@@ -48,7 +48,7 @@ import { AuthService } from '../services/auth.service';
                 [(ngModel)]="email"
                 name="email"
                 required
-                pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$"
                 #emailInput="ngModel"
                 class="form-input"
                 placeholder="Enter your email"
