@@ -112,6 +112,16 @@ router.post(
   async (req, res) => {
     console.log('[REGISTER] Request received:', { name: req.body.name, email: req.body.email });
     
+    // Check database connection
+    const mongoose = require('mongoose');
+    if (mongoose.connection.readyState !== 1) {
+      console.error('[REGISTER] Database not connected, readyState:', mongoose.connection.readyState);
+      return res.status(503).json({ 
+        message: 'Service temporarily unavailable - database connection error',
+        details: 'Database connection not ready' 
+      });
+    }
+    
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       console.log('[REGISTER] Validation errors:', errors.array());
@@ -168,6 +178,17 @@ router.post(
     }
 
     const { email, password, requestedRole } = req.body;
+    console.log('[LOGIN] Request received for:', email, '| Requested role:', requestedRole);
+    
+    // Check database connection
+    const mongoose = require('mongoose');
+    if (mongoose.connection.readyState !== 1) {
+      console.error('[LOGIN] Database not connected, readyState:', mongoose.connection.readyState);
+      return res.status(503).json({ 
+        message: 'Service temporarily unavailable - database connection error',
+        details: 'Database connection not ready' 
+      });
+    }
     console.log('[LOGIN] Request received for:', email, '| Requested role:', requestedRole);
     
     try {

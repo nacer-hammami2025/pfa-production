@@ -70,15 +70,22 @@ console.log('[INDEX] Middleware configured');
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'OK', 
+  const mongoose = require('mongoose');
+  const dbStatus = {
+    connected: mongoose.connection.readyState === 1,
+    readyState: mongoose.connection.readyState,
+    name: mongoose.connection.name || 'Not connected'
+  };
+  
+  res.json({
+    status: 'OK',
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV,
-    port: PORT
+    port: PORT,
+    database: dbStatus,
+    mongoUri: process.env.MONGO_URI ? 'Set' : 'NOT SET'
   });
-});
-
-// Routes
+});// Routes
 console.log('[INDEX] About to load auth routes...');
 try {
   const authRoute = require('./routes/auth');
