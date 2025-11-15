@@ -1,0 +1,249 @@
+<div class="projects-container">
+  <div class="projects-header">
+    <h1>📁 Projets</h1>
+    <button class="btn-primary" (click)="openCreateModal()">
+      <i>➕</i> Nouveau Projet
+    </button>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters">
+    <div class="search-box">
+      <input 
+        type="text" 
+        [(ngModel)]="searchTerm" 
+        (ngModelChange)="applyFilters()"
+        placeholder="🔍 Rechercher un projet..." 
+        class="search-input">
+    </div>
+    <div class="status-filters">
+      <button 
+        [class.active]="filterStatus === 'all'"
+        (click)="filterStatus = 'all'; applyFilters()">
+        Tous
+      </button>
+      <button 
+        [class.active]="filterStatus === 'planning'"
+        (click)="filterStatus = 'planning'; applyFilters()">
+        Planification
+      </button>
+      <button 
+        [class.active]="filterStatus === 'active'"
+        (click)="filterStatus = 'active'; applyFilters()">
+        Actif
+      </button>
+      <button 
+        [class.active]="filterStatus === 'completed'"
+        (click)="filterStatus = 'completed'; applyFilters()">
+        Terminé
+      </button>
+    </div>
+  </div>
+
+  <!-- Projects Grid -->
+  <div class="projects-grid">
+    <div *ngFor="let project of filteredProjects" class="project-card" (click)="openProject(project)">
+      <div class="project-color-bar" [style.background]="project.color"></div>
+      <div class="project-header">
+        <h3>{{project.name}}</h3>
+        <span class="status-badge" [style.background]="getStatusColor(project.status)">
+          {{project.status}}
+        </span>
+      </div>
+      <p class="project-description">{{project.description || 'Aucune description'}}</p>
+      
+      <div class="project-meta">
+        <div class="meta-item">
+          <span class="label">Priorité:</span>
+          <span class="priority-badge" [style.background]="getPriorityColor(project.priority)">
+            {{project.priority}}
+          </span>
+        </div>
+        <div class="meta-item">
+          <span class="label">Progression:</span>
+          <span class="progress-text">{{project.progress}}%</span>
+        </div>
+      </div>
+
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="project.progress"></div>
+      </div>
+
+      <div class="project-footer">
+        <span class="members-count">👥 {{project.members.length}} membre(s)</span>
+        <span class="date">{{formatDate(project.startDate)}}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Project Modal -->
+  <div *ngIf="showCreateModal" class="modal-overlay" (click)="showCreateModal = false">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>➕ Nouveau Projet</h3>
+        <button class="close-btn" (click)="showCreateModal = false">✕</button>
+      </div>
+      <form (ngSubmit)="createProject()" class="modal-form">
+        <div class="form-group">
+          <label>Nom *</label>
+          <input type="text" [(ngModel)]="newProject.name" name="name" required class="form-input">
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea [(ngModel)]="newProject.description" name="description" rows="3" class="form-input"></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Priorité</label>
+            <select [(ngModel)]="newProject.priority" name="priority" class="form-input">
+              <option value="low">🟢 Basse</option>
+              <option value="medium">🟡 Moyenne</option>
+              <option value="high">🔴 Haute</option>
+              <option value="critical">🚨 Critique</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Couleur</label>
+            <input type="color" [(ngModel)]="newProject.color" name="color" class="color-input">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Date début</label>
+            <input type="date" [(ngModel)]="newProject.startDate" name="startDate" class="form-input">
+          </div>
+          <div class="form-group">
+            <label>Date fin</label>
+            <input type="date" [(ngModel)]="newProject.endDate" name="endDate" class="form-input">
+          </div>
+        </div>
+        
+        <!-- Admin: Assign Members -->
+        <div *ngIf="isAdmin" class="form-group">
+          <label>Affecter aux membres 👥</label>
+          <div class="members-selector">
+            <div *ngFor="let user of allUsers" class="member-checkbox-item">
+              <input 
+                type="checkbox" 
+                [checked]="isMemberSelected(user._id)"
+                (change)="toggleMember(user._id)"
+                [id]="'user-' + user._id">
+              <label [for]="'user-' + user._id">
+                {{user.name}} <span class="email-hint">({{user.email}})</span>
+              </label>
+            </div>
+            <p *ngIf="allUsers.length === 0" class="no-users">Aucun utilisateur disponible</p>
+          </div>
+        </div>
+        
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" (click)="showCreateModal = false">Annuler</button>
+          <button type="submit" class="btn-primary">Créer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Project Detail Modal -->
+  <div *ngIf="showDetailModal && selectedProject" class="modal-overlay" (click)="showDetailModal = false">
+    <div class="modal-content large" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div class="header-left">
+          <div class="color-indicator" [style.background]="selectedProject.color"></div>
+          <h3>{{selectedProject.name}}</h3>
+        </div>
+        <button class="close-btn" (click)="showDetailModal = false">✕</button>
+      </div>
+
+      <div class="project-detail">
+        <!-- Description -->
+        <div class="detail-section">
+          <h4>📝 Description</h4>
+          <p>{{selectedProject.description || 'Aucune description'}}</p>
+        </div>
+
+        <!-- Metadata -->
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="label">Statut</span>
+            <select 
+              [value]="selectedProject.status" 
+              (change)="updateProjectStatus($any($event.target).value)"
+              class="status-select">
+              <option value="planning">Planification</option>
+              <option value="active">Actif</option>
+              <option value="on-hold">En pause</option>
+              <option value="completed">Terminé</option>
+              <option value="archived">Archivé</option>
+            </select>
+          </div>
+          <div class="detail-item">
+            <span class="label">Priorité</span>
+            <span class="priority-badge" [style.background]="getPriorityColor(selectedProject.priority)">
+              {{selectedProject.priority}}
+            </span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Progression</span>
+            <div class="progress-info">
+              <span class="progress-text">{{selectedProject.progress}}%</span>
+              <div class="progress-bar small">
+                <div class="progress-fill" [style.width.%]="selectedProject.progress"></div>
+              </div>
+            </div>
+          </div>
+          <div class="detail-item">
+            <span class="label">Membres</span>
+            <span>👥 {{selectedProject.members.length}}</span>
+          </div>
+        </div>
+
+        <!-- Milestones -->
+        <div class="detail-section">
+          <h4>🎯 Jalons ({{selectedProject.milestones.length}})</h4>
+          <div class="milestones-list">
+            <div *ngFor="let milestone of selectedProject.milestones" class="milestone-item">
+              <input 
+                type="checkbox" 
+                [checked]="milestone.completed" 
+                (change)="toggleMilestone(milestone._id, !milestone.completed)"
+                class="milestone-checkbox">
+              <div class="milestone-content">
+                <strong [class.completed]="milestone.completed">{{milestone.title}}</strong>
+                <p *ngIf="milestone.description">{{milestone.description}}</p>
+                <span class="milestone-date" *ngIf="milestone.dueDate">
+                  📅 {{formatDate(milestone.dueDate)}}
+                </span>
+              </div>
+              <button class="btn-icon" (click)="deleteMilestone(milestone._id)">🗑️</button>
+            </div>
+            
+            <div class="add-milestone-form">
+              <input 
+                type="text" 
+                [(ngModel)]="newMilestone.title" 
+                placeholder="Titre du jalon..." 
+                class="form-input">
+              <input 
+                type="date" 
+                [(ngModel)]="newMilestone.dueDate" 
+                class="form-input">
+              <button type="button" class="btn-primary" (click)="addMilestone()">➕ Jalon</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="modal-actions">
+          <button class="btn-danger" (click)="deleteProject()">
+            🗑️ Supprimer le projet
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading-overlay">
+    <div class="spinner"></div>
+  </div>
+</div>

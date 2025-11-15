@@ -1,0 +1,305 @@
+﻿<div class='app-container' [class.dark-mode]='isDarkMode'>
+  <!-- HEADER PROFESSIONNEL -->
+  <header class='app-header' *ngIf='isAuthenticated' [class.scrolled]='isScrolled'>
+    <div class='header-container'>
+      <!-- Logo Premium -->
+      <div class='logo' routerLink='/tasks'>
+        <span class='logo-icon'>⚡</span>
+        <span class='logo-text'>TaskFlow <span class='pro-badge'>PRO</span></span>
+      </div>
+
+      <!-- Navigation Desktop -->
+      <nav class='main-nav desktop-nav'>
+        <ul class='nav-list'>
+          <!-- USER MENUS -->
+          <li *ngIf='userRole === "user"' class='nav-item'>
+            <a routerLink='/tasks' routerLinkActive='active' class='nav-link'>
+              <i class='icon'>✓</i>
+              <span>Tâches</span>
+            </a>
+          </li>
+          
+          <li *ngIf='userRole === "user" || userRole === "admin"' class='nav-item'>
+            <a routerLink='/kanban' routerLinkActive='active' class='nav-link'>
+              <i class='icon'>📋</i>
+              <span>Kanban</span>
+            </a>
+          </li>
+          
+          <li *ngIf='userRole === "user" || userRole === "admin"' class='nav-item'>
+            <a routerLink='/projects' routerLinkActive='active' class='nav-link'>
+              <i class='icon'>📁</i>
+              <span>Projets</span>
+            </a>
+          </li>
+          
+          <li *ngIf='userRole === "user"' class='nav-item dropdown'>
+            <a class='nav-link dropdown-toggle' (click)='toggleToolsMenu($event)'>
+              <i class='icon'>🛠️</i>
+              <span>Outils</span>
+              <i class='arrow'>▼</i>
+            </a>
+            <ul class='dropdown-menu' *ngIf='showToolsMenu'>
+              <li><a routerLink='/voice-commands' routerLinkActive='active'><i>🎤</i> Commandes Vocales</a></li>
+              <li><a routerLink='/pomodoro' routerLinkActive='active'><i>⏱️</i> Pomodoro</a></li>
+              <li><a routerLink='/scheduling' routerLinkActive='active'><i>📅</i> Planning Intelligent</a></li>
+              <li><a routerLink='/time-tracking' routerLinkActive='active'><i>⏰</i> Suivi du Temps</a></li>
+            </ul>
+          </li>
+
+          <li *ngIf='userRole === "user"' class='nav-item dropdown'>
+            <a class='nav-link dropdown-toggle' (click)='toggleAnalyticsMenu($event)'>
+              <i class='icon'>📊</i>
+              <span>Analytics</span>
+              <i class='arrow'>▼</i>
+            </a>
+            <ul class='dropdown-menu' *ngIf='showAnalyticsMenu'>
+              <li><a routerLink='/analytics' routerLinkActive='active'><i>📈</i> Tableau de Bord</a></li>
+              <li><a routerLink='/analytics-dashboard' routerLinkActive='active'><i>📊</i> Analytics Avancés</a></li>
+              <li><a routerLink='/gamification' routerLinkActive='active'><i>🏆</i> Gamification</a></li>
+              <li><a routerLink='/ai-suggestions' routerLinkActive='active'><i>🤖</i> Suggestions IA</a></li>
+            </ul>
+          </li>
+
+          <li *ngIf='userRole === "user"' class='nav-item'>
+            <a routerLink='/teams' routerLinkActive='active' class='nav-link'>
+              <i class='icon'>👥</i>
+              <span>Équipes</span>
+            </a>
+          </li>
+
+          <li *ngIf='userRole === "user"' class='nav-item'>
+            <a routerLink='/integrations' routerLinkActive='active' class='nav-link'>
+              <i class='icon'>🔗</i>
+              <span>Intégrations</span>
+            </a>
+          </li>
+
+          <!-- ADMIN MENUS -->
+          <li *ngIf='userRole === "admin"' class='nav-item dropdown'>
+            <a class='nav-link dropdown-toggle admin-link' (click)='toggleAdminMenu($event)'>
+              <i class='icon'>👑</i>
+              <span>Administration</span>
+              <i class='arrow'>▼</i>
+            </a>
+            <ul class='dropdown-menu' *ngIf='showAdminMenu'>
+              <li><a routerLink='/admin' routerLinkActive='active'><i>📊</i> Dashboard</a></li>
+              <li><a routerLink='/admin/users' routerLinkActive='active'><i>👤</i> Utilisateurs</a></li>
+              <li><a routerLink='/admin/teams' routerLinkActive='active'><i>👥</i> Équipes</a></li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Actions Utilisateur -->
+      <div class='header-actions'>
+        <!-- Notifications -->
+        <button class='action-btn notification-btn' (click)='toggleNotifications()' title='Notifications'>
+          <i class='icon'>🔔</i>
+          <span class='badge' *ngIf='unreadCount > 0'>{{unreadCount}}</span>
+        </button>
+
+        <!-- Theme Toggle -->
+        <button class='action-btn theme-btn' (click)='toggleTheme()' title='Changer le thème'>
+          <i class='icon'>{{isDarkMode ? '☀️' : '🌙'}}</i>
+        </button>
+
+        <!-- User Profile PREMIUM -->
+        <div class='user-profile dropdown'>
+          <button class='profile-btn' (click)='toggleSettingsMenu($event)'>
+            <div class='profile-avatar-wrapper'>
+              <span class='user-avatar'>{{user?.email?.charAt(0).toUpperCase()}}</span>
+              <span class='status-indicator'></span>
+            </div>
+            <span class='user-info'>
+              <span class='user-name'>{{user?.email?.split('@')[0]}}</span>
+              <span class='user-badge' [class.admin]='isAdmin'>
+                <i class='badge-icon'>{{isAdmin ? '👑' : '⭐'}}</i>
+                <span>{{isAdmin ? 'Administrateur' : 'Utilisateur'}}</span>
+              </span>
+            </span>
+            <i class='arrow'>▼</i>
+          </button>
+          
+          <!-- Dropdown Menu PREMIUM -->
+          <div class='dropdown-menu profile-menu' *ngIf='showSettingsMenu'>
+            <div class='menu-header-premium'>
+              <div class='profile-cover'></div>
+              <div class='profile-info-premium'>
+                <div class='avatar-large-premium'>
+                  <span>{{user?.email?.charAt(0).toUpperCase()}}</span>
+                  <div class='avatar-ring'></div>
+                </div>
+                <div class='info-content'>
+                  <h3 class='name-premium'>{{user?.email?.split('@')[0]}}</h3>
+                  <p class='email-premium'>{{user?.email}}</p>
+                  <div class='role-badge-premium' [class.admin]='isAdmin'>
+                    <i>{{isAdmin ? '👑' : '⭐'}}</i>
+                    <span>{{isAdmin ? 'Administrateur' : 'Utilisateur'}}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class='menu-body-premium'>
+              <div class='menu-section'>
+                <h4 class='section-title'>Mon Compte</h4>
+                <ul class='menu-items-premium'>
+                  <li>
+                    <a class='menu-item-premium' (click)='goToProfile()'>
+                      <i class='item-icon'>👤</i>
+                      <div class='item-content'>
+                        <span class='item-title'>Profil</span>
+                        <span class='item-desc'>Gérer vos informations</span>
+                      </div>
+                    </a>
+                  </li>
+                  <li>
+                    <a class='menu-item-premium' (click)='goToSettings()'>
+                      <i class='item-icon'>⚙️</i>
+                      <div class='item-content'>
+                        <span class='item-title'>Paramètres</span>
+                        <span class='item-desc'>Personnaliser votre expérience</span>
+                      </div>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              
+              <div class='menu-divider-premium'></div>
+              
+              <div class='menu-section'>
+                <ul class='menu-items-premium'>
+                  <li>
+                    <a class='menu-item-premium logout-item' (click)='logout()'>
+                      <i class='item-icon logout-icon'>🚪</i>
+                      <div class='item-content'>
+                        <span class='item-title'>Se déconnecter</span>
+                        <span class='item-desc'>Fermer votre session</span>
+                      </div>
+                      <i class='item-arrow'>→</i>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mobile Menu Toggle -->
+        <button class='mobile-menu-btn' (click)='toggleMenu()'>
+          <i class='icon'>☰</i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <nav class='mobile-nav' [class.open]='isMenuOpen'>
+      <ul class='mobile-nav-list'>
+        <li *ngIf='userRole === "user"'>
+          <a routerLink='/tasks' routerLinkActive='active' (click)='closeMenu()'>
+            <i>✓</i> Tâches
+          </a>
+        </li>
+        <li *ngIf='userRole === "user"'>
+          <a routerLink='/voice-commands' routerLinkActive='active' (click)='closeMenu()'>
+            <i>🎤</i> Commandes Vocales
+          </a>
+        </li>
+        <li *ngIf='userRole === "user"'>
+          <a routerLink='/pomodoro' routerLinkActive='active' (click)='closeMenu()'>
+            <i>⏱️</i> Pomodoro
+          </a>
+        </li>
+        <li *ngIf='userRole === "user"'>
+          <a routerLink='/scheduling' routerLinkActive='active' (click)='closeMenu()'>
+            <i>📅</i> Planning
+          </a>
+        </li>
+        <li *ngIf='userRole === "user"'>
+          <a routerLink='/time-tracking' routerLinkActive='active' (click)='closeMenu()'>
+            <i>⏰</i> Suivi du Temps
+          </a>
+        </li>
+        <li *ngIf='userRole === "user"'>
+          <a routerLink='/analytics' routerLinkActive='active' (click)='closeMenu()'>
+            <i>📊</i> Analytics
+          </a>
+        </li>
+        <li *ngIf='userRole === "user"'>
+          <a routerLink='/gamification' routerLinkActive='active' (click)='closeMenu()'>
+            <i>🏆</i> Gamification
+          </a>
+        </li>
+        <li *ngIf='userRole === "user"'>
+          <a routerLink='/ai-suggestions' routerLinkActive='active' (click)='closeMenu()'>
+            <i>🤖</i> Suggestions IA
+          </a>
+        </li>
+        <li *ngIf='userRole === "user"'>
+          <a routerLink='/teams' routerLinkActive='active' (click)='closeMenu()'>
+            <i>👥</i> Équipes
+          </a>
+        </li>
+        <li *ngIf='userRole === "user"'>
+          <a routerLink='/integrations' routerLinkActive='active' (click)='closeMenu()'>
+            <i>🔗</i> Intégrations
+          </a>
+        </li>
+        <li *ngIf='userRole === "admin"'>
+          <a routerLink='/admin' routerLinkActive='active' (click)='closeMenu()'>
+            <i>📊</i> Dashboard Admin
+          </a>
+        </li>
+        <li *ngIf='userRole === "admin"'>
+          <a routerLink='/admin/users' routerLinkActive='active' (click)='closeMenu()'>
+            <i>👤</i> Utilisateurs
+          </a>
+        </li>
+        <li *ngIf='userRole === "admin"'>
+          <a routerLink='/admin/teams' routerLinkActive='active' (click)='closeMenu()'>
+            <i>👥</i> Équipes
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main class='app-main' [style.padding-top.px]='isAuthenticated ? 80 : 0'>
+    <router-outlet></router-outlet>
+  </main>
+
+  <!-- FOOTER PROFESSIONNEL -->
+  <footer class='app-footer' *ngIf='isAuthenticated'>
+    <div class='footer-container'>
+      <p class='footer-text'>
+        <span class='copyright'>© 2025 TaskFlow Pro</span>
+        <span class='separator'>•</span>
+        <span class='tagline'>Gestion de tâches intelligente avec IA</span>
+      </p>
+      <div class='footer-links'>
+        <a href='#' class='footer-link'>Support</a>
+        <a href='#' class='footer-link'>Documentation</a>
+        <a href='#' class='footer-link'>Confidentialité</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Notification Panel -->
+  <div class='notification-panel' [class.open]='showNotifications'>
+    <div class='panel-header'>
+      <h3>Notifications</h3>
+      <button class='close-btn' (click)='toggleNotifications()'>✕</button>
+    </div>
+    <div class='panel-content'>
+      <p class='empty-state' *ngIf='unreadCount === 0'>Aucune nouvelle notification</p>
+      <!-- Notifications will be loaded here -->
+    </div>
+  </div>
+
+  <!-- Scroll to Top Button -->
+  <button class='scroll-top-btn' *ngIf='isScrolled' (click)='scrollToTop()' title='Retour en haut'>
+    ↑
+  </button>
+</div>

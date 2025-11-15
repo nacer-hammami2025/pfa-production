@@ -1,0 +1,225 @@
+<div class="tasks-dashboard">
+  <!-- Hero Section -->
+  <div class="hero-section">
+    <div class="hero-content">
+      <h1 class="page-title">📋 Task Management Dashboard</h1>
+      <p class="page-subtitle">Organize, prioritize, and conquer your tasks</p>
+    </div>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="stats-section">
+    <div class="stat-card total">
+      <div class="stat-icon">📊</div>
+      <div class="stat-content">
+        <div class="stat-value">{{ stats.total }}</div>
+        <div class="stat-label">Total Tasks</div>
+      </div>
+    </div>
+    <div class="stat-card completed">
+      <div class="stat-icon">✅</div>
+      <div class="stat-content">
+        <div class="stat-value">{{ stats.completed }}</div>
+        <div class="stat-label">Completed</div>
+      </div>
+    </div>
+    <div class="stat-card pending">
+      <div class="stat-icon">⏳</div>
+      <div class="stat-content">
+        <div class="stat-value">{{ stats.pending }}</div>
+        <div class="stat-label">Pending</div>
+      </div>
+    </div>
+    <div class="stat-card progress">
+      <div class="stat-icon">🎯</div>
+      <div class="stat-content">
+        <div class="stat-value">{{ stats.completionRate }}%</div>
+        <div class="stat-label">Completion Rate</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Task Section -->
+  <div class="add-task-section">
+    <div class="section-header">
+      <h2>➕ Create New Task</h2>
+    </div>
+    <form (ngSubmit)="addTask()" #taskForm="ngForm" class="task-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Task Title *</label>
+          <input
+            type="text"
+            [(ngModel)]="newTask.title"
+            name="title"
+            required
+            class="form-input"
+            placeholder="Enter task title..."
+          />
+        </div>
+        <div class="form-group">
+          <label>Priority</label>
+          <select [(ngModel)]="newTask.priority" name="priority" class="form-input">
+            <option value="low">🟢 Low</option>
+            <option value="medium">🟡 Medium</option>
+            <option value="high">🔴 High</option>
+            <option value="urgent">🟣 Urgent</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Category</label>
+          <select [(ngModel)]="newTask.category" name="category" class="form-input">
+            <option value="work">💼 Work</option>
+            <option value="personal">👤 Personal</option>
+            <option value="shopping">🛒 Shopping</option>
+            <option value="health">🏥 Health</option>
+            <option value="education">📚 Education</option>
+            <option value="other">📌 Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Due Date</label>
+          <input
+            type="date"
+            [(ngModel)]="newTask.dueDate"
+            name="dueDate"
+            class="form-input"
+          />
+        </div>
+      </div>
+
+      <div class="form-group full">
+        <label>Description</label>
+        <textarea
+          [(ngModel)]="newTask.description"
+          name="description"
+          class="form-input"
+          placeholder="Add task description..."
+          rows="3"
+        ></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-primary" [disabled]="!taskForm.valid || isAdding">
+        {{ isAdding ? '⏳ Adding...' : '✨ Add Task' }}
+      </button>
+    </form>
+  </div>
+
+  <!-- Filters and View Options -->
+  <div class="filters-section">
+    <div class="section-header">
+      <h2>🔍 Tasks</h2>
+      <div class="filter-controls">
+        <select [(ngModel)]="filterPriority" (change)="filterTasks()" class="filter-select">
+          <option value="">All Priorities</option>
+          <option value="urgent">🟣 Urgent</option>
+          <option value="high">🔴 High</option>
+          <option value="medium">🟡 Medium</option>
+          <option value="low">🟢 Low</option>
+        </select>
+
+        <select [(ngModel)]="filterCategory" (change)="filterTasks()" class="filter-select">
+          <option value="">All Categories</option>
+          <option value="work">💼 Work</option>
+          <option value="personal">👤 Personal</option>
+          <option value="shopping">🛒 Shopping</option>
+          <option value="health">🏥 Health</option>
+          <option value="education">📚 Education</option>
+          <option value="other">📌 Other</option>
+        </select>
+
+        <select [(ngModel)]="viewMode" class="filter-select">
+          <option value="list">📋 List View</option>
+          <option value="grid">🔲 Grid View</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Task Count -->
+    <div class="task-count">
+      Showing {{ filteredTasks.length }} of {{ tasks.length }} tasks
+    </div>
+  </div>
+
+  <!-- Tasks List/Grid -->
+  <div [ngSwitch]="viewMode" class="tasks-container">
+    <!-- List View -->
+    <div *ngSwitchCase="'list'" class="tasks-list">
+      <div *ngIf="filteredTasks.length === 0" class="empty-state">
+        <div class="empty-icon">🎯</div>
+        <h3>No tasks found</h3>
+        <p>Create your first task to get started!</p>
+      </div>
+
+      <div *ngFor="let task of filteredTasks" class="task-item" [class.completed]="task.completed">
+        <div class="task-checkbox">
+          <input
+            type="checkbox"
+            [(ngModel)]="task.completed"
+            (change)="updateTask(task)"
+            class="checkbox"
+          />
+        </div>
+        <div class="task-content">
+          <div class="task-header">
+            <h3 class="task-title" [class.done]="task.completed">{{ task.title }}</h3>
+            <span class="priority-badge" [class]="task.priority">
+              {{ getPriorityEmoji(task.priority) }}
+            </span>
+          </div>
+          <p class="task-description" *ngIf="task.description">{{ task.description }}</p>
+          <div class="task-meta">
+            <span class="meta-item">
+              {{ taskService.getCategoryIcon(task.category) }} {{ task.category }}
+            </span>
+            <span class="meta-item" *ngIf="task.dueDate">
+              📅 {{ task.dueDate | date: 'MMM dd, yyyy' }}
+            </span>
+          </div>
+        </div>
+        <div class="task-actions">
+          <button (click)="deleteTask(task._id)" class="btn btn-delete" title="Delete">
+            🗑️
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Grid View -->
+    <div *ngSwitchCase="'grid'" class="tasks-grid">
+      <div *ngIf="filteredTasks.length === 0" class="empty-state">
+        <div class="empty-icon">🎯</div>
+        <h3>No tasks found</h3>
+        <p>Create your first task to get started!</p>
+      </div>
+
+      <div *ngFor="let task of filteredTasks" class="task-card" [class.completed]="task.completed">
+        <div class="card-header">
+          <input
+            type="checkbox"
+            [(ngModel)]="task.completed"
+            (change)="updateTask(task)"
+            class="checkbox"
+          />
+          <span class="priority-badge" [class]="task.priority">
+            {{ getPriorityEmoji(task.priority) }}
+          </span>
+        </div>
+        <h3 class="card-title" [class.done]="task.completed">{{ task.title }}</h3>
+        <p class="card-description" *ngIf="task.description">{{ task.description }}</p>
+        <div class="card-meta">
+          <span class="meta-item">
+            {{ taskService.getCategoryIcon(task.category) }} {{ task.category }}
+          </span>
+          <span class="meta-item" *ngIf="task.dueDate">
+            📅 {{ task.dueDate | date: 'MMM dd' }}
+          </span>
+        </div>
+        <button (click)="deleteTask(task._id)" class="btn btn-delete-card">🗑️ Delete</button>
+      </div>
+    </div>
+  </div>
+</div>

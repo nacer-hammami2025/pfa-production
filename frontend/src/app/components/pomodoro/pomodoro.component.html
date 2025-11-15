@@ -1,0 +1,109 @@
+<div class="pomodoro-timer">
+  <div class="timer-header">
+    <h2>Timer Pomodoro</h2>
+    <div class="timer-controls">
+      <button
+        class="btn btn-primary"
+        (click)="startWorkSession()"
+        [disabled]="isRunning || currentSession?.type === 'work'"
+        *ngIf="!currentSession || currentSession?.type !== 'work'">
+        Démarrer Travail (25min)
+      </button>
+      <button
+        class="btn btn-secondary"
+        (click)="startShortBreak()"
+        [disabled]="isRunning || currentSession?.type === 'shortBreak'"
+        *ngIf="!currentSession || currentSession?.type !== 'shortBreak'">
+        Pause Courte (5min)
+      </button>
+      <button
+        class="btn btn-secondary"
+        (click)="startLongBreak()"
+        [disabled]="isRunning || currentSession?.type === 'longBreak'"
+        *ngIf="!currentSession || currentSession?.type !== 'longBreak'">
+        Pause Longue (15min)
+      </button>
+    </div>
+  </div>
+
+  <div class="timer-display" *ngIf="currentSession">
+    <div class="session-info">
+      <h3 [ngClass]="currentSession.type">
+        {{ getSessionTitle() }}
+      </h3>
+      <div class="progress-circle">
+        <svg width="200" height="200" viewBox="0 0 200 200">
+          <circle
+            cx="100"
+            cy="100"
+            r="90"
+            stroke="#e0e0e0"
+            stroke-width="10"
+            fill="none"/>
+          <circle
+            cx="100"
+            cy="100"
+            r="90"
+            stroke="#007bff"
+            stroke-width="10"
+            fill="none"
+            [attr.stroke-dasharray]="getProgressDashArray()"
+            stroke-dashoffset="0"
+            stroke-linecap="round"
+            transform="rotate(-90 100 100)"/>
+        </svg>
+        <div class="timer-text">
+          <div class="time">{{ formatTime(timeRemaining) }}</div>
+          <div class="session-type">{{ getSessionTypeText() }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="timer-actions">
+      <button
+        class="btn btn-lg"
+        [ngClass]="isRunning ? 'btn-warning' : 'btn-success'"
+        (click)="isRunning ? pauseTimer() : resumeTimer()"
+        *ngIf="currentSession">
+        <i class="fas" [ngClass]="isRunning ? 'fa-pause' : 'fa-play'"></i>
+        {{ isRunning ? 'Pause' : 'Reprendre' }}
+      </button>
+      <button
+        class="btn btn-danger"
+        (click)="stopTimer()">
+        <i class="fas fa-stop"></i>
+        Arrêter
+      </button>
+    </div>
+  </div>
+
+  <div class="stats-section" *ngIf="stats">
+    <h4>Statistiques</h4>
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-value">{{ stats.totalSessions }}</div>
+        <div class="stat-label">Sessions Totales</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">{{ stats.completedSessions }}</div>
+        <div class="stat-label">Sessions Terminées</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">{{ stats.totalWorkTime }}min</div>
+        <div class="stat-label">Temps de Travail</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">{{ stats.currentStreak }}</div>
+        <div class="stat-label">Série Actuelle</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">{{ stats.longestStreak }}</div>
+        <div class="stat-label">Meilleure Série</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="next-session" *ngIf="currentSession">
+    <p>Prochaine session : <strong>{{ getNextSessionTitle() }}</strong></p>
+  </div>
+</div>

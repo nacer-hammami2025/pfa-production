@@ -1,0 +1,185 @@
+<div class="admin-dashboard" *ngIf="!isLoading && summary">
+  <!-- Menu de navigation latéral -->
+  <nav class="admin-sidebar">
+    <div class="sidebar-header">
+      <h3><i class="fas fa-tachometer-alt"></i> Administration</h3>
+    </div>
+    <ul class="sidebar-menu">
+      <li class="menu-item active">
+        <a routerLink="/admin/dashboard" class="menu-link">
+          <i class="fas fa-home"></i>
+          <span>Tableau de bord</span>
+        </a>
+      </li>
+      <li class="menu-item">
+        <a routerLink="/admin/users" class="menu-link">
+          <i class="fas fa-users"></i>
+          <span>Gestion des utilisateurs</span>
+        </a>
+      </li>
+      <li class="menu-item">
+        <a routerLink="/admin/teams" class="menu-link">
+          <i class="fas fa-user-friends"></i>
+          <span>Gestion des équipes</span>
+        </a>
+      </li>
+      <li class="menu-item">
+        <a routerLink="/admin/tasks" class="menu-link">
+          <i class="fas fa-tasks"></i>
+          <span>Gestion des tâches</span>
+        </a>
+      </li>
+      <li class="menu-item">
+        <a routerLink="/admin/analytics" class="menu-link">
+          <i class="fas fa-chart-bar"></i>
+          <span>Analyses</span>
+        </a>
+      </li>
+      <li class="menu-item">
+        <a routerLink="/admin/settings" class="menu-link">
+          <i class="fas fa-cog"></i>
+          <span>Paramètres</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Contenu principal -->
+  <main class="admin-content">
+    <!-- En-tête -->
+    <header class="header">
+      <h1>Tableau de bord Administrateur</h1>
+      <div class="actions">
+        <button class="btn ghost" (click)="reload()">
+          <i>&#x21bb;</i> Rafraîchir les données
+        </button>
+      </div>
+    </header>
+
+  <!-- Grille de statistiques principales -->
+  <section class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-header">
+        <div class="stat-icon icon-users"><i>&#128101;</i></div>
+        <span class="stat-title">Utilisateurs</span>
+      </div>
+      <p class="stat-value">{{ totals.users }}</p>
+      <div class="stat-footer">Total des inscrits</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-header">
+        <div class="stat-icon icon-admins"><i>&#128081;</i></div>
+        <span class="stat-title">Administrateurs</span>
+      </div>
+      <p class="stat-value">{{ totals.admins }}</p>
+      <div class="stat-footer">Comptes avec privilèges</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-header">
+        <div class="stat-icon icon-active"><i>&#128200;</i></div>
+        <span class="stat-title">Utilisateurs Actifs</span>
+      </div>
+      <p class="stat-value">{{ totals.activeUsers }}</p>
+      <div class="stat-footer">Connectés les 30 derniers jours</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-header">
+        <div class="stat-icon icon-teams"><i>&#128107;</i></div>
+        <span class="stat-title">Équipes</span>
+      </div>
+      <p class="stat-value">{{ totals.teams }}</p>
+      <div class="stat-footer">Équipes créées</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-header">
+        <div class="stat-icon icon-members"><i>&#129309;</i></div>
+        <span class="stat-title">Membres d'équipe</span>
+      </div>
+      <p class="stat-value">{{ totals.teamMembers }}</p>
+      <div class="stat-footer">Total dans les équipes</div>
+    </div>
+  </section>
+
+  <!-- Grille de données (graphiques et listes) -->
+  <section class="data-grid">
+    <div class="panel">
+      <div class="panel-header">
+        <h2>Activité de la semaine</h2>
+      </div>
+      <div class="chart-container">
+        <canvas baseChart
+          [data]="activityChartData"
+          type="bar"
+          [options]="activityChartOptions">
+        </canvas>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <h2>Répartition des utilisateurs</h2>
+      </div>
+      <div class="chart-container">
+        <canvas baseChart
+          [data]="userChartData"
+          type="doughnut"
+          [options]="userChartOptions">
+        </canvas>
+      </div>
+    </div>
+  </section>
+
+  <section class="data-grid">
+    <div class="panel">
+      <div class="panel-header">
+        <h2>Inscriptions Récentes</h2>
+        <button class="link" (click)="goTo('users')">Voir tout</button>
+      </div>
+      <ul class="list" *ngIf="summary?.recentUsers?.length; else emptyUsers">
+        <li class="list-item" *ngFor="let user of summary?.recentUsers">
+          <div class="user-info">
+            <strong>{{ user.name }}</strong>
+            <span>{{ user.email }}</span>
+          </div>
+          <span class="pill" [ngClass]="{'admin': user.role === 'admin', 'user': user.role === 'user'}">{{ user.role }}</span>
+        </li>
+      </ul>
+      <ng-template #emptyUsers>
+        <div class="empty-state">Aucune inscription récente.</div>
+      </ng-template>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <h2>Équipes Actives</h2>
+        <button class="link" (click)="goTo('teams')">Voir tout</button>
+      </div>
+      <ul class="list" *ngIf="summary?.recentTeams?.length; else emptyTeams">
+        <li class="list-item" *ngFor="let team of summary?.recentTeams">
+          <div class="user-info">
+            <strong>{{ team.name }}</strong>
+            <span>{{ team.members?.length ?? 0 }} membres</span>
+          </div>
+          <span class="mini-date">MAJ {{ team.updatedAt | date: 'shortDate' }}</span>
+        </li>
+      </ul>
+      <ng-template #emptyTeams>
+        <div class="empty-state">Aucune équipe enregistrée.</div>
+      </ng-template>
+    </div>
+  </section>
+  </main>
+</div>
+
+<!-- États de chargement et d'erreur -->
+<div class="loading" *ngIf="isLoading">
+  <div class="spinner"></div>
+  <p>Chargement du tableau de bord...</p>
+</div>
+
+<div class="error" *ngIf="errorMessage">
+  <p><strong>Erreur de chargement :</strong> {{ errorMessage }}</p>
+  <button class="btn ghost" (click)="reload()">
+    <i>&#x21bb;</i> Réessayer
+  </button>
+</div>

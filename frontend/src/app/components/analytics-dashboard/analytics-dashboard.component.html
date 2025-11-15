@@ -1,0 +1,102 @@
+<div class="analytics-dashboard-container">
+  <div class="dashboard-header">
+    <h1>📊 Dashboard Analytique</h1>
+    <button class="btn-export" (click)="exportReport()">
+      📥 Exporter le rapport
+    </button>
+  </div>
+
+  <!-- Key Metrics -->
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="metric-icon">✅</div>
+      <div class="metric-content">
+        <h3>{{completedTasks}}</h3>
+        <p>Tâches complétées</p>
+        <span class="metric-sub">sur {{totalTasks}} total</span>
+      </div>
+    </div>
+
+    <div class="metric-card">
+      <div class="metric-icon">⏳</div>
+      <div class="metric-content">
+        <h3>{{pendingTasks}}</h3>
+        <p>Tâches en attente</p>
+        <span class="metric-sub warn" *ngIf="overdueTasks > 0">{{overdueTasks}} en retard</span>
+      </div>
+    </div>
+
+    <div class="metric-card">
+      <div class="metric-icon">📁</div>
+      <div class="metric-content">
+        <h3>{{activeProjects}}</h3>
+        <p>Projets actifs</p>
+        <span class="metric-sub">sur {{totalProjects}} total</span>
+      </div>
+    </div>
+
+    <div class="metric-card">
+      <div class="metric-icon">⚡</div>
+      <div class="metric-content">
+        <h3>{{productivityScore}}%</h3>
+        <p>Score productivité</p>
+        <span class="metric-sub" [class.good]="productivityScore >= 70" [class.warn]="productivityScore < 70">
+          {{productivityScore >= 70 ? 'Excellent!' : 'À améliorer'}}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Time Stats -->
+  <div class="time-stats-row">
+    <div class="time-stat">
+      <span class="label">⏱️ Temps estimé</span>
+      <span class="value">{{totalHoursEstimated}}h</span>
+    </div>
+    <div class="time-stat">
+      <span class="label">⏰ Temps réel</span>
+      <span class="value">{{totalHoursActual}}h</span>
+    </div>
+    <div class="time-stat">
+      <span class="label">📈 Efficacité</span>
+      <span class="value" [class.good]="efficiency >= 90" [class.warn]="efficiency < 90">{{efficiency}}%</span>
+    </div>
+    <div class="time-stat">
+      <span class="label">📅 Temps moyen de complétion</span>
+      <span class="value">{{avgCompletionDays}} jour(s)</span>
+    </div>
+  </div>
+
+  <!-- Charts Grid -->
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-container">
+        <canvas #burndownChart></canvas>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-container">
+        <canvas #velocityChart></canvas>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-container">
+        <canvas #timeChart></canvas>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-container">
+        <canvas #categoryChart></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div *ngIf="loading" class="loading-overlay">
+    <div class="spinner"></div>
+    <p>Chargement des analytics...</p>
+  </div>
+</div>

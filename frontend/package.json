@@ -1,0 +1,38 @@
+{
+  "name": "pfa-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve --host 0.0.0.0 --port 4200 --proxy-config proxy.conf.json --disable-host-check",
+    "build": "ng build --configuration production",
+    "test": "ng test --watch=false"
+  },
+  "dependencies": {
+    "@angular/animations": "^16.2.0",
+    "@angular/cdk": "^16.2.14",
+    "@angular/common": "^16.2.0",
+    "@angular/compiler": "^16.2.0",
+    "@angular/core": "^16.2.0",
+    "@angular/forms": "^16.2.0",
+    "@angular/material": "^16.2.14",
+    "@angular/platform-browser": "^16.2.0",
+    "@angular/platform-browser-dynamic": "^16.2.0",
+    "@angular/router": "^16.2.0",
+    "angular-calendar": "^0.31.0",
+    "chart.js": "^4.5.1",
+    "date-fns": "^4.1.0",
+    "ng2-charts": "^5.0.4",
+    "qrcode": "^1.5.4",
+    "rxjs": "~7.8.0",
+    "speakeasy": "^2.0.0",
+    "tslib": "^2.6.0",
+    "zone.js": "~0.13.0"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^16.2.0",
+    "@angular/cli": "^16.2.0",
+    "@angular/compiler-cli": "^16.2.0",
+    "typescript": "5.1.6"
+  }
+}

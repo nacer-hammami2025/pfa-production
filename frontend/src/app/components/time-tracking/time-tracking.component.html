@@ -1,0 +1,242 @@
+<div class="time-tracking-container">
+  <div class="header">
+    <h2>⏱️ Suivi du Temps</h2>
+    <p class="subtitle">Suivez votre temps de travail et améliorez votre productivité</p>
+  </div>
+
+  <!-- Active Time Tracking -->
+  <div class="active-tracking-card" *ngIf="activeEntry">
+    <div class="active-indicator">
+      <div class="pulse"></div>
+      <span class="status-text">EN COURS</span>
+    </div>
+
+    <div class="active-details">
+      <h3>{{ activeEntry.taskTitle }}</h3>
+      <div class="timer">{{ formatElapsedTime(activeEntry.elapsedTime) }}</div>
+      <p *ngIf="activeEntry.description" class="description">{{ activeEntry.description }}</p>
+      <p class="start-time">Démarré à {{ activeEntry.startTime | date:'short' }}</p>
+    </div>
+
+    <div class="active-actions">
+      <button
+        class="btn-stop"
+        (click)="stopTracking()"
+        [disabled]="isLoading">
+        <span *ngIf="isLoading">Arrêt...</span>
+        <span *ngIf="!isLoading">⏹️ Arrêter</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Start New Tracking -->
+  <div class="start-tracking-card" *ngIf="!activeEntry">
+    <h3>Démarrer le suivi du temps</h3>
+
+    <form class="tracking-form" (ngSubmit)="startTracking()">
+      <div class="form-group">
+        <label for="task-select">Tâche :</label>
+        <select
+          id="task-select"
+          [(ngModel)]="selectedTaskId"
+          name="taskId"
+          required
+          class="form-control">
+          <option value="">Sélectionner une tâche...</option>
+          <option *ngFor="let task of tasks" [value]="task._id">
+            {{ task.title }}
+          </option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="description">Description (optionnel) :</label>
+        <input
+          type="text"
+          id="description"
+          [(ngModel)]="description"
+          name="description"
+          placeholder="Ce sur quoi vous travaillez..."
+          class="form-control">
+      </div>
+
+      <button
+        type="submit"
+        class="btn-start"
+        [disabled]="isLoading || !selectedTaskId">
+        <span *ngIf="isLoading">Démarrage...</span>
+        <span *ngIf="!isLoading">▶️ Démarrer</span>
+      </button>
+    </form>
+  </div>
+
+  <!-- Manual Entry Toggle -->
+  <div class="manual-entry-toggle">
+    <button
+      class="btn-toggle"
+      (click)="showManualEntry = !showManualEntry">
+      {{ showManualEntry ? 'Masquer' : 'Afficher' }} l'entrée manuelle
+    </button>
+  </div>
+
+  <!-- Manual Time Entry -->
+  <div class="manual-entry-card" *ngIf="showManualEntry">
+    <h3>Ajouter une entrée manuelle</h3>
+
+    <form class="manual-form" (ngSubmit)="createManualEntry()">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="manual-task">Tâche :</label>
+          <select
+            id="manual-task"
+            [(ngModel)]="manualTaskId"
+            name="manualTaskId"
+            required
+            class="form-control">
+            <option value="">Sélectionner une tâche...</option>
+            <option *ngFor="let task of tasks" [value]="task._id">
+              {{ task.title }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="start-time">Heure de début :</label>
+          <input
+            type="datetime-local"
+            id="start-time"
+            [(ngModel)]="manualStartTime"
+            name="startTime"
+            required
+            class="form-control">
+        </div>
+
+        <div class="form-group">
+          <label for="end-time">Heure de fin :</label>
+          <input
+            type="datetime-local"
+            id="end-time"
+            [(ngModel)]="manualEndTime"
+            name="endTime"
+            required
+            class="form-control">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="manual-description">Description :</label>
+        <input
+          type="text"
+          id="manual-description"
+          [(ngModel)]="manualDescription"
+          name="manualDescription"
+          placeholder="Description du travail effectué..."
+          class="form-control">
+      </div>
+
+      <div class="form-actions">
+        <button
+          type="button"
+          class="btn-cancel"
+          (click)="showManualEntry = false; resetManualEntryForm()">
+          Annuler
+        </button>
+        <button
+          type="submit"
+          class="btn-save"
+          [disabled]="isLoading">
+          <span *ngIf="isLoading">Enregistrement...</span>
+          <span *ngIf="!isLoading">💾 Enregistrer</span>
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Productivity Stats -->
+  <div class="stats-section" *ngIf="productivityStats">
+    <div class="stats-header">
+      <h3>📊 Statistiques de Productivité</h3>
+      <select [(ngModel)]="selectedPeriod" (change)="onPeriodChange()" class="period-select">
+        <option value="day">Aujourd'hui</option>
+        <option value="week">Cette semaine</option>
+        <option value="month">Ce mois</option>
+      </select>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">⏱️</div>
+        <div class="stat-content">
+          <div class="stat-value">{{ formatDuration(productivityStats.totalTimeTracked) }}</div>
+          <div class="stat-label">Temps total tracké</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">🎯</div>
+        <div class="stat-content">
+          <div class="stat-value">{{ productivityStats.overallProductivity }}%</div>
+          <div class="stat-label">Productivité globale</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">📈</div>
+        <div class="stat-content">
+          <div class="stat-value">{{ productivityStats.tasksCompleted }}</div>
+          <div class="stat-label">Tâches terminées</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">⚡</div>
+        <div class="stat-content">
+          <div class="stat-value">{{ formatDuration(productivityStats.averageSessionLength) }}</div>
+          <div class="stat-label">Session moyenne</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Productivity Insights -->
+    <div class="insights-section" *ngIf="getProductivityInsights().length > 0">
+      <h4>💡 Insights</h4>
+      <ul class="insights-list">
+        <li *ngFor="let insight of getProductivityInsights()" class="insight-item">
+          {{ insight }}
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Recent Time Entries -->
+  <div class="entries-section">
+    <h3>📝 Entrées récentes</h3>
+
+    <div class="entries-list" *ngIf="timeEntries.length > 0; else noEntries">
+      <div class="entry-item" *ngFor="let entry of timeEntries">
+        <div class="entry-header">
+          <h4>{{ getTaskTitle(entry.taskId) }}</h4>
+          <span class="entry-duration">{{ formatDuration(entry.duration) }}</span>
+        </div>
+
+        <div class="entry-details">
+          <span class="entry-date">{{ entry.startTime | date:'short' }}</span>
+          <span class="entry-type" [class]="'type-' + (entry.isManual ? 'manual' : 'auto')">
+            {{ entry.isManual ? 'Manuel' : 'Auto' }}
+          </span>
+        </div>
+
+        <p *ngIf="entry.description" class="entry-description">{{ entry.description }}</p>
+      </div>
+    </div>
+
+    <ng-template #noEntries>
+      <div class="no-entries">
+        <p>🚀 Aucune entrée de temps pour le moment.</p>
+        <p>Commencez à tracker votre temps pour voir vos statistiques !</p>
+      </div>
+    </ng-template>
+  </div>
+</div>

@@ -1,0 +1,486 @@
+<div class="team-collaboration">
+  <!-- Header -->
+  <div class="team-header">
+    <h1>Collaboration d'Équipe</h1>
+    <button class="btn btn-primary create-team-btn" (click)="openCreateTeamModal()">
+      Créer une Équipe
+    </button>
+  </div>
+
+  <!-- Teams List -->
+  <div class="teams-section" *ngIf="!currentTeam">
+    <h2>Mes Équipes</h2>
+
+    <div class="teams-grid" *ngIf="teams.length > 0; else noTeams">
+      <div
+        class="team-card"
+        *ngFor="let team of teams"
+        (click)="selectTeam(team)"
+      >
+        <div class="team-name">{{ team.name }}</div>
+        <div class="team-description" *ngIf="team.description">{{ team.description }}</div>
+        <div class="team-stats">
+          <div class="team-stat">
+            <span>👥</span>
+            <span>{{ team.members.length }} membres</span>
+          </div>
+          <div class="team-stat">
+            <span>📅</span>
+            <span>Créée {{ formatDate(team.createdAt) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noTeams>
+      <div class="empty-state">
+        <h3>Aucune équipe trouvée</h3>
+        <p>Créez votre première équipe pour commencer à collaborer.</p>
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- Team Detail -->
+  <div *ngIf="currentTeam">
+    <div class="team-detail">
+      <!-- Team Info -->
+      <div class="team-info">
+        <div class="team-info-left">
+          <h2>{{ currentTeam.name }}</h2>
+          <p *ngIf="currentTeam.description">{{ currentTeam.description }}</p>
+          <p *ngIf="!currentTeam.description">Aucune description</p>
+        </div>
+        <div class="team-actions">
+          <button
+            class="btn btn-primary btn-sm"
+            (click)="showInviteMemberModal = true"
+            *ngIf="canManageTeam()"
+          >
+            Inviter un Membre
+          </button>
+          <button
+            class="btn btn-success btn-sm"
+            (click)="showTaskModal = true"
+          >
+            Nouvelle Tâche
+          </button>
+          <button class="btn btn-secondary btn-sm" (click)="leaveTeam()">
+            Quitter l'Équipe
+          </button>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <button
+          class="tab"
+          [class.active]="activeTab === 'overview'"
+          (click)="activeTab = 'overview'"
+        >
+          Vue d'ensemble
+        </button>
+        <button
+          class="tab"
+          [class.active]="activeTab === 'tasks'"
+          (click)="activeTab = 'tasks'"
+        >
+          Tâches ({{ teamTasks.length }})
+        </button>
+        <button
+          class="tab"
+          [class.active]="activeTab === 'members'"
+          (click)="activeTab = 'members'"
+        >
+          Membres ({{ currentTeam.members.length }})
+        </button>
+        <button
+          class="tab"
+          [class.active]="activeTab === 'activities'"
+          (click)="activeTab = 'activities'"
+        >
+          Activités
+        </button>
+      </div>
+
+      <!-- Overview Tab -->
+      <div *ngIf="activeTab === 'overview'" class="tab-content">
+        <div class="overview-grid">
+          <div class="stat-card">
+            <div class="stat-value">{{ teamTasks.length }}</div>
+            <div class="stat-label">Tâches Totales</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">{{ completedTasksCount }}</div>
+            <div class="stat-label">Tâches Terminées</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">{{ inProgressTasksCount }}</div>
+            <div class="stat-label">En Cours</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">{{ currentTeam.members.length }}</div>
+            <div class="stat-label">Membres</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tasks Tab -->
+      <div *ngIf="activeTab === 'tasks'" class="tab-content">
+        <div class="tasks-section">
+          <div class="tasks-header">
+            <h3>Tâches de l'Équipe</h3>
+          </div>
+
+          <!-- Filters -->
+          <div class="tasks-filters">
+            <select
+              class="filter-select"
+              [(ngModel)]="taskFilters.status"
+              (change)="loadTeamTasks()"
+            >
+              <option value="">Tous les statuts</option>
+              <option value="pending">En attente</option>
+              <option value="in_progress">En cours</option>
+              <option value="completed">Terminée</option>
+              <option value="cancelled">Annulée</option>
+            </select>
+
+            <select
+              class="filter-select"
+              [(ngModel)]="taskFilters.priority"
+              (change)="loadTeamTasks()"
+            >
+              <option value="">Toutes les priorités</option>
+              <option value="low">Basse</option>
+              <option value="medium">Moyenne</option>
+              <option value="high">Haute</option>
+              <option value="urgent">Urgente</option>
+            </select>
+
+            <select
+              class="filter-select"
+              [(ngModel)]="taskFilters.assignedTo"
+              (change)="loadTeamTasks()"
+            >
+              <option value="">Tous les membres</option>
+              <option value="">Non assignée</option>
+              <option *ngFor="let member of currentTeam.members" [value]="member.userId">
+                {{ member.name }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Tasks List -->
+          <div class="tasks-list" *ngIf="teamTasks.length > 0; else noTasks">
+            <div class="task-card" *ngFor="let task of teamTasks">
+              <div class="task-header">
+                <h4 class="task-title">{{ task.title }}</h4>
+                <div class="task-actions">
+                  <select
+                    class="filter-select"
+                    [value]="task.status"
+                    (change)="updateTaskStatus(task, $event)"
+                    *ngIf="canManageTask(task) || isAssignedToCurrentUser(task)"
+                  >
+                    <option value="pending">En attente</option>
+                    <option value="in_progress">En cours</option>
+                    <option value="completed">Terminée</option>
+                    <option value="cancelled">Annulée</option>
+                  </select>
+
+                  <select
+                    class="filter-select"
+                    [value]="task.assignedTo || ''"
+                    (change)="assignTask(task, $event)"
+                    *ngIf="canManageTeam()"
+                  >
+                    <option value="">Non assignée</option>
+                    <option *ngFor="let member of currentTeam.members" [value]="member.userId">
+                      {{ member.name }}
+                    </option>
+                  </select>
+
+                  <button
+                    class="btn btn-danger btn-sm"
+                    (click)="deleteTask(task)"
+                    *ngIf="canManageTask(task)"
+                  >
+                    Supprimer
+                  </button>
+                </div>
+              </div>
+
+              <div class="task-meta">
+                <span class="task-status status-{{ task.status }}">
+                  {{ task.status === 'in_progress' ? 'En cours' :
+                     task.status === 'pending' ? 'En attente' :
+                     task.status === 'completed' ? 'Terminée' : 'Annulée' }}
+                </span>
+                <span class="task-priority priority-{{ task.priority }}">
+                  {{ task.priority === 'urgent' ? 'Urgente' :
+                     task.priority === 'high' ? 'Haute' :
+                     task.priority === 'medium' ? 'Moyenne' : 'Basse' }}
+                </span>
+                <span *ngIf="task.assignedTo">
+                  Assignée à {{ getMemberName(task.assignedTo) }}
+                </span>
+                <span *ngIf="task.dueDate">
+                  Échéance: {{ formatDate(task.dueDate) }}
+                </span>
+              </div>
+
+              <div class="task-description" *ngIf="task.description">
+                {{ task.description }}
+              </div>
+            </div>
+          </div>
+
+          <ng-template #noTasks>
+            <div class="empty-state">
+              <h3>Aucune tâche trouvée</h3>
+              <p>Créez la première tâche de votre équipe.</p>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+
+      <!-- Members Tab -->
+      <div *ngIf="activeTab === 'members'" class="tab-content">
+        <div class="members-section">
+          <div class="members-header">
+            <h3>Membres de l'Équipe</h3>
+          </div>
+
+          <div class="members-list">
+            <div class="member-card" *ngFor="let member of currentTeam.members">
+              <div class="member-info">
+                <div class="member-avatar">
+                  {{ member.name.charAt(0).toUpperCase() }}
+                </div>
+                <div class="member-details">
+                  <h4>{{ member.name }}</h4>
+                  <p>{{ member.email }}</p>
+                </div>
+              </div>
+
+              <div class="member-role role-{{ member.role }}">
+                {{ member.role === 'owner' ? 'Propriétaire' :
+                   member.role === 'admin' ? 'Administrateur' : 'Membre' }}
+              </div>
+
+              <div class="member-actions" *ngIf="canManageTeam() && member.userId !== currentUser?.id">
+                <button
+                  class="btn btn-danger btn-sm"
+                  (click)="removeMember(member.userId)"
+                >
+                  Retirer
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Activities Tab -->
+      <div *ngIf="activeTab === 'activities'" class="tab-content">
+        <div class="activities-list" *ngIf="teamActivities.length > 0; else noActivities">
+          <div class="activity-item" *ngFor="let activity of teamActivities">
+            <div class="activity-icon">
+              {{ activity.action.includes('created') ? '➕' :
+                 activity.action.includes('updated') ? '✏️' :
+                 activity.action.includes('completed') ? '✅' :
+                 activity.action.includes('assigned') ? '👤' :
+                 activity.action.includes('added') ? '👋' : '📝' }}
+            </div>
+            <div class="activity-content">
+              <h4>{{ activity.userName }}</h4>
+              <p>{{ activity.description }}</p>
+              <div class="activity-time">{{ formatDate(activity.createdAt) }}</div>
+            </div>
+          </div>
+        </div>
+
+        <ng-template #noActivities>
+          <div class="empty-state">
+            <h3>Aucune activité récente</h3>
+            <p>Les activités de l'équipe apparaîtront ici.</p>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+
+    <!-- Back to Teams -->
+    <div style="text-align: center; margin-top: 20px;">
+      <button class="btn btn-secondary" (click)="backToTeams()">
+        ← Retour aux Équipes
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="loading">
+    <p>Chargement...</p>
+  </div>
+</div>
+
+<!-- Create Team Modal -->
+<div *ngIf="showCreateTeamModal" class="modal" (click)="showCreateTeamModal = false">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Créer une Nouvelle Équipe</h3>
+      <button class="close-btn" (click)="showCreateTeamModal = false">&times;</button>
+    </div>
+
+    <form [formGroup]="createTeamForm" (ngSubmit)="createTeam()">
+      <div class="form-group">
+        <label for="teamName">Nom de l'Équipe *</label>
+        <input
+          id="teamName"
+          type="text"
+          formControlName="name"
+          placeholder="Entrez le nom de l'équipe"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="teamDescription">Description</label>
+        <textarea
+          id="teamDescription"
+          formControlName="description"
+          placeholder="Décrivez l'objectif de l'équipe (optionnel)"
+          rows="3"
+        ></textarea>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" (click)="showCreateTeamModal = false">
+          Annuler
+        </button>
+        <button type="submit" class="btn btn-primary" [disabled]="createTeamForm.invalid || isLoading">
+          Créer l'Équipe
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Invite Member Modal -->
+<div *ngIf="showInviteMemberModal" class="modal" (click)="showInviteMemberModal = false">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Inviter un Nouveau Membre</h3>
+      <button class="close-btn" (click)="showInviteMemberModal = false">&times;</button>
+    </div>
+
+    <form [formGroup]="inviteMemberForm" (ngSubmit)="inviteMember()">
+      <div class="form-group">
+        <label for="memberEmail">Adresse Email *</label>
+        <input
+          id="memberEmail"
+          type="email"
+          formControlName="email"
+          placeholder="email@exemple.com"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="memberRole">Rôle</label>
+        <select id="memberRole" formControlName="role">
+          <option value="member">Membre</option>
+          <option value="admin">Administrateur</option>
+        </select>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" (click)="showInviteMemberModal = false">
+          Annuler
+        </button>
+        <button type="submit" class="btn btn-primary" [disabled]="inviteMemberForm.invalid || isLoading">
+          Envoyer l'Invitation
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Create Task Modal -->
+<div *ngIf="showTaskModal" class="modal" (click)="showTaskModal = false">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Créer une Nouvelle Tâche</h3>
+      <button class="close-btn" (click)="showTaskModal = false">&times;</button>
+    </div>
+
+    <form [formGroup]="createTaskForm" (ngSubmit)="createTask()">
+      <div class="form-group">
+        <label for="taskTitle">Titre de la Tâche *</label>
+        <input
+          id="taskTitle"
+          type="text"
+          formControlName="title"
+          placeholder="Entrez le titre de la tâche"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="taskDescription">Description</label>
+        <textarea
+          id="taskDescription"
+          formControlName="description"
+          placeholder="Décrivez la tâche (optionnel)"
+          rows="3"
+        ></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="taskPriority">Priorité</label>
+        <select id="taskPriority" formControlName="priority">
+          <option value="low">Basse</option>
+          <option value="medium">Moyenne</option>
+          <option value="high">Haute</option>
+          <option value="urgent">Urgente</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="taskAssignee">Assigner à</label>
+        <select id="taskAssignee" formControlName="assignedTo">
+          <option value="">Non assignée</option>
+          <option *ngFor="let member of currentTeam?.members" [value]="member.userId">
+            {{ member.name }}
+          </option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="taskDueDate">Date d'échéance</label>
+        <input
+          id="taskDueDate"
+          type="date"
+          formControlName="dueDate"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="taskEstimatedHours">Heures estimées</label>
+        <input
+          id="taskEstimatedHours"
+          type="number"
+          formControlName="estimatedHours"
+          placeholder="0"
+          min="0"
+          step="0.5"
+        >
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" (click)="showTaskModal = false">
+          Annuler
+        </button>
+        <button type="submit" class="btn btn-primary" [disabled]="createTaskForm.invalid || isLoading">
+          Créer la Tâche
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

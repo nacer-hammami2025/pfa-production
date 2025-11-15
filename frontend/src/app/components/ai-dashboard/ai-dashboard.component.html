@@ -1,0 +1,132 @@
+<div class="ai-dashboard animate-fade-in">
+  <!-- Header -->
+  <div class="dashboard-header glass card">
+    <div class="header-content">
+      <h1 class="dashboard-title">
+        <i class="icon-brain"></i>
+        Tableau de Bord IA
+      </h1>
+      <p class="dashboard-subtitle">Suggestions intelligentes et analyse de productivité</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-ghost" (click)="refreshInsights()">
+        <i class="icon-refresh"></i>
+        Actualiser
+      </button>
+    </div>
+  </div>
+
+  <!-- Productivity Metrics -->
+  <div class="metrics-grid" *ngIf="productivityMetrics">
+    <div class="metric-card card" *ngFor="let metric of metricsList">
+      <div class="metric-icon" [ngClass]="metric.iconClass">
+        <i [class]="metric.icon"></i>
+      </div>
+      <div class="metric-content">
+        <h3 class="metric-value">{{ metric.value }}</h3>
+        <p class="metric-label">{{ metric.label }}</p>
+        <div class="metric-trend" *ngIf="metric.trend">
+          <i [class]="metric.trendIcon" [ngClass]="metric.trendClass"></i>
+          <span>{{ metric.trend }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Suggestions -->
+  <div class="suggestions-section">
+    <h2 class="section-title">
+      <i class="icon-lightbulb"></i>
+      Suggestions IA
+    </h2>
+    <div class="suggestions-grid">
+      <div class="suggestion-card card"
+           *ngFor="let suggestion of aiSuggestions"
+           [ngClass]="{'high-priority': suggestion.priority === 'high'}">
+        <div class="suggestion-header">
+          <div class="suggestion-type" [ngClass]="suggestion.type">
+            <i [class]="getSuggestionIcon(suggestion.type)"></i>
+            {{ getSuggestionTypeLabel(suggestion.type) }}
+          </div>
+          <div class="suggestion-confidence">
+            <div class="confidence-bar" [style.width.%]="suggestion.confidence * 100"></div>
+          </div>
+        </div>
+        <h3 class="suggestion-title">{{ suggestion.title }}</h3>
+        <p class="suggestion-description">{{ suggestion.description }}</p>
+        <div class="suggestion-meta" *ngIf="suggestion.reasoning">
+          <small class="reasoning">{{ suggestion.reasoning }}</small>
+        </div>
+        <div class="suggestion-actions" *ngIf="suggestion.actionable">
+          <button class="btn btn-primary btn-sm" (click)="executeSuggestion(suggestion)">
+            Appliquer
+          </button>
+          <button class="btn btn-ghost btn-sm" (click)="dismissSuggestion(suggestion)">
+            Ignorer
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Productivity Insights -->
+  <div class="insights-section" *ngIf="productivityInsights.length > 0">
+    <h2 class="section-title">
+      <i class="icon-trending-up"></i>
+      Insights de Productivité
+    </h2>
+    <div class="insights-list">
+      <div class="insight-item card"
+           *ngFor="let insight of productivityInsights"
+           [ngClass]="insight.impact">
+        <div class="insight-icon">
+          <i [class]="getInsightIcon(insight.type)"></i>
+        </div>
+        <div class="insight-content">
+          <h4 class="insight-title">{{ insight.title }}</h4>
+          <p class="insight-description">{{ insight.description }}</p>
+          <div class="insight-meta">
+            <small class="timestamp">{{ insight.timestamp | date:'short' }}</small>
+            <span class="impact-badge" [ngClass]="insight.impact">
+              {{ getImpactLabel(insight.impact) }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Settings -->
+  <div class="settings-section card glass">
+    <h3 class="settings-title">
+      <i class="icon-settings"></i>
+      Paramètres IA
+    </h3>
+    <div class="settings-grid">
+      <div class="setting-item">
+        <label class="setting-label">
+          <input type="checkbox" [(ngModel)]="aiEnabled" (change)="toggleAI()">
+          Activer les suggestions IA
+        </label>
+        <p class="setting-description">Recevoir des suggestions intelligentes basées sur vos habitudes</p>
+      </div>
+      <div class="setting-item">
+        <label class="setting-label">
+          <input type="checkbox" [(ngModel)]="analyticsEnabled" (change)="toggleAnalytics()">
+          Analyse de productivité
+        </label>
+        <p class="setting-description">Analyser vos patterns de travail pour optimiser votre efficacité</p>
+      </div>
+      <div class="setting-item">
+        <label class="setting-label">
+          Notifications IA
+          <select [(ngModel)]="notificationFrequency">
+            <option value="realtime">Temps réel</option>
+            <option value="daily">Quotidien</option>
+            <option value="weekly">Hebdomadaire</option>
+          </select>
+        </label>
+      </div>
+    </div>
+  </div>
+</div>

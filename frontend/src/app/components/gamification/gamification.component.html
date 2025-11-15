@@ -1,0 +1,265 @@
+<div class="gamification-container">
+  <div class="gamification-header">
+    <h1>🏆 Système de Gamification</h1>
+    <p class="motivational-message">{{ getMotivationalMessage() }}</p>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="isLoading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>Chargement de votre profil...</p>
+  </div>
+
+  <!-- Main Content -->
+  <div *ngIf="!isLoading" class="gamification-content">
+    <!-- Tab Navigation -->
+    <div class="tab-navigation">
+      <button
+        class="tab-button"
+        [class.active]="selectedTab === 'profile'"
+        (click)="onTabChange('profile')">
+        👤 Profil
+      </button>
+      <button
+        class="tab-button"
+        [class.active]="selectedTab === 'leaderboard'"
+        (click)="onTabChange('leaderboard')">
+        🏅 Classement
+      </button>
+      <button
+        class="tab-button"
+        [class.active]="selectedTab === 'achievements'"
+        (click)="onTabChange('achievements')">
+        🏆 Réalisations
+      </button>
+      <button
+        class="tab-button"
+        [class.active]="selectedTab === 'rewards'"
+        (click)="onTabChange('rewards')">
+        🎁 Récompenses
+      </button>
+    </div>
+
+    <!-- Profile Tab -->
+    <div *ngIf="selectedTab === 'profile'" class="tab-content">
+      <div class="profile-grid">
+        <!-- Level Card -->
+        <div class="stat-card level-card">
+          <div class="card-header">
+            <h3>Niveau</h3>
+            <span class="level-badge">Niveau {{ gamification?.level || 1 }}</span>
+          </div>
+          <div class="level-progress">
+            <div class="progress-bar">
+              <div
+                class="progress-fill"
+                [style.width.%]="getLevelProgress().percentage">
+              </div>
+            </div>
+            <div class="progress-text">
+              {{ getLevelProgress().current }} / {{ getLevelProgress().next }} XP
+            </div>
+          </div>
+        </div>
+
+        <!-- Points Card -->
+        <div class="stat-card points-card">
+          <div class="card-header">
+            <h3>Points Totaux</h3>
+            <span class="points-icon">💎</span>
+          </div>
+          <div class="points-value">
+            {{ formatPoints(gamification?.totalPoints || 0) }}
+          </div>
+        </div>
+
+        <!-- Streak Card -->
+        <div class="stat-card streak-card">
+          <div class="card-header">
+            <h3>Série Active</h3>
+            <span class="streak-icon" [class.active]="getStreakStatus().isActive">🔥</span>
+          </div>
+          <div class="streak-info">
+            <div class="current-streak">{{ getStreakStatus().current }} jours</div>
+            <div class="longest-streak">Record: {{ getStreakStatus().longest }} jours</div>
+          </div>
+        </div>
+
+        <!-- Stats Overview -->
+        <div class="stat-card stats-card">
+          <h3>Statistiques</h3>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <span class="stat-label">Tâches terminées</span>
+              <span class="stat-value">{{ gamification?.stats?.tasksCompleted || 0 }}</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Tâches créées</span>
+              <span class="stat-value">{{ gamification?.stats?.tasksCreated || 0 }}</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Badges obtenus</span>
+              <span class="stat-value">{{ gamification?.badges?.length || 0 }}</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Réalisations</span>
+              <span class="stat-value">{{ getCompletedAchievements().length }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Leaderboard Tab -->
+    <div *ngIf="selectedTab === 'leaderboard'" class="tab-content">
+      <div class="leaderboard-controls">
+        <h3>Classement</h3>
+        <div class="leaderboard-types">
+          <button
+            class="type-button"
+            [class.active]="leaderboardType === 'points'"
+            (click)="onLeaderboardTypeChange('points')">
+            💎 Points
+          </button>
+          <button
+            class="type-button"
+            [class.active]="leaderboardType === 'level'"
+            (click)="onLeaderboardTypeChange('level')">
+            📈 Niveau
+          </button>
+          <button
+            class="type-button"
+            [class.active]="leaderboardType === 'streak'"
+            (click)="onLeaderboardTypeChange('streak')">
+            🔥 Série
+          </button>
+        </div>
+      </div>
+
+      <div class="leaderboard-table" *ngIf="leaderboard">
+        <div class="leaderboard-header">
+          <span>Rang</span>
+          <span>Utilisateur</span>
+          <span>Score</span>
+          <span>Niveau</span>
+          <span>Badges</span>
+          <span>Évolution</span>
+        </div>
+        <div
+          class="leaderboard-row"
+          *ngFor="let entry of leaderboard.entries; let i = index"
+          [class.current-user]="entry.userId === gamification?.userId">
+          <div class="rank">
+            <span class="rank-number">#{{ entry.rank }}</span>
+            <span class="rank-medal" *ngIf="entry.rank <= 3">
+              {{ entry.rank === 1 ? '🥇' : entry.rank === 2 ? '🥈' : '🥉' }}
+            </span>
+          </div>
+          <div class="username">{{ entry.username }}</div>
+          <div class="score">{{ formatPoints(entry.score) }}</div>
+          <div class="level">{{ entry.level }}</div>
+          <div class="badges">{{ entry.badgesCount }}</div>
+          <div class="change">
+            <span class="change-icon">{{ getRankChangeIcon(entry.change) }}</span>
+            <span class="change-value">{{ getRankChangeText(entry.change) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Achievements Tab -->
+    <div *ngIf="selectedTab === 'achievements'" class="tab-content">
+      <div class="achievements-section">
+        <h3>🏆 Réalisations Débloquées</h3>
+        <div class="achievements-grid">
+          <div
+            class="achievement-card completed"
+            *ngFor="let achievement of getCompletedAchievements()">
+            <div class="achievement-icon">{{ achievement.icon }}</div>
+            <div class="achievement-info">
+              <h4>{{ achievement.name }}</h4>
+              <p>{{ achievement.description }}</p>
+              <div class="achievement-meta">
+                <span class="category-icon">{{ getAchievementCategoryIcon(achievement.category) }}</span>
+                <span class="points">+{{ achievement.pointsReward }} pts</span>
+                <span class="experience">+{{ achievement.experienceReward }} XP</span>
+              </div>
+            </div>
+            <div class="achievement-status">✓</div>
+          </div>
+        </div>
+
+        <h3>🎯 Réalisations en Cours</h3>
+        <div class="achievements-grid">
+          <div
+            class="achievement-card in-progress"
+            *ngFor="let achievement of getInProgressAchievements()">
+            <div class="achievement-icon">{{ achievement.icon }}</div>
+            <div class="achievement-info">
+              <h4>{{ achievement.name }}</h4>
+              <p>{{ achievement.description }}</p>
+              <div class="achievement-progress">
+                <div class="progress-bar">
+                  <div
+                    class="progress-fill"
+                    [style.width.%]="achievement.progress">
+                  </div>
+                </div>
+                <span class="progress-text">{{ achievement.progress }}%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rewards Tab -->
+    <div *ngIf="selectedTab === 'rewards'" class="tab-content">
+      <div class="rewards-section">
+        <h3>🎁 Récompenses Disponibles</h3>
+        <div class="rewards-grid">
+          <div
+            class="reward-card"
+            *ngFor="let reward of getUnlockedRewards()"
+            [class.claimed]="isRewardClaimed(reward)">
+            <div class="reward-icon">{{ reward.icon }}</div>
+            <div class="reward-info">
+              <h4>{{ reward.name }}</h4>
+              <p>{{ reward.description }}</p>
+              <div class="reward-rarity" [style.color]="getBadgeRarityColor(reward.rarity)">
+                {{ reward.rarity | titlecase }}
+              </div>
+            </div>
+            <button
+              class="claim-button"
+              *ngIf="!isRewardClaimed(reward)"
+              (click)="claimReward(reward)">
+              Réclamer
+            </button>
+            <div class="claimed-badge" *ngIf="isRewardClaimed(reward)">
+              ✓ Réclamé
+            </div>
+          </div>
+        </div>
+
+        <h3>🔒 Récompenses Verrouillées</h3>
+        <div class="rewards-grid">
+          <div
+            class="reward-card locked"
+            *ngFor="let reward of getLockedRewards()">
+            <div class="reward-icon">🔒</div>
+            <div class="reward-info">
+              <h4>{{ reward.name }}</h4>
+              <p>{{ reward.description }}</p>
+              <div class="reward-requirements">
+                <small *ngFor="let req of reward.requirements">
+                  {{ req.type | titlecase }}: {{ req.target }}
+                </small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

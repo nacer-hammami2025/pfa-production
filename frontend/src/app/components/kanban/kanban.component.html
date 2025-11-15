@@ -1,0 +1,249 @@
+<div class="kanban-container">
+  <div class="kanban-header">
+    <h1>📋 Tableau Kanban</h1>
+    <button class="btn-primary" (click)="showAddTaskModal = true">
+      <i>➕</i> Nouvelle Tâche
+    </button>
+  </div>
+
+  <div class="kanban-board">
+    <!-- TO DO Column -->
+    <div class="kanban-column todo-column">
+      <div class="column-header">
+        <h3><i>📝</i> À Faire</h3>
+        <span class="count">{{todoTasks.length}}</span>
+      </div>
+      <div 
+        cdkDropList 
+        #todoList="cdkDropList"
+        [cdkDropListData]="todoTasks"
+        [cdkDropListConnectedTo]="[inProgressList, doneList]"
+        (cdkDropListDropped)="drop($event, 'todo')"
+        class="task-list">
+        <div 
+          *ngFor="let task of todoTasks" 
+          cdkDrag
+          class="task-card"
+          (click)="openTaskDetail(task)">
+          <div class="task-priority" [style.background]="getPriorityColor(task.priority)"></div>
+          <h4>{{task.title}}</h4>
+          <p *ngIf="task.description">{{task.description}}</p>
+          <div class="task-meta">
+            <span *ngIf="task.dueDate" class="due-date">
+              <i>📅</i> {{formatDate(task.dueDate)}}
+            </span>
+            <span class="priority-badge" [style.background]="getPriorityColor(task.priority)">
+              {{task.priority}}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- IN PROGRESS Column -->
+    <div class="kanban-column progress-column">
+      <div class="column-header">
+        <h3><i>⚙️</i> En Cours</h3>
+        <span class="count">{{inProgressTasks.length}}</span>
+      </div>
+      <div 
+        cdkDropList
+        #inProgressList="cdkDropList"
+        [cdkDropListData]="inProgressTasks"
+        [cdkDropListConnectedTo]="[todoList, doneList]"
+        (cdkDropListDropped)="drop($event, 'in-progress')"
+        class="task-list">
+        <div 
+          *ngFor="let task of inProgressTasks" 
+          cdkDrag
+          class="task-card"
+          (click)="openTaskDetail(task)">
+          <div class="task-priority" [style.background]="getPriorityColor(task.priority)"></div>
+          <h4>{{task.title}}</h4>
+          <p *ngIf="task.description">{{task.description}}</p>
+          <div class="task-meta">
+            <span *ngIf="task.dueDate" class="due-date">
+              <i>📅</i> {{formatDate(task.dueDate)}}
+            </span>
+            <span class="priority-badge" [style.background]="getPriorityColor(task.priority)">
+              {{task.priority}}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DONE Column -->
+    <div class="kanban-column done-column">
+      <div class="column-header">
+        <h3><i>✅</i> Terminé</h3>
+        <span class="count">{{doneTasks.length}}</span>
+      </div>
+      <div 
+        cdkDropList
+        #doneList="cdkDropList"
+        [cdkDropListData]="doneTasks"
+        [cdkDropListConnectedTo]="[todoList, inProgressList]"
+        (cdkDropListDropped)="drop($event, 'done')"
+        class="task-list">
+        <div 
+          *ngFor="let task of doneTasks" 
+          cdkDrag
+          class="task-card done"
+          (click)="openTaskDetail(task)">
+          <div class="task-priority" [style.background]="getPriorityColor(task.priority)"></div>
+          <h4>{{task.title}}</h4>
+          <p *ngIf="task.description">{{task.description}}</p>
+          <div class="task-meta">
+            <span *ngIf="task.dueDate" class="due-date">
+              <i>📅</i> {{formatDate(task.dueDate)}}
+            </span>
+            <span class="priority-badge" [style.background]="getPriorityColor(task.priority)">
+              {{task.priority}}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Task Modal -->
+  <div *ngIf="showAddTaskModal" class="modal-overlay" (click)="showAddTaskModal = false">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>➕ Nouvelle Tâche</h3>
+        <button class="close-btn" (click)="showAddTaskModal = false">✕</button>
+      </div>
+      <form (ngSubmit)="createTask()" class="modal-form">
+        <div class="form-group">
+          <label>Titre *</label>
+          <input type="text" [(ngModel)]="newTask.title" name="title" required class="form-input">
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea [(ngModel)]="newTask.description" name="description" rows="3" class="form-input"></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Priorité</label>
+            <select [(ngModel)]="newTask.priority" name="priority" class="form-input">
+              <option value="low">🟢 Basse</option>
+              <option value="medium">🟡 Moyenne</option>
+              <option value="high">🔴 Haute</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Statut</label>
+            <select [(ngModel)]="newTask.status" name="status" class="form-input">
+              <option value="todo">📝 À Faire</option>
+              <option value="in-progress">⚙️ En Cours</option>
+              <option value="done">✅ Terminé</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Date d'échéance</label>
+          <input type="date" [(ngModel)]="newTask.dueDate" name="dueDate" class="form-input">
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" (click)="showAddTaskModal = false">Annuler</button>
+          <button type="submit" class="btn-primary">Créer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Task Detail Modal -->
+  <div *ngIf="showTaskDetailModal && selectedTask" class="modal-overlay" (click)="showTaskDetailModal = false">
+    <div class="modal-content large" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>{{selectedTask.title}}</h3>
+        <button class="close-btn" (click)="showTaskDetailModal = false">✕</button>
+      </div>
+      <div class="task-detail">
+        <!-- Description -->
+        <div class="detail-section">
+          <h4>📝 Description</h4>
+          <p>{{selectedTask.description || 'Aucune description'}}</p>
+        </div>
+
+        <!-- Metadata Grid -->
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="label">Priorité</span>
+            <span class="priority-badge" [style.background]="getPriorityColor(selectedTask.priority)">
+              {{selectedTask.priority}}
+            </span>
+          </div>
+          <div class="detail-item" *ngIf="selectedTask.dueDate">
+            <span class="label">Échéance</span>
+            <span>{{formatDate(selectedTask.dueDate)}}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Statut</span>
+            <span class="status-badge">{{selectedTask.status}}</span>
+          </div>
+        </div>
+
+        <!-- Subtasks Section -->
+        <div class="detail-section">
+          <h4>✅ Sous-tâches ({{selectedTask.subtasks?.length || 0}})</h4>
+          <div class="subtasks-list">
+            <div *ngFor="let subtask of selectedTask.subtasks" class="subtask-item">
+              <input 
+                type="checkbox" 
+                [checked]="subtask.completed" 
+                (change)="toggleSubtask(subtask._id, !subtask.completed)"
+                class="subtask-checkbox">
+              <span [class.completed]="subtask.completed">{{subtask.title}}</span>
+              <button class="btn-icon" (click)="deleteSubtask(subtask._id)" title="Supprimer">🗑️</button>
+            </div>
+            <div class="add-subtask-form">
+              <input 
+                type="text" 
+                [(ngModel)]="newSubtask" 
+                placeholder="Ajouter une sous-tâche..." 
+                class="form-input"
+                (keyup.enter)="addSubtask()">
+              <button type="button" class="btn-primary" (click)="addSubtask()">➕</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Comments Section -->
+        <div class="detail-section">
+          <h4>💬 Commentaires ({{selectedTask.comments?.length || 0}})</h4>
+          <div class="comments-list">
+            <div *ngFor="let comment of selectedTask.comments" class="comment-item">
+              <div class="comment-header">
+                <strong>{{comment.author?.name || 'Utilisateur'}}</strong>
+                <span class="comment-date">{{formatDate(comment.createdAt)}}</span>
+              </div>
+              <p>{{comment.text}}</p>
+              <button class="btn-icon" (click)="deleteComment(comment._id)" title="Supprimer">🗑️</button>
+            </div>
+            <div class="add-comment-form">
+              <textarea 
+                [(ngModel)]="newComment" 
+                placeholder="Ajouter un commentaire..." 
+                rows="3"
+                class="form-input"></textarea>
+              <button type="button" class="btn-primary" (click)="addComment()">💬 Commenter</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="modal-actions">
+          <button class="btn-danger" (click)="deleteTask(selectedTask._id)">
+            <i>🗑️</i> Supprimer la tâche
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading-overlay">
+    <div class="spinner"></div>
+  </div>
+</div>

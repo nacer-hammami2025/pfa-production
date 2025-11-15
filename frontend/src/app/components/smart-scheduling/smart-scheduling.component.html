@@ -1,0 +1,234 @@
+<div class="smart-scheduling">
+  <div class="scheduling-header">
+    <h1>Planification Intelligente</h1>
+    <p>Optimisez votre temps avec l'IA</p>
+  </div>
+
+  <!-- Navigation Tabs -->
+  <div class="tabs">
+    <button
+      class="tab-button"
+      [class.active]="activeTab === 'priorities'"
+      (click)="setActiveTab('priorities')">
+      Priorisation IA
+    </button>
+    <button
+      class="tab-button"
+      [class.active]="activeTab === 'schedule'"
+      (click)="setActiveTab('schedule')">
+      Planning Quotidien
+    </button>
+    <button
+      class="tab-button"
+      [class.active]="activeTab === 'suggestions'"
+      (click)="setActiveTab('suggestions')">
+      Suggestions
+    </button>
+    <button
+      class="tab-button"
+      [class.active]="activeTab === 'analytics'"
+      (click)="setActiveTab('analytics')">
+      Analytics
+    </button>
+  </div>
+
+  <!-- Priorities Tab -->
+  <div *ngIf="activeTab === 'priorities'" class="tab-content">
+    <div class="section-header">
+      <h2>Priorisation des Tâches</h2>
+      <button class="btn btn-primary" (click)="prioritizeAllTasks()">
+        Analyser Toutes les Tâches
+      </button>
+    </div>
+
+    <div class="priorities-list" *ngIf="taskPriorities.length > 0; else noPriorities">
+      <div
+        class="priority-item"
+        *ngFor="let priority of taskPriorities"
+        [class]="getPriorityClass(priority.priority)">
+        <div class="priority-header">
+          <div class="priority-icon">{{ getPriorityIcon(priority.priority) }}</div>
+          <div class="priority-info">
+            <h3>{{ getTaskTitle(priority.taskId) }}</h3>
+            <div class="priority-score">
+              Score: {{ priority.score }}/100
+            </div>
+          </div>
+          <div class="priority-badge" [style.background-color]="getPriorityColor(priority.priority)">
+            {{ priority.priority.toUpperCase() }}
+          </div>
+        </div>
+
+        <div class="priority-factors" *ngIf="priority.factors.length > 0">
+          <h4>Facteurs de priorisation:</h4>
+          <div class="factors-list">
+            <div class="factor" *ngFor="let factor of priority.factors">
+              <span class="factor-name">{{ factor.name }}</span>
+              <span class="factor-value">{{ (factor.value * 100).toFixed(0) }}%</span>
+              <span class="factor-weight">(poids: {{ (factor.weight * 100).toFixed(0) }}%)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noPriorities>
+      <div class="empty-state">
+        <h3>Aucune priorisation disponible</h3>
+        <p>Cliquez sur "Analyser Toutes les Tâches" pour obtenir des recommandations de priorisation basées sur l'IA.</p>
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- Schedule Tab -->
+  <div *ngIf="activeTab === 'schedule'" class="tab-content">
+    <div class="section-header">
+      <h2>Planning Quotidien</h2>
+      <div class="date-selector">
+        <input
+          type="date"
+          [value]="getDateString(selectedDate)"
+          (change)="onDateChange($event)"
+          class="date-input">
+        <button class="btn btn-secondary" (click)="generateSchedule()">
+          Générer Planning
+        </button>
+      </div>
+    </div>
+
+    <div class="schedule-container" *ngIf="currentSchedule; else noSchedule">
+      <div class="schedule-header">
+        <h3>{{ getFormattedDate(selectedDate) }}</h3>
+        <div class="schedule-stats">
+          <div class="stat">
+            <span class="stat-label">Heures de travail:</span>
+            <span class="stat-value">{{ currentSchedule ? currentSchedule.totalWorkHours.toFixed(1) : '0.0' }}h</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Productivité estimée:</span>
+            <span class="stat-value">{{ currentSchedule ? calculateProductivityScore(currentSchedule) : 0 }}%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="time-slots">
+        <div
+          class="time-slot"
+          *ngFor="let slot of currentSchedule.slots"
+          [class]="getSlotClass(slot)">
+          <div class="slot-time">
+            {{ formatTime(slot.startTime) }} - {{ formatTime(slot.endTime) }}
+          </div>
+          <div class="slot-content">
+            <div class="slot-type" [class]="slot.type">
+              {{ getSlotTypeLabel(slot.type) }}
+            </div>
+            <div class="slot-task" *ngIf="slot.taskId">
+              {{ getTaskTitle(slot.taskId) }}
+            </div>
+            <div class="slot-priority" *ngIf="slot.priority > 0">
+              Priorité: {{ slot.priority }}/100
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noSchedule>
+      <div class="empty-state">
+        <h3>Aucun planning généré</h3>
+        <p>Sélectionnez une date et cliquez sur "Générer Planning" pour créer un planning optimisé.</p>
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- Suggestions Tab -->
+  <div *ngIf="activeTab === 'suggestions'" class="tab-content">
+    <div class="section-header">
+      <h2>Suggestions Intelligentes</h2>
+      <button class="btn btn-outline" (click)="refreshSuggestions()">
+        Actualiser
+      </button>
+    </div>
+
+    <div class="suggestions-list" *ngIf="smartSuggestions.length > 0; else noSuggestions">
+      <div
+        class="suggestion-item"
+        *ngFor="let suggestion of smartSuggestions"
+        [class]="getSuggestionClass(suggestion)">
+        <div class="suggestion-header">
+          <div class="suggestion-icon">{{ getSuggestionIcon(suggestion.type) }}</div>
+          <div class="suggestion-info">
+            <h3>{{ suggestion.title }}</h3>
+            <p>{{ suggestion.description }}</p>
+          </div>
+          <div class="suggestion-confidence" [style.color]="getConfidenceColor(suggestion.confidence)">
+            {{ getConfidenceLabel(suggestion.confidence) }}
+          </div>
+        </div>
+
+        <div class="suggestion-actions">
+          <button
+            class="btn btn-sm btn-success"
+            (click)="applySuggestion(suggestion)">
+            Appliquer
+          </button>
+          <button
+            class="btn btn-sm btn-outline"
+            (click)="dismissSuggestion(suggestion)">
+            Ignorer
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noSuggestions>
+      <div class="empty-state">
+        <h3>Aucune suggestion disponible</h3>
+        <p>L'IA n'a pas de suggestions pour le moment. Revenez plus tard !</p>
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- Analytics Tab -->
+  <div *ngIf="activeTab === 'analytics'" class="tab-content">
+    <div class="section-header">
+      <h2>Analytics de Productivité</h2>
+    </div>
+
+    <div class="analytics-grid">
+      <div class="analytics-card">
+        <h3>Estimation de Temps</h3>
+        <div class="analytics-content">
+          <p>Précision moyenne des estimations: <strong>75%</strong></p>
+          <p>Tâches estimées cette semaine: <strong>12</strong></p>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 75%"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="analytics-card">
+        <h3>Optimisation du Planning</h3>
+        <div class="analytics-content">
+          <p>Amélioration de productivité: <strong>+23%</strong></p>
+          <p>Heures de travail optimisées: <strong>45h</strong></p>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 85%"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="analytics-card">
+        <h3>Patterns de Priorisation</h3>
+        <div class="analytics-content">
+          <p>Tâches urgentes identifiées: <strong>8</strong></p>
+          <p>Tâches sur-estimées: <strong>3</strong></p>
+          <div class="chart-placeholder">
+            <p>Graphique des priorités</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,68 @@
+<div class="file-attachments">
+  <div class="attachments-header">
+    <h3>📎 Pièces jointes</h3>
+    <div class="upload-buttons">
+      <label class="btn-upload">
+        <input type="file" (change)="onFileSelected($event)" hidden>
+        <span>➕ Ajouter un fichier</span>
+      </label>
+      <label class="btn-upload-multiple">
+        <input type="file" multiple (change)="onMultipleFilesSelected($event)" hidden>
+        <span>📁 Plusieurs fichiers</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- Message d'erreur -->
+  <div class="error-message" *ngIf="errorMessage">
+    <span>⚠️ {{ errorMessage }}</span>
+    <button (click)="clearError()">✕</button>
+  </div>
+
+  <!-- Progression upload -->
+  <div class="upload-progress" *ngIf="uploadingFile">
+    <div class="progress-info">
+      <span>📤 Upload en cours: {{ uploadingFile }}</span>
+      <span>{{ uploadProgress }}%</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" [style.width.%]="uploadProgress"></div>
+    </div>
+  </div>
+
+  <!-- Liste des fichiers -->
+  <div class="attachments-list" *ngIf="!isLoading && attachments.length > 0">
+    <div class="attachment-item" *ngFor="let attachment of attachments">
+      <div class="attachment-icon">{{ getFileIcon(attachment) }}</div>
+      <div class="attachment-info">
+        <div class="attachment-name">{{ attachment.filename }}</div>
+        <div class="attachment-meta">
+          <span>{{ formatFileSize(attachment.size) }}</span>
+          <span>•</span>
+          <span>{{ attachment.uploadedAt | date:'dd/MM/yyyy HH:mm' }}</span>
+        </div>
+      </div>
+      <div class="attachment-actions">
+        <button class="btn-download" (click)="downloadFile(attachment)" title="Télécharger">
+          ⬇️
+        </button>
+        <button class="btn-delete" (click)="deleteFile(attachment)" title="Supprimer">
+          🗑️
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Message vide -->
+  <div class="empty-state" *ngIf="!isLoading && attachments.length === 0">
+    <div class="empty-icon">📎</div>
+    <p>Aucune pièce jointe</p>
+    <small>Ajoutez des fichiers pour mieux organiser cette tâche</small>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Chargement des fichiers...</p>
+  </div>
+</div>

@@ -1,0 +1,161 @@
+<div class="profile-container">
+  <input type="file" id="photoInput" accept="image/*" (change)="onPhotoSelect($event)" style="display: none;">
+  
+  <div class="profile-header">
+    <div class="avatar-section">
+      <div class="avatar-large" [style.backgroundImage]="photoPreview ? 'url(' + photoPreview + ')' : 'none'" 
+           [style.backgroundSize]="'cover'" [style.backgroundPosition]="'center'">
+        <span *ngIf="!photoPreview">{{user?.email?.charAt(0).toUpperCase()}}</span>
+      </div>
+      <button class="btn-change-photo" (click)="triggerPhotoUpload()">📷 Changer la photo</button>
+    </div>
+    <div class="user-info">
+      <h1>{{user?.name || user?.email?.split('@')[0]}}</h1>
+      <p class="email">{{user?.email}}</p>
+      <span class="role-badge" [class.admin]="user?.role === 'admin'">
+        {{user?.role === 'admin' ? '👑 Administrateur' : '⭐ Utilisateur'}}
+      </span>
+    </div>
+  </div>
+
+  <div class="profile-content">
+    <div class="card">
+      <h2>Informations personnelles</h2>
+      <div class="info-grid">
+        <div class="info-item">
+          <label>Nom complet</label>
+          <p>{{user?.name || 'Non renseigné'}}</p>
+        </div>
+        <div class="info-item">
+          <label>Email</label>
+          <p>{{user?.email}}</p>
+        </div>
+        <div class="info-item">
+          <label>Téléphone</label>
+          <p>{{user?.phone || 'Non renseigné'}}</p>
+        </div>
+        <div class="info-item">
+          <label>Rôle</label>
+          <p>{{user?.role === 'admin' ? 'Administrateur' : 'Utilisateur'}}</p>
+        </div>
+      </div>
+      <button class="btn-primary" (click)="openEditModal()">✏️ Modifier le profil</button>
+    </div>
+
+    <div class="card">
+      <h2>Sécurité</h2>
+      <div class="security-section">
+        <div class="security-item">
+          <div>
+            <h3>🔒 Mot de passe</h3>
+            <p>Modifiez votre mot de passe régulièrement</p>
+          </div>
+          <button class="btn-secondary" (click)="openPasswordModal()">Modifier</button>
+        </div>
+        <div class="security-item">
+          <div>
+            <h3>🛡️ Authentification à deux facteurs</h3>
+            <p>{{mfaEnabled ? '✅ Activée' : 'Renforcez la sécurité de votre compte'}}</p>
+          </div>
+          <button class="btn-secondary" (click)="openMfaModal()">
+            {{mfaEnabled ? 'Désactiver' : 'Activer'}}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Password Change Modal -->
+<div class="modal-overlay" *ngIf="showPasswordModal" (click)="closePasswordModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>🔒 Changer le mot de passe</h2>
+      <button class="btn-close" (click)="closePasswordModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Mot de passe actuel</label>
+        <input type="password" [(ngModel)]="passwordData.currentPassword" 
+               placeholder="Entrez votre mot de passe actuel" class="form-input">
+      </div>
+      <div class="form-group">
+        <label>Nouveau mot de passe</label>
+        <input type="password" [(ngModel)]="passwordData.newPassword" 
+               placeholder="Minimum 6 caractères" class="form-input">
+      </div>
+      <div class="form-group">
+        <label>Confirmer le nouveau mot de passe</label>
+        <input type="password" [(ngModel)]="passwordData.confirmPassword" 
+               placeholder="Retapez le nouveau mot de passe" class="form-input">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" (click)="closePasswordModal()">Annuler</button>
+      <button class="btn-primary" (click)="changePassword()">💾 Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- MFA Setup Modal -->
+<div class="modal-overlay" *ngIf="showMfaModal" (click)="closeMfaModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>🛡️ Configuration de l'authentification à deux facteurs</h2>
+      <button class="btn-close" (click)="closeMfaModal()">✕</button>
+    </div>
+    <div class="modal-body mfa-setup">
+      <div class="mfa-instructions">
+        <h3>📱 Étape 1 : Scannez le QR Code</h3>
+        <p>Utilisez une application d'authentification (Google Authenticator, Authy, etc.)</p>
+      </div>
+      <div class="qr-code-container" *ngIf="mfaQrCode">
+        <img [src]="mfaQrCode" alt="QR Code">
+      </div>
+      <div class="secret-key">
+        <p><strong>Clé secrète (si vous ne pouvez pas scanner) :</strong></p>
+        <code>{{mfaSecret}}</code>
+      </div>
+      <div class="form-group">
+        <label>🔢 Étape 2 : Entrez le code à 6 chiffres</label>
+        <input type="text" [(ngModel)]="mfaCode" maxlength="6" 
+               placeholder="000000" class="form-input mfa-input">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" (click)="closeMfaModal()">Annuler</button>
+      <button class="btn-primary" (click)="enableMfa()">✅ Activer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Profile Modal -->
+<div class="modal-overlay" *ngIf="showEditModal" (click)="closeEditModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>✏️ Modifier le profil</h2>
+      <button class="btn-close" (click)="closeEditModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Nom complet</label>
+        <input type="text" [(ngModel)]="editData.name" 
+               placeholder="Votre nom complet" class="form-input">
+      </div>
+      <div class="form-group">
+        <label>Téléphone</label>
+        <input type="tel" [(ngModel)]="editData.phone" 
+               placeholder="+33 6 12 34 56 78" class="form-input">
+      </div>
+      <div class="form-group">
+        <label>Bio</label>
+        <textarea [(ngModel)]="editData.bio" rows="4"
+                  placeholder="Parlez-nous de vous..." class="form-input"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" (click)="closeEditModal()">Annuler</button>
+      <button class="btn-primary" (click)="saveProfile()">💾 Enregistrer</button>
+    </div>
+  </div>
+</div>

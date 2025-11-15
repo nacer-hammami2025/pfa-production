@@ -1,0 +1,279 @@
+<div class="dashboard-container">
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" *ngIf="isLoading">
+    <div class="spinner-container">
+      <div class="spinner"></div>
+      <p>Chargement du tableau de bord...</p>
+    </div>
+  </div>
+
+  <!-- Main Dashboard Content -->
+  <div *ngIf="!isLoading" class="dashboard-content">
+    
+    <!-- Header avec badge et refresh -->
+    <header class="dashboard-header">
+      <div class="header-content">
+        <div class="header-title">
+          <h1>📊 Tableau de Bord Administrateur</h1>
+          <p>Vue d'ensemble complète de la plateforme TaskFlow</p>
+        </div>
+        <button class="btn-refresh" [class.loading]="isLoading" [disabled]="isLoading" (click)="loadDashboardData(true)">
+          <span class="icon">🔄</span>
+          <span>{{ isLoading ? 'Actualisation...' : 'Actualiser' }}</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Stats Cards Grid - 8 cartes -->
+    <div class="stats-grid">
+      <!-- Card 1: Total Users -->
+      <div class="stat-card gradient-blue">
+        <div class="stat-icon">
+          <span>👥</span>
+        </div>
+        <div class="stat-details">
+          <h3 class="stat-value">{{ stats.totalUsers }}</h3>
+          <p class="stat-label">Utilisateurs</p>
+          <span class="stat-trend positive">+12% ce mois</span>
+        </div>
+      </div>
+
+      <!-- Card 2: Total Tasks -->
+      <div class="stat-card gradient-green">
+        <div class="stat-icon">
+          <span>✅</span>
+        </div>
+        <div class="stat-details">
+          <h3 class="stat-value">{{ stats.totalTasks }}</h3>
+          <p class="stat-label">Tâches Totales</p>
+          <span class="stat-trend positive">+8% ce mois</span>
+        </div>
+      </div>
+
+      <!-- Card 3: Completed Tasks -->
+      <div class="stat-card gradient-purple">
+        <div class="stat-icon">
+          <span>🎯</span>
+        </div>
+        <div class="stat-details">
+          <h3 class="stat-value">{{ stats.completedTasks }}</h3>
+          <p class="stat-label">Tâches Complétées</p>
+          <span class="stat-trend positive">{{ stats.avgCompletionRate }}% taux</span>
+        </div>
+      </div>
+
+      <!-- Card 4: Total Teams -->
+      <div class="stat-card gradient-orange">
+        <div class="stat-icon">
+          <span>🏢</span>
+        </div>
+        <div class="stat-details">
+          <h3 class="stat-value">{{ stats.totalTeams }}</h3>
+          <p class="stat-label">Équipes Actives</p>
+          <span class="stat-trend positive">+3 nouvelles</span>
+        </div>
+      </div>
+
+      <!-- Card 5: Projects -->
+      <div class="stat-card gradient-pink">
+        <div class="stat-icon">
+          <span>📁</span>
+        </div>
+        <div class="stat-details">
+          <h3 class="stat-value">{{ stats.totalProjects }}</h3>
+          <p class="stat-label">Projets</p>
+          <span class="stat-trend neutral">5 en cours</span>
+        </div>
+      </div>
+
+      <!-- Card 6: Pending Tasks -->
+      <div class="stat-card gradient-yellow">
+        <div class="stat-icon">
+          <span>⏳</span>
+        </div>
+        <div class="stat-details">
+          <h3 class="stat-value">{{ stats.pendingTasks }}</h3>
+          <p class="stat-label">En Attente</p>
+          <span class="stat-trend neutral">À traiter</span>
+        </div>
+      </div>
+
+      <!-- Card 7: Integrations -->
+      <div class="stat-card gradient-teal">
+        <div class="stat-icon">
+          <span>🔗</span>
+        </div>
+        <div class="stat-details">
+          <h3 class="stat-value">{{ stats.activeIntegrations }}</h3>
+          <p class="stat-label">Intégrations</p>
+          <span class="stat-trend positive">Actives</span>
+        </div>
+      </div>
+
+      <!-- Card 8: Completion Rate -->
+      <div class="stat-card gradient-red">
+        <div class="stat-icon">
+          <span>⚡</span>
+        </div>
+        <div class="stat-details">
+          <h3 class="stat-value">{{ stats.avgCompletionRate }}%</h3>
+          <p class="stat-label">Taux Complétion</p>
+          <span class="stat-trend positive">Excellent</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Section - 2 grandes lignes -->
+    <div class="charts-section">
+      
+      <!-- Row 1: 2 charts principaux -->
+      <div class="charts-row">
+        <div class="chart-card large">
+          <div class="chart-header">
+            <h3>📈 Activité Hebdomadaire</h3>
+            <span class="chart-badge">7 derniers jours</span>
+          </div>
+          <div class="chart-wrapper">
+            <canvas baseChart
+              [data]="weeklyActivityData"
+              [options]="weeklyActivityOptions"
+              [type]="'line'">
+            </canvas>
+          </div>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3>🎯 Statut des Tâches</h3>
+            <span class="chart-badge">Répartition</span>
+          </div>
+          <div class="chart-wrapper">
+            <canvas baseChart
+              [data]="taskStatusData"
+              [options]="taskStatusOptions"
+              [type]="'doughnut'">
+            </canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 2: 4 charts avancés -->
+      <div class="charts-row-advanced">
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3>💪 Performance Équipe</h3>
+            <span class="chart-badge">Semaine</span>
+          </div>
+          <div class="chart-wrapper">
+            <canvas #performanceChart></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3>👤 Utilisateurs Actifs</h3>
+            <span class="chart-badge">6 mois</span>
+          </div>
+          <div class="chart-wrapper">
+            <canvas #userActivityChart></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3>📊 Projets</h3>
+            <span class="chart-badge">Distribution</span>
+          </div>
+          <div class="chart-wrapper">
+            <canvas #projectsChart></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3>🎯 Priorités</h3>
+            <span class="chart-badge">Répartition</span>
+          </div>
+          <div class="chart-wrapper">
+            <canvas #priorityChart></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Section: Top Performers & Activities -->
+    <div class="bottom-section">
+      
+      <!-- Top Users -->
+      <div class="panel top-users">
+        <div class="panel-header">
+          <h3>🏆 Top Performers</h3>
+          <span class="panel-badge">Ce mois</span>
+        </div>
+        <div class="panel-content">
+          <div class="user-item" *ngFor="let user of topUsers; let i = index">
+            <div class="user-rank" [class]="'rank-' + (i + 1)">{{ i + 1 }}</div>
+            <div class="user-avatar">{{ user.avatar }}</div>
+            <div class="user-info">
+              <div class="user-name">{{ user.name }}</div>
+              <div class="user-stats">
+                <span class="tasks-count">{{ user.tasksCompleted }} tâches</span>
+                <span class="efficiency" [class.high]="user.efficiency >= 90">
+                  {{ user.efficiency }}% efficacité
+                </span>
+              </div>
+            </div>
+            <div class="user-badge" *ngIf="i === 0">👑</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top Teams -->
+      <div class="panel top-teams">
+        <div class="panel-header">
+          <h3>🏅 Meilleures Équipes</h3>
+          <span class="panel-badge">Performance</span>
+        </div>
+        <div class="panel-content">
+          <div class="team-item" *ngFor="let team of topTeams">
+            <div class="team-icon">{{ team.icon }}</div>
+            <div class="team-info">
+              <div class="team-name">{{ team.name }}</div>
+              <div class="team-meta">
+                <span>{{ team.members }} membres</span>
+                <span>•</span>
+                <span>{{ team.tasksCompleted }} tâches</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" [style.width.%]="team.progress"></div>
+              </div>
+            </div>
+            <div class="team-progress-label">{{ team.progress }}%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Activities -->
+      <div class="panel recent-activities">
+        <div class="panel-header">
+          <h3>🕐 Activités Récentes</h3>
+          <span class="panel-badge">En direct</span>
+        </div>
+        <div class="panel-content">
+          <div class="activity-item" *ngFor="let activity of recentActivities">
+            <div class="activity-icon">{{ activity.icon }}</div>
+            <div class="activity-info">
+              <div class="activity-text">
+                <strong>{{ activity.user }}</strong> {{ activity.action }}
+                <span class="activity-target">{{ activity.target }}</span>
+              </div>
+              <div class="activity-time">{{ activity.time }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+

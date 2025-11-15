@@ -1,0 +1,70 @@
+<div class="settings-container">
+  <h1>Paramètres</h1>
+  
+  <div class="settings-content">
+    <div class="card">
+      <h2>Notifications</h2>
+      <div class="setting-item">
+        <div>
+          <h3>Notifications push</h3>
+          <p>Recevoir des notifications pour les mises à jour</p>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" [(ngModel)]="settings.notifications">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="setting-item">
+        <div>
+          <h3>Notifications par email</h3>
+          <p>Recevoir un résumé quotidien par email</p>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" [(ngModel)]="settings.emailNotifications">
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Apparence</h2>
+      <div class="setting-item">
+        <div>
+          <h3>Mode sombre</h3>
+          <p>Basculer vers un thème sombre</p>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" [(ngModel)]="settings.darkMode">
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Préférences</h2>
+      <div class="setting-item">
+        <div>
+          <h3>Langue</h3>
+          <p>Choisir la langue de l'interface</p>
+        </div>
+        <select [(ngModel)]="settings.language" class="select-input">
+          <option value="fr">Français</option>
+          <option value="en">English</option>
+          <option value="es">Español</option>
+        </select>
+      </div>
+      <div class="setting-item">
+        <div>
+          <h3>Sauvegarde automatique</h3>
+          <p>Enregistrer automatiquement vos modifications</p>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" [(ngModel)]="settings.autoSave">
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <button class="btn-primary" (click)="saveSettings()">Enregistrer les paramètres</button>
+  </div>
+</div>

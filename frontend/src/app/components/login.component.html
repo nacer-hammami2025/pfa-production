@@ -1,0 +1,158 @@
+﻿<div class="login-wrapper">
+  <!-- Animated Background -->
+  <div class="animated-background">
+    <!-- Floating geometric shapes -->
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+    <div class="shape shape-4"></div>
+    <div class="shape shape-5"></div>
+    <div class="shape shape-6"></div>
+    
+    <!-- Animated particles -->
+    <div class="particles">
+      <div class="particle" *ngFor="let i of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]"></div>
+    </div>
+    
+    <!-- Animated waves -->
+    <div class="waves">
+      <div class="wave wave-1"></div>
+      <div class="wave wave-2"></div>
+      <div class="wave wave-3"></div>
+    </div>
+  </div>
+
+  <div class="login-container">
+    <div class="login-left">
+      <div class="brand-content">
+        <div class="logo-animation">
+          <div class="logo-circle"></div>
+          <div class="logo-checkmark">✓</div>
+        </div>
+        <h1 class="brand-title">TaskFlow Pro</h1>
+        <p class="brand-subtitle">🚀 Gestion de tâches intelligente</p>
+        <div class="brand-features">
+          <div class="feature-item">
+            <span class="feature-icon">⚡</span>
+            <span>Productivité maximale</span>
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">🎯</span>
+            <span>Objectifs clairs</span>
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">📊</span>
+            <span>Suivi en temps réel</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="login-right">
+      <div class="login-card glass-card animate-slide-up">
+        <div class="login-header">
+          <h2 class="login-title">Welcome Back</h2>
+          <p class="login-subtitle">Sign in to your account</p>
+        </div>
+
+        <form (ngSubmit)="submit()" #f="ngForm" class="login-form">
+          <!-- User Type Selection -->
+          <div class="user-type-selector">
+            <div class="selector-label">
+              <span class="label-text">Connexion en tant que</span>
+              <span class="label-hint">⚠️ Le type doit correspondre à votre compte</span>
+            </div>
+            <div class="selector-buttons">
+              <button
+                type="button"
+                [class.active]="userType === 'user'"
+                (click)="setUserType('user')"
+                class="user-type-btn"
+              >
+                👤 User
+              </button>
+              <button
+                type="button"
+                [class.active]="userType === 'admin'"
+                (click)="setUserType('admin')"
+                class="user-type-btn"
+              >
+                👑 Admin
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <div class="input-container">
+              <i class="input-icon">✉️</i>
+              <input
+                type="email"
+                [(ngModel)]="email"
+                name="email"
+                required
+                #emailInput="ngModel"
+                class="form-input"
+                placeholder="Enter your email"
+                [class.error]="emailInput.invalid && (emailInput.dirty || emailInput.touched)"
+              />
+              <div class="input-focus-effect"></div>
+            </div>
+            <div *ngIf="emailInput.invalid && (emailInput.dirty || emailInput.touched)" class="error-message">
+              <i class="error-icon">⚠️</i>
+              Please enter a valid email address
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <div class="input-container has-toggle">
+              <i class="input-icon">🔒</i>
+              <input
+                [type]="showPassword ? 'text' : 'password'"
+                [(ngModel)]="password"
+                name="password"
+                required
+                #passwordInput="ngModel"
+                class="form-input"
+                placeholder="Enter your password"
+                [class.error]="passwordInput.invalid && (passwordInput.dirty || passwordInput.touched)"
+              />
+              <button
+                type="button"
+                (click)="togglePasswordVisibility()"
+                class="password-toggle-btn"
+                tabindex="-1"
+              >
+                <i class="toggle-icon">{{ showPassword ? '🙈' : '👁️' }}</i>
+              </button>
+              <div class="input-focus-effect"></div>
+            </div>
+            <div *ngIf="passwordInput.invalid && (passwordInput.dirty || passwordInput.touched)" class="error-message">
+              <i class="error-icon">⚠️</i>
+              Please enter a valid password
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            [disabled]="!f.valid || isLoading"
+            class="btn btn-primary"
+          >
+            <span *ngIf="isLoading">Signing In...</span>
+            <span *ngIf="!isLoading">Sign In</span>
+          </button>
+
+          <div *ngIf="errorMessage" class="error-message">
+            {{ errorMessage }}
+          </div>
+        </form>
+
+        <div class="login-footer">
+          <a routerLink="/forgot-password" class="link">Forgot password?</a>
+          <p>Don't have an account? <a routerLink="/register" class="link">Sign up</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,163 @@
+<div class="integrations-container">
+  <div class="integrations-header">
+    <h1>🔗 Intégrations Externes</h1>
+    <p class="header-description">
+      Connectez TaskFlow Pro avec vos outils préférés pour une productivité maximale
+    </p>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="isLoading" class="loading-spinner">
+    <div class="spinner"></div>
+    <p>Synchronisation en cours...</p>
+  </div>
+
+  <!-- Connected Integrations Summary -->
+  <div *ngIf="!isLoading && getConnectedIntegrations().length > 0" class="connected-summary">
+    <h2>🔗 Intégrations Actives</h2>
+    <div class="connected-grid">
+      <div
+        *ngFor="let integrationId of getConnectedIntegrations()"
+        class="connected-card"
+        [style.border-left-color]="getIntegrationColor(integrationId)">
+        <div class="connected-icon">{{ getIntegrationIcon(integrationId) }}</div>
+        <div class="connected-info">
+          <h3>{{ getIntegrationDisplayName(integrationId) }}</h3>
+          <p *ngIf="getIntegration(integrationId)?.email">
+            {{ getIntegration(integrationId)?.email }}
+          </p>
+          <p *ngIf="getIntegration(integrationId)?.teamName">
+            Équipe: {{ getIntegration(integrationId)?.teamName }}
+          </p>
+          <small class="last-sync">
+            Dernière sync: {{ formatLastSync(getIntegration(integrationId)?.lastSync || undefined) }}
+          </small>
+        </div>
+        <div class="connected-actions">
+          <button
+            class="sync-btn"
+            (click)="syncIntegration(integrationId)"
+            [disabled]="isLoading">
+            🔄 Sync
+          </button>
+          <button
+            class="disconnect-btn"
+            (click)="disconnectIntegration(integrationId)">
+            ❌ Déconnecter
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Available Integrations -->
+  <div class="available-integrations">
+    <h2>📚 Intégrations Disponibles</h2>
+    <div class="integrations-grid">
+      <div
+        *ngFor="let integration of availableIntegrations"
+        class="integration-card"
+        [class.connected]="isConnected(integration.id)"
+        [style.border-left-color]="integration.color">
+
+        <div class="integration-header">
+          <div class="integration-icon" [style.color]="integration.color">
+            {{ integration.icon }}
+          </div>
+          <div class="integration-title">
+            <h3>{{ integration.name }}</h3>
+            <div class="status-badge" [class]="getIntegrationStatus(integration.id)">
+              {{ getIntegrationStatus(integration.id) === 'connected' ? 'Connecté' :
+                 getIntegrationStatus(integration.id) === 'error' ? 'Erreur' : 'Déconnecté' }}
+            </div>
+          </div>
+        </div>
+
+        <div class="integration-description">
+          <p>{{ integration.description }}</p>
+        </div>
+
+        <div class="integration-features">
+          <h4>Fonctionnalités :</h4>
+          <ul>
+            <li *ngFor="let feature of integration.features">
+              ✅ {{ feature }}
+            </li>
+          </ul>
+        </div>
+
+        <div class="integration-actions">
+          <button
+            *ngIf="!isConnected(integration.id)"
+            class="connect-btn"
+            [style.background-color]="integration.color"
+            (click)="connectIntegration(integration.id)">
+            🔗 Se connecter
+          </button>
+
+          <div *ngIf="isConnected(integration.id)" class="connected-actions">
+            <button
+              class="sync-btn"
+              (click)="syncIntegration(integration.id)"
+              [disabled]="isLoading">
+              🔄 Synchroniser
+            </button>
+            <button
+              class="test-btn"
+              *ngIf="integration.id === 'slack'"
+              (click)="testSlackNotification()">
+              📤 Test Notification
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Integration Instructions -->
+  <div class="integration-instructions">
+    <h2>📋 Instructions de Configuration</h2>
+    <div class="instructions-grid">
+      <div class="instruction-card">
+        <h3>🔐 Variables d'Environnement</h3>
+        <p>Configurez ces variables dans votre fichier <code>.env</code> du backend :</p>
+        <div class="env-vars">
+          <code>GOOGLE_CLIENT_ID=votre_client_id_google</code><br>
+          <code>GOOGLE_CLIENT_SECRET=votre_client_secret_google</code><br>
+          <code>OUTLOOK_CLIENT_ID=votre_client_id_outlook</code><br>
+          <code>OUTLOOK_CLIENT_SECRET=votre_client_secret_outlook</code><br>
+          <code>SLACK_CLIENT_ID=votre_client_id_slack</code><br>
+          <code>SLACK_CLIENT_SECRET=votre_client_secret_slack</code><br>
+          <code>TRELLO_API_KEY=votre_api_key_trello</code>
+        </div>
+      </div>
+
+      <div class="instruction-card">
+        <h3>🔗 URLs de Redirection</h3>
+        <p>Configurez ces URLs dans les paramètres de vos applications :</p>
+        <div class="redirect-urls">
+          <strong>Google Calendar:</strong><br>
+          <code>{{ getBaseUrl() }}/integrations/google-calendar/callback</code><br><br>
+          <strong>Outlook:</strong><br>
+          <code>{{ getBaseUrl() }}/integrations/outlook/callback</code><br><br>
+          <strong>Slack:</strong><br>
+          <code>{{ getBaseUrl() }}/integrations/slack/callback</code><br><br>
+          <strong>Trello:</strong><br>
+          <code>{{ getBaseUrl() }}/integrations/trello/callback</code>
+        </div>
+      </div>
+
+      <div class="instruction-card">
+        <h3>📖 Guide Complet</h3>
+        <p>Pour des instructions détaillées sur la configuration de chaque service :</p>
+        <a href="/INTEGRATIONS_SETUP.md" target="_blank" class="setup-link">
+          📄 Ouvrir le guide de configuration
+        </a>
+        <p class="note">
+          <strong>Note:</strong> Assurez-vous d'avoir configuré les variables d'environnement
+          et les applications OAuth avant de tester les intégrations.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,4 @@
+/* Styles basiques pour le composant racine */
+:host {
+  display: block;
+}
