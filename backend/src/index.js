@@ -83,7 +83,8 @@ app.get('/api/health', (req, res) => {
     environment: process.env.NODE_ENV,
     port: PORT,
     database: dbStatus,
-    mongoUri: process.env.MONGO_URI ? 'Set' : 'NOT SET'
+    mongoUri: process.env.MONGODB_URI ? 'MONGODB_URI Set' : 'MONGODB_URI NOT SET',
+    mongoUriLegacy: process.env.MONGO_URI ? 'MONGO_URI Set' : 'MONGO_URI NOT SET'
   });
 });// Routes
 console.log('[INDEX] About to load auth routes...');
