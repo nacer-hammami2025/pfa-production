@@ -52,8 +52,10 @@ const corsOptions = {
     'http://127.0.0.1:4200', 
     'http://127.0.0.1:3000',
     `http://${localIP}:4200`,
-    `http://${localIP}:3000`
-  ],
+    `http://${localIP}:3000`,
+    process.env.FRONTEND_URL,
+    process.env.ALLOWED_ORIGINS?.split(',') || []
+  ].flat().filter(Boolean),
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
@@ -65,6 +67,16 @@ app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
 app.use(express.json());
 console.log('[INDEX] Middleware configured');
+
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'OK', 
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV,
+    port: PORT
+  });
+});
 
 // Routes
 console.log('[INDEX] About to load auth routes...');
