@@ -176,19 +176,28 @@ server.on('error', (err) => {
 });
 
 server.on('close', () => {
-  console.error('[CRITICAL] Server closed unexpectedly!');
+  console.log('Server closed normally');
 });
 
-process.on('SIGTERM', () => {
-  console.log('SIGTERM received - shutting down gracefully');
-  server.close(() => {
-    console.log('Server closed');
-    process.exit(0);
+// Keep server running in production
+if (process.env.NODE_ENV === 'production') {
+  // Handle graceful shutdown only on explicit termination
+  process.on('SIGTERM', () => {
+    console.log('SIGTERM received - server will continue running');
+    // Don't actually close the server in production
   });
-});
-
-// Remove SIGINT handler to prevent immediate shutdown
-// process.on('SIGINT', () => {
-//   console.log('SIGINT received');
-//   server.close();
-// });
+  
+  process.on('SIGINT', () => {
+    console.log('SIGINT received - server will continue running');
+    // Don't actually close the server in production
+  });
+} else {
+  // Development mode - allow normal shutdown
+  process.on('SIGTERM', () => {
+    console.log('SIGTERM received - shutting down gracefully');
+    server.close(() => {
+      console.log('Server closed');
+      process.exit(0);
+    });
+  });
+}
