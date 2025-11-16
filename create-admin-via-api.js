@@ -1,9 +1,9 @@
 const https = require('https');
 
 const userData = {
-  name: 'Admin User',
-  email: 'admin@taskflow.com',
-  password: 'admin123',
+  name: 'Super Admin',
+  email: 'superadmin@taskflow.com',
+  password: 'SuperAdmin123!',
   role: 'admin'
 };
 

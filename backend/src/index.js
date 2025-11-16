@@ -53,6 +53,8 @@ const corsOptions = {
     'http://127.0.0.1:3000',
     `http://${localIP}:4200`,
     `http://${localIP}:3000`,
+    'https://nacer-dev.me',
+    'https://www.nacer-dev.me',
     process.env.FRONTEND_URL,
     process.env.ALLOWED_ORIGINS?.split(',') || []
   ].flat().filter(Boolean),
