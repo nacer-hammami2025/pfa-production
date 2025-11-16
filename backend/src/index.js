@@ -14,6 +14,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/db');
+const { metricsMiddleware, metricsHandler } = require('./middleware/metrics');
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -68,6 +69,9 @@ app.use(cors(corsOptions));
 // Handle preflight requests
 app.options('*', cors(corsOptions));
 app.use(express.json());
+
+// Prometheus metrics middleware
+app.use(metricsMiddleware);
 console.log('[INDEX] Middleware configured');
 
 // Health check endpoint
@@ -88,7 +92,10 @@ app.get('/api/health', (req, res) => {
     mongoUri: process.env.MONGODB_URI ? 'MONGODB_URI Set' : 'MONGODB_URI NOT SET',
     mongoUriLegacy: process.env.MONGO_URI ? 'MONGO_URI Set' : 'MONGO_URI NOT SET'
   });
-});// Routes
+});
+
+// Prometheus metrics endpoint
+app.get('/api/metrics', metricsHandler);// Routes
 console.log('[INDEX] About to load auth routes...');
 try {
   const authRoute = require('./routes/auth');

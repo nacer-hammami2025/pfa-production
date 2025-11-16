@@ -1,0 +1,50 @@
+# Alertmanager Configuration
+global:
+  smtp_smarthost: 'localhost:587'
+  smtp_from: 'alerts@nacer-dev.me'
+  
+# Email notification templates
+templates:
+  - '/etc/alertmanager/templates/*.tmpl'
+
+# Route configuration
+route:
+  group_by: ['alertname']
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 1h
+  receiver: 'pfa-alerts'
+
+# Notification receivers
+receivers:
+  - name: 'pfa-alerts'
+    email_configs:
+      - to: 'admin@nacer-dev.me'
+        subject: '🚨 PFA Alert: {{ .GroupLabels.alertname }}'
+        body: |
+          {{ range .Alerts }}
+          **Alert:** {{ .Annotations.summary }}
+          **Description:** {{ .Annotations.description }}
+          **Severity:** {{ .Labels.severity }}
+          **Instance:** {{ .Labels.instance }}
+          **Time:** {{ .StartsAt }}
+          {{ end }}
+    
+    # Slack notifications (optionnel)
+    slack_configs:
+      - api_url: 'YOUR_SLACK_WEBHOOK_URL'
+        channel: '#pfa-alerts'
+        title: '🚨 PFA Application Alert'
+        text: |
+          {{ range .Alerts }}
+          *{{ .Annotations.summary }}*
+          {{ .Annotations.description }}
+          {{ end }}
+
+# Inhibition rules (éviter le spam d'alertes)
+inhibit_rules:
+  - source_match:
+      severity: 'critical'
+    target_match:
+      severity: 'warning'
+    equal: ['alertname', 'instance']
