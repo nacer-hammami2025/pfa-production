@@ -8,12 +8,17 @@ import { AuthService } from '../services/auth.service';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  email: string = '';
-  password: string = '';
-  userType: string = 'user'; // 'user' or 'admin'
-  showPassword: boolean = false;
-  isLoading: boolean = false;
-  errorMessage: string = '';
+  email = '';
+  password = '';
+  userType = 'user'; // 'user' or 'admin'
+  showPassword = false;
+  isLoading = false;
+  errorMessage = '';
+  
+  // MFA
+  showMfaStep = false;
+  mfaToken = '';
+  tempUser: any = null;
 
   constructor(
     private authService: AuthService,
@@ -60,46 +65,93 @@ export class LoginComponent implements OnInit {
 
     try {
       // Passer le rôle demandé au backend
-      const success = await this.authService.login(this.email, this.password, this.userType);
-      if (success) {
+      const result = await this.authService.login(this.email, this.password, this.userType);
+      
+      if (result.mfaRequired && result.user) {
+        // MFA requis
+        this.showMfaStep = true;
+        this.tempUser = result.user;
         this.isLoading = false;
-        
-        // Check if there's a return URL
-        const returnUrl = sessionStorage.getItem('returnUrl');
-        if (returnUrl) {
-          sessionStorage.removeItem('returnUrl');
-          this.router.navigateByUrl(returnUrl);
-        } else {
-          // Get the actual user role from AuthService after login
-          const userRole = this.authService.getUserRole();
-          
-          // Redirection basée sur le rôle réel de l'utilisateur
-          if (userRole === 'admin') {
-            this.router.navigate(['/admin']);
-          } else {
-            this.router.navigate(['/tasks']);
-          }
-        }
+        return;
+      }
+
+      if (result.success) {
+        this.isLoading = false;
+        this.redirectAfterLogin();
       } else {
         this.isLoading = false;
         this.errorMessage = 'Échec de la connexion';
       }
     } catch (error: any) {
       this.isLoading = false;
-      
-      // Gérer les erreurs avec messages du backend
-      if (error.error && error.error.errors && error.error.errors.length > 0) {
-        this.errorMessage = error.error.errors[0].msg;
-      } else if (error.status === 403) {
-        this.errorMessage = 'Accès refusé. Vérifiez vos identifiants et le type de compte.';
-      } else if (error.status === 401 || error.status === 400) {
-        this.errorMessage = 'Email ou mot de passe incorrect';
-      } else if (error.status === 0) {
-        this.errorMessage = 'Impossible de contacter le serveur. Vérifiez votre connexion.';
-      } else {
-        this.errorMessage = 'Une erreur est survenue. Veuillez réessayer.';
-      }
-      console.error('Erreur de connexion:', error);
+      this.handleLoginError(error);
     }
+  }
+
+  async submitMfa(): Promise<void> {
+    if (!this.mfaToken) {
+      this.errorMessage = 'Veuillez entrer le code MFA';
+      return;
+    }
+
+    this.isLoading = true;
+    this.errorMessage = '';
+
+    try {
+      const success = await this.authService.verifyMfaLogin(this.email, this.mfaToken);
+      if (success) {
+        this.isLoading = false;
+        this.redirectAfterLogin();
+      } else {
+        this.isLoading = false;
+        this.errorMessage = 'Code MFA invalide';
+      }
+    } catch (error: any) {
+      this.isLoading = false;
+      this.errorMessage = 'Code MFA invalide ou expiré';
+      console.error('Erreur MFA:', error);
+    }
+  }
+
+  private redirectAfterLogin(): void {
+    // Check if there's a return URL
+    const returnUrl = sessionStorage.getItem('returnUrl');
+    if (returnUrl) {
+      sessionStorage.removeItem('returnUrl');
+      this.router.navigateByUrl(returnUrl);
+    } else {
+      // Get the actual user role from AuthService after login
+      const userRole = this.authService.getUserRole();
+      
+      // Redirection basée sur le rôle réel de l'utilisateur
+      if (userRole === 'admin') {
+        this.router.navigate(['/admin']);
+      } else {
+        this.router.navigate(['/tasks']);
+      }
+    }
+  }
+
+  private handleLoginError(error: any): void {
+    // Gérer les erreurs avec messages du backend
+    if (error.error && error.error.errors && error.error.errors.length > 0) {
+      this.errorMessage = error.error.errors[0].msg;
+    } else if (error.status === 403) {
+      this.errorMessage = 'Accès refusé. Vérifiez vos identifiants et le type de compte.';
+    } else if (error.status === 401 || error.status === 400) {
+      this.errorMessage = 'Email ou mot de passe incorrect';
+    } else if (error.status === 0) {
+      this.errorMessage = 'Impossible de contacter le serveur. Vérifiez votre connexion.';
+    } else {
+      this.errorMessage = 'Une erreur est survenue. Veuillez réessayer.';
+    }
+    console.error('Erreur de connexion:', error);
+  }
+
+  backToLogin(): void {
+    this.showMfaStep = false;
+    this.mfaToken = '';
+    this.tempUser = null;
+    this.errorMessage = '';
   }
 }

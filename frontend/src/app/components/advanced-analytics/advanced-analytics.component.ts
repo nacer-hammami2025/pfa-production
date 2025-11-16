@@ -1761,7 +1761,7 @@ export class AdvancedAnalyticsComponent implements OnInit, OnDestroy {
       .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
 
     let streak = 0;
-    let currentDate = new Date();
+    const currentDate = new Date();
     currentDate.setHours(0, 0, 0, 0);
 
     for (const task of completedTasks) {
@@ -1780,7 +1780,7 @@ export class AdvancedAnalyticsComponent implements OnInit, OnDestroy {
   }
 
   getMostProductiveDay(completedTasks: Task[]): string {
-    const dayCounts: { [key: string]: number } = {};
+    const dayCounts: Record<string, number> = {};
     const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
     completedTasks.forEach(task => {
@@ -1795,7 +1795,7 @@ export class AdvancedAnalyticsComponent implements OnInit, OnDestroy {
   }
 
   getMostProductiveHour(completedTasks: Task[]): number {
-    const hourCounts: { [key: number]: number } = {};
+    const hourCounts: Record<number, number> = {};
 
     completedTasks.forEach(task => {
       const hour = new Date(task.updatedAt).getHours();

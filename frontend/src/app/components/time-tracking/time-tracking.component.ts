@@ -14,8 +14,8 @@ import { TaskService, Task } from '../../services/task.service';
 })
 export class TimeTrackingComponent implements OnInit, OnDestroy {
   activeEntry: ActiveTimeEntry | null = null;
-  selectedTaskId: string = '';
-  description: string = '';
+  selectedTaskId = '';
+  description = '';
   tasks: Task[] = [];
   timeEntries: TimeEntry[] = [];
   productivityStats: ProductivityStats | null = null;
@@ -24,10 +24,10 @@ export class TimeTrackingComponent implements OnInit, OnDestroy {
 
   // Manual entry form
   showManualEntry = false;
-  manualTaskId: string = '';
-  manualStartTime: string = '';
-  manualEndTime: string = '';
-  manualDescription: string = '';
+  manualTaskId = '';
+  manualStartTime = '';
+  manualEndTime = '';
+  manualDescription = '';
 
   private subscriptions: Subscription[] = [];
 

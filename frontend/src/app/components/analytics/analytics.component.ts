@@ -549,7 +549,7 @@ export class AnalyticsComponent implements OnInit, OnDestroy {
 
     // Calculate streak
     let streakDays = 0;
-    let currentDate = new Date(today);
+    const currentDate = new Date(today);
 
     while (true) {
       const dayTasks = completedTasks.filter(task => {
@@ -563,7 +563,7 @@ export class AnalyticsComponent implements OnInit, OnDestroy {
     }
 
     // Calculate most productive hour (simplified)
-    const hourCounts: { [key: number]: number } = {};
+    const hourCounts: Record<number, number> = {};
     completedTasks.forEach(task => {
       const hour = new Date(task.updatedAt).getHours();
       hourCounts[hour] = (hourCounts[hour] || 0) + 1;
@@ -710,7 +710,7 @@ export class AnalyticsComponent implements OnInit, OnDestroy {
   }
 
   private getMostProductiveDay(completedTasks: Task[]): string {
-    const dayCounts: { [key: string]: number } = {};
+    const dayCounts: Record<string, number> = {};
     const days = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
 
     completedTasks.forEach(task => {

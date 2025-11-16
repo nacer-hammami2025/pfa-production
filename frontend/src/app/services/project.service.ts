@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { catchError } from 'rxjs/operators';
 
 export type ProjectStatus = 'planning' | 'active' | 'on-hold' | 'completed' | 'archived';
 export type ProjectPriority = 'low' | 'medium' | 'high' | 'critical';

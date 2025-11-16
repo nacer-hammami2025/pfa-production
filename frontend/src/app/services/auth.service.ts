@@ -13,12 +13,14 @@ export interface JwtPayload {
 }
 
 export interface AuthResponse {
-  token: string;
+  token?: string;
   user?: {
     id: string;
     name: string;
     email: string;
   };
+  mfaRequired?: boolean;
+  message?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -66,18 +68,58 @@ export class AuthService {
     }
   }
 
-  async login(email: string, password: string, requestedRole: string = 'user'): Promise<boolean> {
+  async login(email: string, password: string, requestedRole = 'user'): Promise<{ success: boolean; mfaRequired?: boolean; user?: any }> {
     try {
       const res = await this.http.post<AuthResponse>(
         `${this.base}/auth/login`,
         { email, password, requestedRole }
       ).toPromise();
 
-      return this.handleAuthResponse(res);
+      if (res?.mfaRequired) {
+        return { success: false, mfaRequired: true, user: res.user };
+      }
+
+      const success = this.handleAuthResponse(res);
+      return { success };
     } catch (err) {
       console.error('Login error:', err);
       throw this.handleError(err);
     }
+  }
+
+  async verifyMfaLogin(email: string, mfaToken: string): Promise<boolean> {
+    try {
+      const res = await this.http.post<AuthResponse>(
+        `${this.base}/auth/verify-mfa-login`,
+        { email, mfaToken }
+      ).toPromise();
+
+      return this.handleAuthResponse(res);
+    } catch (err) {
+      console.error('MFA login verification error:', err);
+      throw this.handleError(err);
+    }
+  }
+
+  async setupMfa(): Promise<{ secret: string; qrCode: string; manualEntry: string }> {
+    const res = await this.http.post<{ secret: string; qrCode: string; manualEntry: string }>(
+      `${this.base}/auth/setup-mfa`,
+      {}
+    ).toPromise();
+
+    if (!res) {
+      throw new Error('Failed to setup MFA');
+    }
+
+    return res;
+  }
+
+  async verifyMfa(token: string): Promise<void> {
+    await this.http.post(`${this.base}/auth/verify-mfa`, { token }).toPromise();
+  }
+
+  async disableMfa(password: string): Promise<void> {
+    await this.http.post(`${this.base}/auth/disable-mfa`, { password }).toPromise();
   }
 
   private handleAuthResponse(res: AuthResponse | undefined): boolean {

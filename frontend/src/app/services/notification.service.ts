@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, timer, combineLatest } from 'rxjs';
-import { map, switchMap, distinctUntilChanged } from 'rxjs/operators';
+import { BehaviorSubject, Observable, timer } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 
 export interface Notification {
   id: string;
@@ -530,7 +530,6 @@ export class NotificationService {
   // Nettoyer les tâches notifiées (appelée périodiquement)
   clearNotifiedTasks(): void {
     // Garder seulement les tâches notifiées dans les dernières 24h
-    const oneDayAgo = Date.now() - 86400000;
     // Cette méthode pourrait être étendue pour nettoyer les anciennes notifications
   }
 }

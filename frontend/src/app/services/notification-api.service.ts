@@ -62,7 +62,7 @@ export class NotificationApiService {
   }
 
   // Récupérer les notifications avec pagination
-  getNotifications(page: number = 1, limit: number = 20, unreadOnly: boolean = false): Observable<NotificationResponse> {
+  getNotifications(page = 1, limit = 20, unreadOnly = false): Observable<NotificationResponse> {
     let params = new HttpParams()
       .set('page', page.toString())
       .set('limit', limit.toString());

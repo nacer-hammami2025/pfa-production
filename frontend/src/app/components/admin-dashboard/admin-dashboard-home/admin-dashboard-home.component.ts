@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
 import { Chart, ChartOptions, ChartData, registerables } from 'chart.js';
 import { AdminService } from 'src/app/services/admin.service';
 
@@ -9,7 +9,7 @@ Chart.register(...registerables);
   templateUrl: './admin-dashboard-home.component.html',
   styleUrls: ['./admin-dashboard-home.component.css']
 })
-export class AdminDashboardHomeComponent implements OnInit, AfterViewInit {
+export class AdminDashboardHomeComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('performanceChart') performanceChartRef!: ElementRef<HTMLCanvasElement>;
   @ViewChild('userActivityChart') userActivityChartRef!: ElementRef<HTMLCanvasElement>;
   @ViewChild('projectsChart') projectsChartRef!: ElementRef<HTMLCanvasElement>;
@@ -185,7 +185,7 @@ export class AdminDashboardHomeComponent implements OnInit, AfterViewInit {
     // Les graphiques seront créés après le chargement des données
   }
 
-  loadDashboardData(forceRefresh: boolean = false): void {
+  loadDashboardData(forceRefresh = false): void {
     this.isLoading = true;
     this.cdr.detectChanges();
     

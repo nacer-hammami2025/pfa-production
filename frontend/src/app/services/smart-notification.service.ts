@@ -59,7 +59,7 @@ export class SmartNotificationService {
     this.checkBreakReminders(now);
 
     // Achievement notifications
-    this.checkAchievements(now);
+    this.checkAchievements();
 
     // Overdue task alerts
     this.checkOverdueTasks(now);
@@ -167,7 +167,7 @@ export class SmartNotificationService {
     }
   }
 
-  private checkAchievements(now: Date): void {
+  private checkAchievements(): void {
     this.taskService.getTasks().subscribe(tasks => {
       const completedToday = tasks.filter(t =>
         t.completed && this.isToday(new Date(t.updatedAt))

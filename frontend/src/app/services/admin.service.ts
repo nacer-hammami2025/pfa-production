@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map, shareReplay, tap, catchError } from 'rxjs/operators';
 
 export interface AdminDashboardSummary {
@@ -40,10 +40,10 @@ export interface AdminTeam {
   name: string;
   description?: string;
   owner?: { _id: string; name: string; email: string; role: string } | null;
-  members?: Array<{
+  members?: {
     user?: { _id: string; name: string; email: string; role: string } | null;
     role: string;
-  }>;
+  }[];
   createdAt: string;
   updatedAt: string;
 }
@@ -74,7 +74,7 @@ export class AdminService {
 
   constructor(private http: HttpClient) {}
 
-  getDashboardSummary(forceRefresh: boolean = false): Observable<AdminDashboardSummary> {
+  getDashboardSummary(forceRefresh = false): Observable<AdminDashboardSummary> {
     if (!forceRefresh && this.dashboardCache$) {
       return this.dashboardCache$;
     }

@@ -23,8 +23,8 @@ export interface ProductivityPattern {
   mostProductiveDay: number;
   preferredCategories: string[];
   averageTaskDuration: number;
-  completionRateByHour: { [hour: number]: number };
-  completionRateByDay: { [day: number]: number };
+  completionRateByHour: Record<number, number>;
+  completionRateByDay: Record<number, number>;
 }
 
 @Injectable({
@@ -63,8 +63,8 @@ export class AISuggestionsService {
     const completedTasks = tasks.filter(task => task.completed);
 
     // Analyser les heures les plus productives
-    const hourCounts: { [hour: number]: number } = {};
-    const dayCounts: { [day: number]: number } = {};
+    const hourCounts: Record<number, number> = {};
+    const dayCounts: Record<number, number> = {};
 
     completedTasks.forEach(task => {
       const completedDate = new Date(task.updatedAt);
@@ -86,7 +86,7 @@ export class AISuggestionsService {
     );
 
     // Analyser les catégories préférées
-    const categoryCounts: { [category: string]: number } = {};
+    const categoryCounts: Record<string, number> = {};
     tasks.forEach(task => {
       categoryCounts[task.category] = (categoryCounts[task.category] || 0) + 1;
     });
@@ -105,8 +105,8 @@ export class AISuggestionsService {
     const averageTaskDuration = totalDuration / completedTasks.length;
 
     // Calculer les taux de completion par heure et par jour
-    const completionRateByHour: { [hour: number]: number } = {};
-    const completionRateByDay: { [day: number]: number } = {};
+    const completionRateByHour: Record<number, number> = {};
+    const completionRateByDay: Record<number, number> = {};
 
     // Pour chaque heure/jour, calculer le taux de completion
     for (let hour = 0; hour < 24; hour++) {
@@ -159,7 +159,7 @@ export class AISuggestionsService {
     suggestions.push(...this.generateSchedulingSuggestions(tasks));
 
     // Suggestions de productivité
-    suggestions.push(...this.generateProductivitySuggestions(tasks, stats));
+    suggestions.push(...this.generateProductivitySuggestions(tasks));
 
     // Détection de patterns
     suggestions.push(...this.generatePatternSuggestions(tasks));
@@ -258,7 +258,7 @@ export class AISuggestionsService {
     return suggestions;
   }
 
-  private generateProductivitySuggestions(tasks: Task[], stats: any): AISuggestion[] {
+  private generateProductivitySuggestions(tasks: Task[]): AISuggestion[] {
     const suggestions: AISuggestion[] = [];
     const patterns = this.productivityPatterns.value;
 
@@ -444,7 +444,6 @@ export class AISuggestionsService {
 
     const completedTasks = tasks.filter(t => t.completed).length;
     const overdueTasks = tasks.filter(t => !t.completed && t.dueDate && new Date(t.dueDate) < new Date()).length;
-    const onTimeCompletion = completedTasks - overdueTasks;
 
     const baseScore = (completedTasks / tasks.length) * 100;
     const penalty = (overdueTasks / tasks.length) * 50;

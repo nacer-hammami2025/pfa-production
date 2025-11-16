@@ -55,7 +55,8 @@
           <p class="login-subtitle">Sign in to your account</p>
         </div>
 
-        <form (ngSubmit)="submit()" #f="ngForm" class="login-form">
+        <!-- Étape 1: Login standard -->
+        <form (ngSubmit)="submit()" #f="ngForm" class="login-form" *ngIf="!showMfaStep">
           <!-- User Type Selection -->
           <div class="user-type-selector">
             <div class="selector-label">
@@ -148,7 +149,63 @@
           </div>
         </form>
 
-        <div class="login-footer">
+        <!-- Étape 2: Vérification MFA -->
+        <form (ngSubmit)="submitMfa()" #mfaForm="ngForm" class="login-form" *ngIf="showMfaStep">
+          <div class="mfa-header">
+            <i class="mfa-icon">🔐</i>
+            <h3>Authentification à deux facteurs</h3>
+            <p>Entrez le code à 6 chiffres de votre application d'authentification</p>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Code MFA</label>
+            <div class="input-container">
+              <i class="input-icon">🔢</i>
+              <input
+                type="text"
+                [(ngModel)]="mfaToken"
+                name="mfaToken"
+                required
+                pattern="[0-9]{6}"
+                maxlength="6"
+                #mfaInput="ngModel"
+                class="form-input mfa-input"
+                placeholder="000000"
+                [class.error]="mfaInput.invalid && (mfaInput.dirty || mfaInput.touched)"
+                autocomplete="one-time-code"
+              />
+              <div class="input-focus-effect"></div>
+            </div>
+            <div *ngIf="mfaInput.invalid && (mfaInput.dirty || mfaInput.touched)" class="error-message">
+              <i class="error-icon">⚠️</i>
+              Veuillez entrer un code à 6 chiffres
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            [disabled]="!mfaForm.valid || isLoading"
+            class="btn btn-primary"
+          >
+            <span *ngIf="isLoading">Vérification...</span>
+            <span *ngIf="!isLoading">Vérifier</span>
+          </button>
+
+          <button
+            type="button"
+            (click)="backToLogin()"
+            class="btn btn-secondary"
+            [disabled]="isLoading"
+          >
+            Retour
+          </button>
+
+          <div *ngIf="errorMessage" class="error-message">
+            {{ errorMessage }}
+          </div>
+        </form>
+
+        <div class="login-footer" *ngIf="!showMfaStep">
           <a routerLink="/forgot-password" class="link">Forgot password?</a>
           <p>Don't have an account? <a routerLink="/register" class="link">Sign up</a></p>
         </div>

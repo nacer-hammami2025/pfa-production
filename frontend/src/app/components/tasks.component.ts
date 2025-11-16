@@ -808,7 +808,7 @@ export class TasksComponent implements OnInit {
   }
 
   getPriorityEmoji(priority: Priority): string {
-    const emojis: { [key in Priority]: string } = {
+    const emojis: Record<Priority, string> = {
       high: '',
       medium: '',
       low: '',

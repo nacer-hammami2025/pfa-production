@@ -85,8 +85,8 @@ export interface TaskStats {
   completed: number;
   pending: number;
   overdue: number;
-  byPriority: { [key in Priority]: number };
-  byCategory: { [key in Category]: number };
+  byPriority: Record<Priority, number>;
+  byCategory: Record<Category, number>;
   completionRate: number;
 }
 

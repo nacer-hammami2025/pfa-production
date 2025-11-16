@@ -4,6 +4,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { check, validationResult } = require('express-validator');
 const User = require('../models/User');
+const speakeasy = require('speakeasy');
+const qrcode = require('qrcode');
 
 // Store reset tokens temporarily (in production, use Redis or database)
 const resetTokens = new Map();
@@ -204,15 +206,13 @@ router.post(
         return res.status(400).json({ errors: [{ msg: 'Invalid credentials' }] });
       }
 
-      // SÉCURITÉ CRITIQUE: Vérifier que le rôle demandé correspond au rôle réel
-      if (requestedRole && requestedRole !== user.role) {
-        console.log('[LOGIN] ⛔ ROLE MISMATCH: User', email, 'has role', user.role, 'but requested', requestedRole);
-        return res.status(403).json({ 
-          errors: [{ 
-            msg: requestedRole === 'admin' 
-              ? 'Accès refusé. Vous n\'avez pas les privilèges administrateur.' 
-              : 'Ce compte est un compte administrateur. Veuillez utiliser l\'interface admin.'
-          }] 
+      // Vérifier si MFA est activé
+      if (user.mfaEnabled && user.mfaSecret) {
+        console.log('[LOGIN] MFA required for:', email);
+        return res.json({
+          mfaRequired: true,
+          user: { id: user.id, name: user.name, email: user.email, role: user.role },
+          message: 'MFA verification required'
         });
       }
 
@@ -236,5 +236,173 @@ router.post(
     }
   }
 );
+
+// Middleware pour vérifier le token JWT
+const auth = (req, res, next) => {
+  const token = req.header('Authorization')?.replace('Bearer ', '');
+  if (!token) {
+    return res.status(401).json({ message: 'No token, authorization denied' });
+  }
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded.user;
+    next();
+  } catch (err) {
+    res.status(401).json({ message: 'Token is not valid' });
+  }
+};
+
+// POST /api/auth/setup-mfa
+router.post('/setup-mfa', auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Générer un secret TOTP
+    const secret = speakeasy.generateSecret({
+      name: `PFA App (${user.email})`,
+      issuer: 'PFA Productivity'
+    });
+
+    // Sauvegarder temporairement le secret
+    user.mfaTempSecret = secret.base32;
+    await user.save();
+
+    // Générer le QR code
+    const qrCodeUrl = await qrcode.toDataURL(secret.otpauth_url);
+
+    res.json({
+      message: 'MFA setup initiated',
+      secret: secret.base32,
+      qrCode: qrCodeUrl,
+      manualEntry: secret.base32
+    });
+  } catch (err) {
+    console.error('MFA setup error:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// POST /api/auth/verify-mfa
+router.post('/verify-mfa', auth, async (req, res) => {
+  const { token } = req.body;
+
+  if (!token) {
+    return res.status(400).json({ message: 'MFA token is required' });
+  }
+
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    if (!user.mfaTempSecret) {
+      return res.status(400).json({ message: 'MFA setup not initiated' });
+    }
+
+    // Vérifier le token
+    const verified = speakeasy.totp.verify({
+      secret: user.mfaTempSecret,
+      encoding: 'base32',
+      token: token,
+      window: 2 // Tolérance de 2 périodes (30 secondes)
+    });
+
+    if (!verified) {
+      return res.status(400).json({ message: 'Invalid MFA token' });
+    }
+
+    // Activer le MFA
+    user.mfaEnabled = true;
+    user.mfaSecret = user.mfaTempSecret;
+    user.mfaTempSecret = '';
+    await user.save();
+
+    res.json({ message: 'MFA enabled successfully' });
+  } catch (err) {
+    console.error('MFA verification error:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// POST /api/auth/disable-mfa
+router.post('/disable-mfa', auth, async (req, res) => {
+  const { password } = req.body;
+
+  if (!password) {
+    return res.status(400).json({ message: 'Password is required to disable MFA' });
+  }
+
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Vérifier le mot de passe
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Invalid password' });
+    }
+
+    // Désactiver le MFA
+    user.mfaEnabled = false;
+    user.mfaSecret = '';
+    user.mfaTempSecret = '';
+    await user.save();
+
+    res.json({ message: 'MFA disabled successfully' });
+  } catch (err) {
+    console.error('MFA disable error:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// POST /api/auth/verify-mfa-login
+router.post('/verify-mfa-login', async (req, res) => {
+  const { email, mfaToken } = req.body;
+
+  if (!email || !mfaToken) {
+    return res.status(400).json({ message: 'Email and MFA token are required' });
+  }
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: 'User not found' });
+    }
+
+    if (!user.mfaEnabled || !user.mfaSecret) {
+      return res.status(400).json({ message: 'MFA not enabled for this account' });
+    }
+
+    // Vérifier le token MFA
+    const verified = speakeasy.totp.verify({
+      secret: user.mfaSecret,
+      encoding: 'base32',
+      token: mfaToken,
+      window: 2 // Tolérance de 2 périodes (30 secondes)
+    });
+
+    if (!verified) {
+      return res.status(400).json({ message: 'Invalid MFA token' });
+    }
+
+    // Générer le token JWT final
+    const payload = { user: { id: user.id, name: user.name, email: user.email, role: user.role } };
+    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' });
+
+    res.json({
+      token,
+      user: { id: user.id, name: user.name, email: user.email, role: user.role }
+    });
+  } catch (err) {
+    console.error('MFA login verification error:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
 
 module.exports = router;

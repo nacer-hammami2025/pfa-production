@@ -208,7 +208,7 @@ export class IntegrationsService {
   }
 
   getIntegrationDisplayName(provider: string): string {
-    const names: { [key: string]: string } = {
+    const names: Record<string, string> = {
       googleCalendar: 'Google Calendar',
       outlook: 'Microsoft Outlook',
       slack: 'Slack',
@@ -218,7 +218,7 @@ export class IntegrationsService {
   }
 
   getIntegrationIcon(provider: string): string {
-    const icons: { [key: string]: string } = {
+    const icons: Record<string, string> = {
       googleCalendar: '📅',
       outlook: '📧',
       slack: '💬',
@@ -228,7 +228,7 @@ export class IntegrationsService {
   }
 
   getIntegrationDescription(provider: string): string {
-    const descriptions: { [key: string]: string } = {
+    const descriptions: Record<string, string> = {
       googleCalendar: 'Synchronisez vos tâches avec Google Calendar',
       outlook: 'Intégrez avec Microsoft Outlook Calendar',
       slack: 'Recevez des notifications dans Slack',

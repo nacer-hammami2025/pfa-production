@@ -1,8 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, BehaviorSubject, interval, Subscription } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
-import { environment } from '../../environments/environment';
+import { map } from 'rxjs/operators';
 
 export interface TimeEntry {
   id: string;
@@ -55,7 +54,7 @@ export interface ActiveTimeEntry {
 @Injectable({
   providedIn: 'root'
 })
-export class TimeTrackingService {
+export class TimeTrackingService implements OnDestroy {
   private base = '/api';
   private apiUrl = `${this.base}/api/time-tracking`;
   private activeEntrySubject = new BehaviorSubject<ActiveTimeEntry | null>(null);

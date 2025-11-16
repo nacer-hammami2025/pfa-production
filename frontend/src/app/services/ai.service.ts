@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of, BehaviorSubject } from 'rxjs';
-import { map, catchError, switchMap } from 'rxjs/operators';
+import { catchError } from 'rxjs/operators';
 import { Task } from './task.service';
 
 export interface AISuggestion {
@@ -165,7 +165,6 @@ export class AIService {
     // Group tasks by priority and deadline
     const urgentTasks = tasks.filter(t => !t.completed && t.priority === 'high');
     const importantTasks = tasks.filter(t => !t.completed && t.priority === 'medium');
-    const lowPriorityTasks = tasks.filter(t => !t.completed && t.priority === 'low');
 
     // Suggest time blocks
     if (urgentTasks.length > 0) {

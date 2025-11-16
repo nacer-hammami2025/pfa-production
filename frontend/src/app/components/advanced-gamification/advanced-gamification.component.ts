@@ -1948,7 +1948,7 @@ export class AdvancedGamificationComponent implements OnInit, OnDestroy {
   }
 
   getCategoryColor(category: string): string {
-    const colors: { [key: string]: string } = {
+    const colors: Record<string, string> = {
       'getting_started': '#667eea',
       'productivity': '#27ae60',
       'consistency': '#e67e22',

@@ -997,7 +997,7 @@ export class AdvancedNotificationsComponent implements OnInit, OnDestroy {
   }
 
   getTypeLabel(type: string): string {
-    const labels: { [key: string]: string } = {
+    const labels: Record<string, string> = {
       'task_due': 'Task Due',
       'task_overdue': 'Overdue',
       'task_assigned': 'Assigned',

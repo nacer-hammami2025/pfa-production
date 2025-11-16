@@ -16,7 +16,7 @@ export class ProjectsComponent implements OnInit {
   showDetailModal = false;
   selectedProject: Project | null = null;
   
-  filterStatus: string = 'all';
+  filterStatus = 'all';
   searchTerm = '';
   
   // User management
