@@ -5,9 +5,6 @@ const API_URL = 'https://pfa-production-backend.onrender.com/api/auth/login';
 
 const testUsers = [
   { email: 'rawia@gmail.com', password: '123456' },
-  { email: 'admin@example.com', password: '123456' },
-  { email: 'nacer@gmail.com', password: '123456' },
-  // Ajoutez vos autres comptes ici
 ];
 
 async function testLoginWithRole(email, password, requestedRole) {
