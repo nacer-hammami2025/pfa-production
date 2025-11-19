@@ -68,17 +68,44 @@ FRONTEND_URL=http://localhost:4200
 
 ### 3. Slack
 
-1. **Créer une application Slack :**
-   - Allez sur [Slack API](https://api.slack.com/apps)
-   - Créez une nouvelle application
+#### Créer une Application Slack
 
-2. **Configurer OAuth :**
-   - Dans "OAuth & Permissions"
-   - Redirect URLs : `https://nacer-dev.me/api/integrations/slack/callback`
+1. **Accédez à** [Slack API Apps](https://api.slack.com/apps)
+2. **Cliquez sur** "Create New App" → "From scratch"
+3. **Remplissez** :
+   - **App Name** : TaskFlow Pro
+   - **Workspace** : Sélectionnez votre workspace Slack
 
-3. **Permissions (Scopes) :**
-   - `chat:write` (pour envoyer des messages)
-   - `channels:read` (pour lire les canaux)
+#### Configuration OAuth & Permissions
+
+Dans l'onglet "OAuth & Permissions" :
+
+- **Redirect URLs** :
+  - Ajouter : `https://nacer-dev.me/api/integrations/slack/callback`
+
+- **Scopes (Bot Token Scopes)** :
+  - `chat:write` - Envoyer des messages
+  - `channels:read` - Lire les informations des canaux
+  - `users:read` - Lire les informations utilisateur
+
+#### App Credentials
+
+Dans l'onglet "Basic Information" :
+
+- **Client ID** : Notez cette valeur (sera `SLACK_CLIENT_ID`)
+- **Client Secret** : Notez cette valeur (sera `SLACK_CLIENT_SECRET`)
+
+#### Installation
+
+1. **Installez l'application** dans votre workspace
+2. **Accordez les permissions** lors de l'installation
+
+#### Variables d'Environnement
+
+```env
+SLACK_CLIENT_ID=votre_client_id_slack
+SLACK_CLIENT_SECRET=votre_client_secret_slack
+```
 
 ### 4. Trello
 
