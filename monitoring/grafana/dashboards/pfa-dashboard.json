@@ -1,8 +1,8 @@
 {
   "dashboard": {
     "id": null,
-    "title": "PFA Application Monitoring",
-    "tags": ["pfa", "nodejs", "mongodb"],
+    "title": "🚀 PFA TaskFlow Pro - Production Monitoring",
+    "tags": ["pfa", "production", "taskflow", "nodejs", "mongodb"],
     "style": "dark",
     "timezone": "browser",
     "panels": [

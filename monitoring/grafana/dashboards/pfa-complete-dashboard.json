@@ -1,0 +1,407 @@
+{
+  "dashboard": {
+    "id": null,
+    "uid": "pfa-production-complete",
+    "title": "🚀 PFA TaskFlow Pro - Dashboard Production Complet",
+    "description": "Monitoring complet de l'application PFA TaskFlow Pro en production",
+    "tags": ["pfa", "production", "taskflow", "monitoring"],
+    "style": "dark",
+    "timezone": "browser",
+    "editable": true,
+    "graphTooltip": 1,
+    "panels": [
+      {
+        "id": 1,
+        "title": "🔥 Overview Système",
+        "type": "row",
+        "collapsed": false,
+        "gridPos": {"h": 1, "w": 24, "x": 0, "y": 0}
+      },
+      {
+        "id": 2,
+        "title": "📊 Status Service PFA",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "up{job=\"pfa-production\"}",
+            "legendFormat": "PFA Backend",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {"mode": "thresholds"},
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"color": "red", "value": 0},
+                {"color": "green", "value": 1}
+              ]
+            },
+            "mappings": [
+              {"options": {"0": {"text": "🔴 OFFLINE", "color": "red"}}, "type": "value"},
+              {"options": {"1": {"text": "🟢 ONLINE", "color": "green"}}, "type": "value"}
+            ],
+            "unit": "none"
+          }
+        },
+        "options": {
+          "colorMode": "background",
+          "graphMode": "none",
+          "justifyMode": "center",
+          "orientation": "horizontal"
+        },
+        "gridPos": {"h": 4, "w": 6, "x": 0, "y": 1}
+      },
+      {
+        "id": 3,
+        "title": "💾 Usage Mémoire",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "process_resident_memory_bytes{job=\"pfa-production\"} / 1024 / 1024",
+            "legendFormat": "Memory (MB)",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {"mode": "palette-classic"},
+            "unit": "MB",
+            "decimals": 1,
+            "thresholds": {
+              "steps": [
+                {"color": "green", "value": 0},
+                {"color": "yellow", "value": 100},
+                {"color": "red", "value": 200}
+              ]
+            }
+          }
+        },
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "center"
+        },
+        "gridPos": {"h": 4, "w": 6, "x": 6, "y": 1}
+      },
+      {
+        "id": 4,
+        "title": "⚡ CPU Usage",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "rate(process_cpu_user_seconds_total{job=\"pfa-production\"}[1m]) * 100",
+            "legendFormat": "CPU %",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {"mode": "thresholds"},
+            "unit": "percent",
+            "decimals": 1,
+            "thresholds": {
+              "steps": [
+                {"color": "green", "value": 0},
+                {"color": "yellow", "value": 50},
+                {"color": "red", "value": 80}
+              ]
+            }
+          }
+        },
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area"
+        },
+        "gridPos": {"h": 4, "w": 6, "x": 12, "y": 1}
+      },
+      {
+        "id": 5,
+        "title": "🗄️ MongoDB Status",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "mongodb_connections_current{job=\"pfa-production\"}",
+            "legendFormat": "Connexions",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {"mode": "thresholds"},
+            "unit": "short",
+            "thresholds": {
+              "steps": [
+                {"color": "red", "value": 0},
+                {"color": "yellow", "value": 1},
+                {"color": "green", "value": 3}
+              ]
+            }
+          }
+        },
+        "options": {
+          "colorMode": "background",
+          "graphMode": "none"
+        },
+        "gridPos": {"h": 4, "w": 6, "x": 18, "y": 1}
+      },
+      {
+        "id": 6,
+        "title": "🌐 Trafic HTTP & Performance",
+        "type": "row",
+        "collapsed": false,
+        "gridPos": {"h": 1, "w": 24, "x": 0, "y": 5}
+      },
+      {
+        "id": 7,
+        "title": "📈 Requêtes HTTP par Minute",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "rate(http_requests_total{job=\"pfa-production\"}[1m]) * 60",
+            "legendFormat": "{{method}} {{route}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {"mode": "palette-classic"},
+            "unit": "reqps",
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "smooth",
+              "lineWidth": 2,
+              "fillOpacity": 20,
+              "gradientMode": "hue",
+              "spanNulls": false,
+              "insertNulls": false,
+              "showPoints": "auto",
+              "pointSize": 5,
+              "stacking": {"mode": "none", "group": "A"},
+              "axisPlacement": "auto",
+              "axisLabel": "",
+              "axisColorMode": "text",
+              "scaleDistribution": {"type": "linear"},
+              "axisCenteredZero": false,
+              "hideFrom": {"legend": false, "tooltip": false, "vis": false},
+              "thresholdsStyle": {"mode": "off"}
+            }
+          }
+        },
+        "options": {
+          "tooltip": {"mode": "single", "sort": "none"},
+          "legend": {"displayMode": "list", "placement": "bottom", "calcs": []},
+          "displayLabels": []
+        },
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 6}
+      },
+      {
+        "id": 8,
+        "title": "⏱️ Temps de Réponse API",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "http_request_duration_ms{job=\"pfa-production\"}",
+            "legendFormat": "{{method}} {{route}} - {{percentile}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {"mode": "palette-classic"},
+            "unit": "ms",
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "smooth",
+              "lineWidth": 2,
+              "fillOpacity": 10
+            }
+          }
+        },
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 6}
+      },
+      {
+        "id": 9,
+        "title": "📊 Métriques Application PFA",
+        "type": "row",
+        "collapsed": false,
+        "gridPos": {"h": 1, "w": 24, "x": 0, "y": 14}
+      },
+      {
+        "id": 10,
+        "title": "✅ Tâches par Statut",
+        "type": "piechart",
+        "targets": [
+          {
+            "expr": "pfa_tasks_total{job=\"pfa-production\"}",
+            "legendFormat": "{{status}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {"mode": "palette-classic"},
+            "custom": {
+              "hideFrom": {"legend": false, "tooltip": false, "vis": false}
+            },
+            "mappings": []
+          }
+        },
+        "options": {
+          "reduceOptions": {
+            "values": false,
+            "calcs": ["lastNotNull"],
+            "fields": ""
+          },
+          "pieType": "pie",
+          "tooltip": {"mode": "single", "sort": "none"},
+          "legend": {"displayMode": "list", "placement": "right", "values": ["value"]},
+          "displayLabels": ["name", "value"]
+        },
+        "gridPos": {"h": 8, "w": 8, "x": 0, "y": 15}
+      },
+      {
+        "id": 11,
+        "title": "📁 Métriques Projets",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "pfa_projects_total{job=\"pfa-production\"}",
+            "legendFormat": "Total Projets",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {"mode": "palette-classic"},
+            "unit": "short"
+          }
+        },
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "center"
+        },
+        "gridPos": {"h": 4, "w": 8, "x": 8, "y": 15}
+      },
+      {
+        "id": 12,
+        "title": "👥 Activité Utilisateurs",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "pfa_user_activity_total{job=\"pfa-production\"}",
+            "legendFormat": "{{action}} - {{user_role}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {"mode": "palette-classic"},
+            "unit": "short",
+            "custom": {
+              "drawStyle": "bars",
+              "lineWidth": 1,
+              "fillOpacity": 80
+            }
+          }
+        },
+        "gridPos": {"h": 8, "w": 8, "x": 16, "y": 15}
+      },
+      {
+        "id": 13,
+        "title": "🏢 Équipes Actives",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "pfa_teams_total{job=\"pfa-production\"}",
+            "legendFormat": "Équipes",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {"mode": "palette-classic"},
+            "unit": "short"
+          }
+        },
+        "gridPos": {"h": 4, "w": 8, "x": 8, "y": 19}
+      },
+      {
+        "id": 14,
+        "title": "🔧 Monitoring Infrastructure",
+        "type": "row",
+        "collapsed": false,
+        "gridPos": {"h": 1, "w": 24, "x": 0, "y": 23}
+      },
+      {
+        "id": 15,
+        "title": "📊 Métriques Système Temps Réel",
+        "type": "table",
+        "targets": [
+          {
+            "expr": "label_replace(up{job=\"pfa-production\"}, \"metric\", \"Service Status\", \"\", \"\")",
+            "format": "table",
+            "refId": "A"
+          },
+          {
+            "expr": "label_replace(process_resident_memory_bytes{job=\"pfa-production\"} / 1024 / 1024, \"metric\", \"Memory (MB)\", \"\", \"\")",
+            "format": "table",
+            "refId": "B"
+          },
+          {
+            "expr": "label_replace(rate(process_cpu_user_seconds_total{job=\"pfa-production\"}[1m]) * 100, \"metric\", \"CPU %\", \"\", \"\")",
+            "format": "table",
+            "refId": "C"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {"mode": "thresholds"},
+            "custom": {
+              "displayMode": "auto"
+            }
+          }
+        },
+        "options": {
+          "showHeader": true,
+          "sortBy": []
+        },
+        "gridPos": {"h": 6, "w": 24, "x": 0, "y": 24}
+      }
+    ],
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "timepicker": {
+      "refresh_intervals": ["5s", "10s", "30s", "1m", "5m", "15m", "30m", "1h", "2h", "1d"]
+    },
+    "refresh": "10s",
+    "schemaVersion": 30,
+    "version": 1
+  },
+  "meta": {
+    "type": "db",
+    "canSave": true,
+    "canEdit": true,
+    "canAdmin": true,
+    "canStar": true,
+    "slug": "pfa-production-complete",
+    "url": "/d/pfa-production-complete/pfa-taskflow-pro-dashboard-production-complet",
+    "expires": "0001-01-01T00:00:00Z",
+    "created": "2025-11-18T00:00:00Z",
+    "updated": "2025-11-18T00:00:00Z",
+    "updatedBy": "admin",
+    "createdBy": "admin",
+    "version": 1,
+    "hasAcl": false,
+    "isFolder": false,
+    "folderId": 0,
+    "folderTitle": "General",
+    "folderUrl": "",
+    "provisioned": false,
+    "provisionedExternalId": ""
+  }
+}

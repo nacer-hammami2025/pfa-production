@@ -1,0 +1,67 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "🚀 PFA Production Monitoring - Live",
+    "tags": ["pfa", "production"],
+    "style": "dark",
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "📊 Service Status",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "up",
+            "legendFormat": "{{job}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {"mode": "thresholds"},
+            "thresholds": {
+              "steps": [
+                {"color": "red", "value": 0},
+                {"color": "green", "value": 1}
+              ]
+            },
+            "mappings": [
+              {"options": {"0": {"text": "🔴 OFFLINE"}}, "type": "value"},
+              {"options": {"1": {"text": "🟢 ONLINE"}}, "type": "value"}
+            ]
+          }
+        },
+        "gridPos": {"h": 6, "w": 12, "x": 0, "y": 0}
+      },
+      {
+        "id": 2,
+        "title": "💾 Memory Usage (MB)",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "process_resident_memory_bytes / 1024 / 1024",
+            "legendFormat": "Memory Usage"
+          }
+        ],
+        "gridPos": {"h": 6, "w": 12, "x": 12, "y": 0}
+      },
+      {
+        "id": 3,
+        "title": "🌐 HTTP Requests Total",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(http_requests_total[1m]) * 60",
+            "legendFormat": "{{method}} {{route}}"
+          }
+        ],
+        "gridPos": {"h": 6, "w": 24, "x": 0, "y": 6}
+      }
+    ],
+    "time": {
+      "from": "now-5m",
+      "to": "now"
+    },
+    "refresh": "5s"
+  }
+}

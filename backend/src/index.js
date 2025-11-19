@@ -196,25 +196,11 @@ server.on('close', () => {
   console.log('Server closed normally');
 });
 
-// Keep server running in production
-if (process.env.NODE_ENV === 'production') {
-  // Handle graceful shutdown only on explicit termination
-  process.on('SIGTERM', () => {
-    console.log('SIGTERM received - server will continue running');
-    // Don't actually close the server in production
-  });
-  
-  process.on('SIGINT', () => {
-    console.log('SIGINT received - server will continue running');
-    // Don't actually close the server in production
-  });
-} else {
-  // Development mode - allow normal shutdown
-  process.on('SIGTERM', () => {
-    console.log('SIGTERM received - shutting down gracefully');
-    server.close(() => {
-      console.log('Server closed');
-      process.exit(0);
-    });
-  });
-}
+// Keep server running in all environments for testing
+process.on('SIGTERM', () => {
+  console.log('SIGTERM received - server will continue running for testing');
+});
+
+process.on('SIGINT', () => {
+  console.log('SIGINT received - server will continue running for testing');
+});
