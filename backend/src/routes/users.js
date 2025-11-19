@@ -193,10 +193,16 @@ router.put('/profile', auth, async (req, res) => {
 
     // Handle preferences update
     if (preferences) {
-      updateData.preferences = {};
+      // Get current user to preserve existing preferences
+      const currentUser = await User.findById(req.user.id);
+      updateData.preferences = { ...currentUser.preferences };
+      
       if (preferences.theme) updateData.preferences.theme = preferences.theme;
       if (preferences.notifications) {
-        updateData.preferences.notifications = preferences.notifications;
+        updateData.preferences.notifications = { 
+          ...updateData.preferences.notifications, 
+          ...preferences.notifications 
+        };
       }
       if (preferences.timezone) updateData.preferences.timezone = preferences.timezone;
       if (preferences.language) updateData.preferences.language = preferences.language;

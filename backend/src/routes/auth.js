@@ -260,7 +260,7 @@ router.get('/me', auth, async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    res.json(user);
+    res.json({ user });
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');
