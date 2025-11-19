@@ -1,190 +1,590 @@
+/* 🎨 Design Spectaculaire et Professionnel pour Attirer l'Attention */
+
+/* ==================== Animations Spectaculaires ==================== */
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  25% { background-position: 50% 100%; }
+  50% { background-position: 100% 50%; }
+  75% { background-position: 50% 0%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  33% { transform: translateY(-20px) rotate(120deg); }
+  66% { transform: translateY(-10px) rotate(240deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.15); opacity: 0.8; }
+}
+
+@keyframes iconRotate {
+  0% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(90deg) scale(1.1); }
+  50% { transform: rotate(180deg) scale(1); }
+  75% { transform: rotate(270deg) scale(1.1); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-60px) rotateY(-15deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) rotateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(60px) rotateY(15deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) rotateY(0);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes shine {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes particle {
+  0% {
+    transform: translateY(100vh) translateX(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% {
+    transform: translateY(-100vh) translateX(100px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes ripple {
+  0% {
+    box-shadow: 0 0 0 0 rgba(156, 39, 176, 0.7),
+                0 0 0 0 rgba(156, 39, 176, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 0 15px rgba(156, 39, 176, 0),
+                0 0 0 30px rgba(156, 39, 176, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(156, 39, 176, 0),
+                0 0 0 0 rgba(156, 39, 176, 0);
+  }
+}
+
+@keyframes cardEntrance {
+  0% {
+    opacity: 0;
+    transform: rotateX(-15deg) translateY(-50px);
+  }
+  100% {
+    opacity: 1;
+    transform: rotateX(0) translateY(0);
+  }
+}
+
+/* ==================== Conteneur Principal avec Fond Animé ==================== */
+
 .access-denied-container {
   min-height: 100vh;
   display: flex;
-  justify-content: center;
   align-items: center;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  justify-content: center;
   padding: 20px;
+  position: relative;
+  overflow: hidden;
+  
+  /* Gradient animé ultra spectaculaire */
+  background: linear-gradient(
+    135deg,
+    #667eea 0%,
+    #764ba2 15%,
+    #f093fb 30%,
+    #4facfe 45%,
+    #00f2fe 60%,
+    #43e97b 75%,
+    #fa709a 90%,
+    #667eea 100%
+  );
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
 }
 
-.access-denied-card {
-  max-width: 600px;
-  width: 100%;
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+/* Particules flottantes en arrière-plan */
+.access-denied-container::before,
+.access-denied-container::after {
+  content: '';
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.3;
+  animation: float 8s ease-in-out infinite;
 }
+
+.access-denied-container::before {
+  top: -100px;
+  left: -100px;
+  background: rgba(255, 255, 255, 0.5);
+  animation-delay: 0s;
+}
+
+.access-denied-container::after {
+  bottom: -100px;
+  right: -100px;
+  background: rgba(255, 255, 255, 0.4);
+  animation-delay: 4s;
+}
+
+/* ==================== Contenu Central ==================== */
+
+.content-wrapper {
+  width: 100%;
+  max-width: 900px;
+  position: relative;
+  z-index: 1;
+  animation: cardEntrance 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ==================== En-tête Spectaculaire ==================== */
 
 .header-section {
   text-align: center;
-  padding: 40px 30px 30px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  margin-bottom: 40px;
+  animation: slideInUp 0.6s ease-out;
 }
 
 .error-icon {
-  font-size: 64px;
-  width: 64px;
-  height: 64px;
-  margin-bottom: 16px;
+  width: 120px !important;
+  height: 120px !important;
+  font-size: 120px !important;
+  color: #ffffff;
+  text-shadow: 
+    0 0 20px rgba(255, 255, 255, 0.8),
+    0 0 40px rgba(255, 255, 255, 0.6),
+    0 0 60px rgba(255, 255, 255, 0.4);
+  animation: pulse 2s ease-in-out infinite, iconRotate 3s linear infinite;
+  display: inline-block;
+  filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.3));
 }
 
-.main-title {
-  font-size: 32px;
-  font-weight: 600;
-  margin: 0 0 8px 0;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+.title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin: 20px 0 10px 0;
+  color: #ffffff;
+  text-shadow: 
+    0 2px 10px rgba(0, 0, 0, 0.3),
+    0 0 30px rgba(255, 255, 255, 0.5);
+  letter-spacing: 2px;
+  background: linear-gradient(
+    90deg,
+    #ffffff 0%,
+    #f0f0f0 50%,
+    #ffffff 100%
+  );
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shine 3s linear infinite;
 }
 
 .subtitle {
-  font-size: 16px;
-  opacity: 0.9;
+  font-size: 1.3rem;
+  color: rgba(255, 255, 255, 0.95);
   margin: 0;
   font-weight: 300;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
+
+/* ==================== Cartes Glassmorphism ==================== */
 
 .info-card,
 .recommendation-card {
-  margin: 20px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  background: rgba(255, 255, 255, 0.15) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: 24px !important;
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.2) inset,
+    0 0 100px rgba(255, 255, 255, 0.1) !important;
+  margin-bottom: 30px !important;
+  padding: 35px !important;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  overflow: hidden;
 }
 
-.info-card mat-card-header,
-.recommendation-card mat-card-header {
-  background-color: #f8f9fa;
-  border-radius: 12px 12px 0 0;
-  margin: -16px -16px 16px -16px;
-  padding: 16px;
+.info-card::before,
+.recommendation-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.7s ease;
 }
 
-.info-card mat-card-title,
-.recommendation-card mat-card-title {
+.info-card:hover::before,
+.recommendation-card:hover::before {
+  left: 100%;
+}
+
+.info-card {
+  animation: slideInLeft 0.7s ease-out 0.2s both;
+}
+
+.recommendation-card {
+  animation: slideInRight 0.7s ease-out 0.4s both;
+}
+
+.info-card:hover,
+.recommendation-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 
+    0 30px 80px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.4) inset,
+    0 0 120px rgba(255, 255, 255, 0.2) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* ==================== Titres des Cartes ==================== */
+
+.card-title {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 18px;
+  gap: 15px;
+  margin-bottom: 25px;
+  color: #ffffff !important;
+  font-size: 1.8rem !important;
+  font-weight: 700 !important;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.card-title mat-icon {
+  font-size: 36px !important;
+  width: 36px !important;
+  height: 36px !important;
+  color: #ffffff;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+}
+
+/* ==================== Contenu des Cartes ==================== */
+
+mat-card-content {
+  color: #ffffff !important;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+mat-card-content p {
+  margin: 15px 0 !important;
+  color: rgba(255, 255, 255, 0.95) !important;
+}
+
+mat-card-content strong {
+  color: #ffffff;
   font-weight: 600;
-  color: #2c3e50;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
-.info-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 12px;
-  padding: 8px 0;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.info-item:last-child {
-  border-bottom: none;
-  margin-bottom: 0;
-}
-
-.label {
-  font-weight: 600;
-  color: #555;
-  flex: 0 0 140px;
-}
-
-.value {
-  flex: 1;
-  text-align: right;
-  color: #333;
-}
+/* ==================== Listes de Recommandations ==================== */
 
 .recommendation-list {
-  margin: 16px 0 0 0;
-  padding-left: 20px;
+  list-style: none;
+  padding: 0;
+  margin: 20px 0 0 0;
 }
 
 .recommendation-list li {
-  margin-bottom: 8px;
-  color: #666;
-  line-height: 1.5;
+  padding: 15px 20px;
+  margin: 12px 0;
+  background: rgba(255, 255, 255, 0.1);
+  border-left: 4px solid #ffffff;
+  border-radius: 12px;
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 1.05rem;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
-.actions-section {
-  padding: 30px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  background-color: #fafbfc;
+.recommendation-list li:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateX(8px);
+  border-left-width: 6px;
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
 }
 
-.action-btn {
-  height: 48px;
-  border-radius: 8px;
-  font-weight: 500;
-  text-transform: none;
-  font-size: 14px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+/* ==================== Badges de Rôles ==================== */
+
+.role-badge {
+  display: inline-block;
+  padding: 8px 20px;
+  background: rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 25px;
+  font-weight: 600;
+  color: #ffffff;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
 }
 
-.action-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+.role-badge:hover {
+  background: rgba(255, 255, 255, 0.35);
+  transform: scale(1.05);
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
 }
 
-.action-btn mat-icon {
-  margin-right: 8px;
-}
+/* ==================== Boutons Spectaculaires ==================== */
 
-.security-notice {
+.action-buttons {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 20px 30px;
-  background-color: #e8f4f8;
-  color: #2c5aa0;
-  font-size: 14px;
-  border-top: 1px solid #dde7eb;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 40px;
+  animation: slideInUp 0.7s ease-out 0.6s both;
 }
 
-.security-notice mat-icon {
-  color: #2c5aa0;
-  font-size: 20px;
-  width: 20px;
-  height: 20px;
+.action-buttons button {
+  min-width: 200px;
+  height: 56px;
+  border-radius: 28px !important;
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  backdrop-filter: blur(20px);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.4) !important;
 }
 
-/* Responsive design */
+.primary-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 
+    0 10px 30px rgba(102, 126, 234, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.2) inset !important;
+}
+
+.primary-button:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 
+    0 15px 40px rgba(102, 126, 234, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.4) inset !important;
+  animation: ripple 1.5s ease-out infinite;
+}
+
+.secondary-button {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2) !important;
+}
+
+.secondary-button:hover {
+  background: rgba(255, 255, 255, 0.25) !important;
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Effet de brillance sur les boutons */
+.action-buttons button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  transition: left 0.6s ease;
+}
+
+.action-buttons button:hover::before {
+  left: 100%;
+}
+
+.action-buttons button mat-icon {
+  margin-right: 8px;
+  font-size: 24px !important;
+  width: 24px !important;
+  height: 24px !important;
+}
+
+/* ==================== Note de Sécurité ==================== */
+
+.security-note {
+  text-align: center;
+  margin-top: 40px;
+  padding: 25px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 16px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.95rem;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  animation: slideInUp 0.7s ease-out 0.8s both;
+  position: relative;
+  overflow: hidden;
+}
+
+.security-note::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.15),
+    transparent
+  );
+  animation: shine 4s linear infinite;
+}
+
+.security-note mat-icon {
+  vertical-align: middle;
+  margin-right: 8px;
+  color: #ffffff;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3));
+}
+
+/* ==================== Responsive Design ==================== */
+
 @media (max-width: 768px) {
-  .access-denied-container {
-    padding: 10px;
+  .title {
+    font-size: 2.5rem;
   }
-
-  .header-section {
-    padding: 30px 20px 20px;
+  
+  .subtitle {
+    font-size: 1.1rem;
   }
-
-  .main-title {
-    font-size: 24px;
+  
+  .error-icon {
+    width: 90px !important;
+    height: 90px !important;
+    font-size: 90px !important;
   }
-
+  
+  .card-title {
+    font-size: 1.5rem !important;
+  }
+  
   .info-card,
   .recommendation-card {
-    margin: 15px;
+    padding: 25px !important;
   }
-
-  .actions-section {
-    padding: 20px;
-  }
-
-  .info-item {
+  
+  .action-buttons {
     flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
+    align-items: stretch;
   }
-
-  .value {
-    text-align: left;
+  
+  .action-buttons button {
+    width: 100%;
   }
-
-  .label {
-    flex: none;
+  
+  mat-card-content {
+    font-size: 1rem;
   }
 }
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 2rem;
+  }
+  
+  .error-icon {
+    width: 70px !important;
+    height: 70px !important;
+    font-size: 70px !important;
+  }
+  
+  .card-title {
+    font-size: 1.3rem !important;
+    gap: 10px;
+  }
+  
+  .card-title mat-icon {
+    font-size: 28px !important;
+    width: 28px !important;
+    height: 28px !important;
+  }
+  
+  .info-card,
+  .recommendation-card {
+    padding: 20px !important;
+  }
+}
+
+/* ==================== Particules Décoratives ==================== */
+
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+  animation: particle 15s linear infinite;
+  pointer-events: none;
+}
+
+.particle:nth-child(1) { left: 10%; animation-delay: 0s; }
+.particle:nth-child(2) { left: 20%; animation-delay: 2s; }
+.particle:nth-child(3) { left: 30%; animation-delay: 4s; }
+.particle:nth-child(4) { left: 40%; animation-delay: 6s; }
+.particle:nth-child(5) { left: 50%; animation-delay: 8s; }
+.particle:nth-child(6) { left: 60%; animation-delay: 10s; }
+.particle:nth-child(7) { left: 70%; animation-delay: 12s; }
+.particle:nth-child(8) { left: 80%; animation-delay: 14s; }
+.particle:nth-child(9) { left: 90%; animation-delay: 1s; }
+.particle:nth-child(10) { left: 15%; animation-delay: 3s; }

@@ -1,40 +1,51 @@
 <div class="access-denied-container">
-  <div class="access-denied-card">
+  <!-- Particules décoratives -->
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  
+  <div class="content-wrapper">
     <!-- Icône et titre principal -->
     <div class="header-section">
-      <mat-icon class="error-icon" color="warn">block</mat-icon>
-      <h1 class="main-title">Accès Refusé</h1>
+      <mat-icon class="error-icon">block</mat-icon>
+      <h1 class="title">Accès Refusé</h1>
       <p class="subtitle">Vous n'êtes pas autorisé à accéder à cette section</p>
     </div>
 
     <!-- Section d'information -->
     <mat-card class="info-card">
       <mat-card-header>
-        <mat-card-title>
+        <mat-card-title class="card-title">
           <mat-icon>info</mat-icon>
           Détails de la restriction
         </mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <div class="info-item">
-          <span class="label">Votre compte :</span>
-          <span class="value">{{ userEmail }} ({{ getRoleDisplayName(userRole) }})</span>
-        </div>
-        <div class="info-item">
-          <span class="label">Accès demandé :</span>
-          <span class="value">{{ getRoleDisplayName(attemptedRole) }}</span>
-        </div>
-        <div class="info-item">
-          <span class="label">Raison :</span>
-          <span class="value">{{ getReasonMessage() }}</span>
-        </div>
+        <p>
+          <strong>Votre compte :</strong> 
+          <span class="role-badge">{{ userEmail }} ({{ getRoleDisplayName(userRole) }})</span>
+        </p>
+        <p>
+          <strong>Accès demandé :</strong> 
+          <span class="role-badge">{{ getRoleDisplayName(attemptedRole) }}</span>
+        </p>
+        <p>
+          <strong>Raison :</strong> {{ getReasonMessage() }}
+        </p>
       </mat-card-content>
     </mat-card>
 
     <!-- Section recommandations -->
     <mat-card class="recommendation-card">
       <mat-card-header>
-        <mat-card-title>
+        <mat-card-title class="card-title">
           <mat-icon>lightbulb</mat-icon>
           Que faire maintenant ?
         </mat-card-title>
@@ -50,25 +61,25 @@
     </mat-card>
 
     <!-- Section actions -->
-    <div class="actions-section">
-      <button mat-raised-button color="primary" (click)="navigateToUserDashboard()" class="action-btn">
+    <div class="action-buttons">
+      <button mat-raised-button (click)="navigateToUserDashboard()" class="primary-button">
         <mat-icon>dashboard</mat-icon>
-        Aller au tableau de bord
+        Tableau de bord
       </button>
       
-      <button mat-raised-button color="accent" (click)="contactSupport()" class="action-btn">
+      <button mat-raised-button (click)="contactSupport()" class="secondary-button">
         <mat-icon>contact_support</mat-icon>
-        Contacter le support
+        Contacter Support
       </button>
       
-      <button mat-stroked-button (click)="logout()" class="action-btn">
+      <button mat-raised-button (click)="logout()" class="secondary-button">
         <mat-icon>logout</mat-icon>
         Se déconnecter
       </button>
     </div>
 
     <!-- Message de sécurité -->
-    <div class="security-notice">
+    <div class="security-note">
       <mat-icon>security</mat-icon>
       <span>Cette restriction fait partie de nos mesures de sécurité pour protéger votre organisation.</span>
     </div>
