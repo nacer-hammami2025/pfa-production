@@ -133,10 +133,16 @@ export class LoginComponent implements OnInit {
   }
 
   private handleLoginError(error: any): void {
+    // DEBUG: Log complet de l'erreur
+    console.log('🔍 [DEBUG] handleLoginError appelé');
+    console.log('🔍 [DEBUG] error.status:', error.status);
+    console.log('🔍 [DEBUG] error complet:', JSON.stringify(error, null, 2));
+    
     // Gérer les erreurs avec messages du backend
     if (error.status === 403) {
       // SÉCURITÉ: Tentative d'accès avec un rôle inapproprié - rediriger vers access-denied
       console.log('🚨 TENTATIVE D\'ACCÈS NON AUTORISÉ DÉTECTÉE', error);
+      console.log('🚨 Redirection vers /access-denied...');
       this.router.navigate(['/access-denied'], { 
         queryParams: { 
           reason: 'role-mismatch',
@@ -146,7 +152,15 @@ export class LoginComponent implements OnInit {
       });
       return;
     } else if (error.error && error.error.errors && error.error.errors.length > 0) {
-      this.errorMessage = error.error.errors[0].msg;
+      // Utiliser le message professionnel du backend
+      const backendMessage = error.error.errors[0].msg;
+      const backendDetails = error.error.errors[0].details;
+      
+      console.log('📝 Message backend:', backendMessage);
+      console.log('📝 Détails backend:', backendDetails);
+      
+      // Afficher le message professionnel du backend
+      this.errorMessage = backendDetails || backendMessage;
     } else if (error.status === 401 || error.status === 400) {
       this.errorMessage = 'Email ou mot de passe incorrect';
     } else if (error.status === 0) {
