@@ -20,6 +20,7 @@ import { AdminGuard } from './guards/admin.guard';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { AdminAccessInterceptor } from './interceptors/admin-access.interceptor';
 import { NgChartsModule } from 'ng2-charts';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { APP_INITIALIZER } from '@angular/core';
 import { AuthService } from './services/auth.service';
 
@@ -46,7 +47,8 @@ export function appInitializer(authService: AuthService) {
     FormsModule,
     ReactiveFormsModule,
     AppRoutingModule,
-    NgChartsModule
+    NgChartsModule,
+    MatSnackBarModule
   ],
   providers: [
     AuthGuard,
