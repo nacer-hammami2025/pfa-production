@@ -206,6 +206,7 @@ router.put('/profile', auth, async (req, res) => {
       }
       if (preferences.timezone) updateData.preferences.timezone = preferences.timezone;
       if (preferences.language) updateData.preferences.language = preferences.language;
+      if (preferences.autoSave !== undefined) updateData.preferences.autoSave = preferences.autoSave;
     }
 
     const user = await User.findByIdAndUpdate(
@@ -218,6 +219,17 @@ router.put('/profile', auth, async (req, res) => {
   } catch (error) {
     console.error('Error updating profile:', error);
     res.status(500).json({ message: 'Error updating profile' });
+  }
+});
+
+// Get profile
+router.get('/profile', auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select('-password -mfaSecret');
+    res.json({ user });
+  } catch (error) {
+    console.error('Error getting profile:', error);
+    res.status(500).json({ message: 'Error getting profile' });
   }
 });
 

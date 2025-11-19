@@ -22,7 +22,8 @@ const UserSchema = new mongoose.Schema({
       achievements: { type: Boolean, default: true }
     },
     timezone: { type: String, default: 'UTC' },
-    language: { type: String, default: 'en' }
+    language: { type: String, default: 'en' },
+    autoSave: { type: Boolean, default: true }
   },
   stats: {
     tasksCompleted: { type: Number, default: 0 },
