@@ -541,4 +541,44 @@ router.get('/list-users', async (req, res) => {
   }
 });
 
+// POST /api/admin/create-admin - Create admin account (admin only)
+router.post('/create-admin', [auth, requireAdmin], async (req, res) => {
+  const { name, email, password } = req.body;
+
+  try {
+    // Check if user already exists
+    let user = await User.findOne({ email });
+    if (user) {
+      return res.status(400).json({ msg: 'User already exists' });
+    }
+
+    // Create new admin user
+    user = new User({
+      name,
+      email,
+      password,
+      role: 'admin'
+    });
+
+    // Hash password
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(password, salt);
+
+    await user.save();
+
+    res.json({
+      msg: 'Admin user created successfully',
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      }
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+});
+
 module.exports = router;

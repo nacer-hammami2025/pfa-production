@@ -12,6 +12,7 @@ const UserSchema = new mongoose.Schema({
   mfaSecret: { type: String, default: '' },
   mfaTempSecret: { type: String, default: '' },
   preferences: {
+    theme: { type: String, enum: ['light', 'dark'], default: 'light' },
     notifications: {
       email: { type: Boolean, default: true },
       push: { type: Boolean, default: true },

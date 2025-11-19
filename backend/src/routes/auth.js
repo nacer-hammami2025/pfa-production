@@ -130,7 +130,8 @@ router.post(
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { name, email, password, role = 'user' } = req.body; // Default role is 'user'
+    const { name, email, password } = req.body; // Remove role from user input for security
+    const role = 'user'; // Force default role to 'user' for security - only admins can create admin accounts
     try {
       let user = await User.findOne({ email });
       if (user) {

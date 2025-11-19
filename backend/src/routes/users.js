@@ -184,12 +184,23 @@ router.post('/mfa/disable', auth, async (req, res) => {
 // Update profile
 router.put('/profile', auth, async (req, res) => {
   try {
-    const { name, phone, bio } = req.body;
+    const { name, phone, bio, preferences } = req.body;
 
     const updateData = {};
     if (name) updateData.name = name;
     if (phone) updateData.phone = phone;
     if (bio) updateData.bio = bio;
+
+    // Handle preferences update
+    if (preferences) {
+      updateData.preferences = {};
+      if (preferences.theme) updateData.preferences.theme = preferences.theme;
+      if (preferences.notifications) {
+        updateData.preferences.notifications = preferences.notifications;
+      }
+      if (preferences.timezone) updateData.preferences.timezone = preferences.timezone;
+      if (preferences.language) updateData.preferences.language = preferences.language;
+    }
 
     const user = await User.findByIdAndUpdate(
       req.user.id,

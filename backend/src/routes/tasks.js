@@ -158,6 +158,30 @@ router.patch('/:id/toggle', auth, async (req, res) => {
   }
 });
 
+// PATCH /api/tasks/:id/status - update task status for Kanban
+router.patch('/:id/status', auth, async (req, res) => {
+  try {
+    const task = await Task.findById(req.params.id);
+    if (!task) return res.status(404).json({ msg: 'Task not found' });
+    if (task.owner.toString() !== req.user.id) return res.status(403).json({ msg: 'Forbidden' });
+
+    const { status } = req.body;
+    if (!['todo', 'in-progress', 'done'].includes(status)) {
+      return res.status(400).json({ msg: 'Invalid status. Must be: todo, in-progress, or done' });
+    }
+
+    task.status = status;
+    // Auto-update completed based on status
+    task.completed = status === 'done';
+
+    await task.save();
+    res.json(task);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+});
+
 // GET /api/tasks/export - export tasks as CSV
 router.get('/export', auth, async (req, res) => {
   try {
