@@ -1,7 +1,7 @@
 // Production Environment Configuration
 export const environment = {
   production: true,
-  apiUrl: 'https://pfa-backend-production.onrender.com/api',
+  apiUrl: 'https://nacer-dev.me/api',
   wsUrl: 'wss://nacer-dev.me',
   
   // Feature Flags
