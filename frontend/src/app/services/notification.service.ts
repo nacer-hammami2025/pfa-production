@@ -352,6 +352,33 @@ export class NotificationService {
     }
   }
 
+  // Messages d'accès administrateur
+  showAccessDeniedMessage(): void {
+    this.addNotification({
+      type: 'warning',
+      title: '🛡️ Accès Restreint',
+      message: 'Vous n\'avez pas les privilèges administrateur nécessaires pour accéder à cette section.',
+      category: 'task',
+      priority: 'high',
+      persistent: true
+    });
+  }
+
+  showProfessionalAccessMessage(): void {
+    this.addNotification({
+      type: 'info',
+      title: '👑 Autorisation Administrateur Requise',
+      message: 'Cette fonctionnalité est réservée aux utilisateurs disposant de privilèges administrateur. Contactez votre administrateur système si vous pensez qu\'il s\'agit d\'une erreur.',
+      category: 'task',
+      priority: 'high',
+      persistent: true,
+      action: {
+        label: 'Contacter Admin',
+        callback: () => window.location.href = 'mailto:admin@taskflow.com?subject=Demande accès administrateur'
+      }
+    });
+  }
+
   // Messages de motivation
   private sendMotivationalMessage(): void {
     const now = Date.now();

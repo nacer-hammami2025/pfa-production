@@ -1,0 +1,73 @@
+/* Styles pour les messages d'accès admin */
+
+/* Snackbar d'accès refusé */
+.access-denied-snackbar {
+  background: linear-gradient(135deg, #ff6b6b, #ee5a52) !important;
+  color: white !important;
+  font-weight: 600 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 32px rgba(255, 107, 107, 0.3) !important;
+}
+
+.access-denied-snackbar .mat-simple-snack-bar-content {
+  display: flex !important;
+  align-items: center !important;
+  font-size: 14px !important;
+}
+
+.admin-required-snackbar {
+  background: linear-gradient(135deg, #4ecdc4, #44a08d) !important;
+  color: white !important;
+  font-weight: 600 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 32px rgba(78, 205, 196, 0.3) !important;
+}
+
+.professional-message-snackbar {
+  background: linear-gradient(135deg, #667eea, #764ba2) !important;
+  color: white !important;
+  font-weight: 500 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3) !important;
+  max-width: 500px !important;
+}
+
+.professional-message-snackbar .mat-simple-snack-bar-content {
+  line-height: 1.5 !important;
+  font-size: 14px !important;
+}
+
+/* Animation pour les messages */
+@keyframes slideInFromTop {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.access-denied-snackbar,
+.admin-required-snackbar,
+.professional-message-snackbar {
+  animation: slideInFromTop 0.3s ease-out !important;
+}
+
+/* Boutons dans les snackbars */
+.access-denied-snackbar .mat-button,
+.admin-required-snackbar .mat-button,
+.professional-message-snackbar .mat-button {
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: white !important;
+  border-radius: 20px !important;
+  font-weight: 600 !important;
+  margin-left: 10px !important;
+}
+
+.access-denied-snackbar .mat-button:hover,
+.admin-required-snackbar .mat-button:hover,
+.professional-message-snackbar .mat-button:hover {
+  background: rgba(255, 255, 255, 0.3) !important;
+}

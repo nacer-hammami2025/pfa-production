@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './guards/auth.guard';
+import { AdminGuard } from './guards/admin.guard';
+import { AccessDeniedComponent } from './components/access-denied/access-denied.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { SettingsComponent } from './components/settings/settings.component';
 
@@ -61,8 +63,11 @@ const routes: Routes = [
   {
     path: 'admin',
     loadChildren: () => import('./components/admin-dashboard/admin-dashboard.module').then(m => m.AdminDashboardModule),
-    canActivate: [AuthGuard],
-    data: { role: 'admin' }
+    canActivate: [AuthGuard, AdminGuard]
+  },
+  {
+    path: 'access-denied',
+    component: AccessDeniedComponent
   },
   {
     path: 'voice-commands',
