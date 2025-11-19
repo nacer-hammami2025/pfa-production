@@ -8,6 +8,22 @@ const routes: Routes = [
   {
     path: '',
     component: IntegrationsComponent
+  },
+  {
+    path: 'google-calendar/callback',
+    component: IntegrationsComponent
+  },
+  {
+    path: 'outlook/callback',
+    component: IntegrationsComponent
+  },
+  {
+    path: 'slack/callback',
+    component: IntegrationsComponent
+  },
+  {
+    path: 'trello/callback',
+    component: IntegrationsComponent
   }
 ];
 

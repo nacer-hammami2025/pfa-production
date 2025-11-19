@@ -199,6 +199,11 @@ export class IntegrationsComponent implements OnInit, OnDestroy {
           queryParams: {}
         });
         alert(`${this.getIntegrationDisplayName(provider.replace('-', ''))} connecté avec succès !`);
+        
+        // Redirect to setup guide section
+        setTimeout(() => {
+          this.scrollToSetupGuide();
+        }, 500);
       },
       error => {
         console.error(`Error connecting ${provider}:`, error);
@@ -264,5 +269,16 @@ export class IntegrationsComponent implements OnInit, OnDestroy {
         alert('Erreur lors de l\'envoi de la notification de test');
       }
     );
+  }
+
+  // Scroll to setup guide section
+  private scrollToSetupGuide(): void {
+    const guideElement = document.querySelector('.integration-instructions');
+    if (guideElement) {
+      guideElement.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start' 
+      });
+    }
   }
 }
