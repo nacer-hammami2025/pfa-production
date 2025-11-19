@@ -12,9 +12,13 @@ import { OfflineIndicatorComponent } from './components/offline-indicator/offlin
 import { NotificationsComponent } from './components/notifications.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { SettingsComponent } from './components/settings/settings.component';
+import { AccessDeniedComponent } from './components/access-denied/access-denied.component';
+import { AdminOnlyDirective } from './directives/admin-only.directive';
 
 import { AuthGuard } from './guards/auth.guard';
+import { AdminGuard } from './guards/admin.guard';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { AdminAccessInterceptor } from './interceptors/admin-access.interceptor';
 import { NgChartsModule } from 'ng2-charts';
 import { APP_INITIALIZER } from '@angular/core';
 import { AuthService } from './services/auth.service';
@@ -29,7 +33,9 @@ export function appInitializer(authService: AuthService) {
     OfflineIndicatorComponent,
     NotificationsComponent,
     ProfileComponent,
-    SettingsComponent
+    SettingsComponent,
+    AccessDeniedComponent,
+    AdminOnlyDirective
   ],
   imports: [
     BrowserModule,
@@ -44,9 +50,15 @@ export function appInitializer(authService: AuthService) {
   ],
   providers: [
     AuthGuard,
+    AdminGuard,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AdminAccessInterceptor,
       multi: true
     },
     {
