@@ -32,7 +32,13 @@ export class AdminGuard implements CanActivate {
     }
 
     // Rediriger vers la page d'accès refusé avec un message professionnel
-    this.router.navigate(['/access-denied']);
+    this.router.navigate(['/access-denied'], {
+      queryParams: {
+        reason: 'admin-only',
+        attempted: 'admin',
+        message: 'Cette section est réservée aux administrateurs. Votre compte utilisateur ne dispose pas des privilèges nécessaires.'
+      }
+    });
     return false;
   }
 }

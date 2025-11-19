@@ -1,0 +1,76 @@
+<div class="access-denied-container">
+  <div class="access-denied-card">
+    <!-- Icône et titre principal -->
+    <div class="header-section">
+      <mat-icon class="error-icon" color="warn">block</mat-icon>
+      <h1 class="main-title">Accès Refusé</h1>
+      <p class="subtitle">Vous n'êtes pas autorisé à accéder à cette section</p>
+    </div>
+
+    <!-- Section d'information -->
+    <mat-card class="info-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>info</mat-icon>
+          Détails de la restriction
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="info-item">
+          <span class="label">Votre compte :</span>
+          <span class="value">{{ userEmail }} ({{ getRoleDisplayName(userRole) }})</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Accès demandé :</span>
+          <span class="value">{{ getRoleDisplayName(attemptedRole) }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Raison :</span>
+          <span class="value">{{ getReasonMessage() }}</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Section recommandations -->
+    <mat-card class="recommendation-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>lightbulb</mat-icon>
+          Que faire maintenant ?
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>{{ getRecommendation() }}</p>
+        <ul class="recommendation-list">
+          <li>Vérifiez que vous utilisez le bon compte</li>
+          <li>Contactez votre administrateur si vous pensez avoir besoin d'un accès</li>
+          <li>Consultez la documentation utilisateur pour plus d'informations</li>
+        </ul>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Section actions -->
+    <div class="actions-section">
+      <button mat-raised-button color="primary" (click)="navigateToUserDashboard()" class="action-btn">
+        <mat-icon>dashboard</mat-icon>
+        Aller au tableau de bord
+      </button>
+      
+      <button mat-raised-button color="accent" (click)="contactSupport()" class="action-btn">
+        <mat-icon>contact_support</mat-icon>
+        Contacter le support
+      </button>
+      
+      <button mat-stroked-button (click)="logout()" class="action-btn">
+        <mat-icon>logout</mat-icon>
+        Se déconnecter
+      </button>
+    </div>
+
+    <!-- Message de sécurité -->
+    <div class="security-notice">
+      <mat-icon>security</mat-icon>
+      <span>Cette restriction fait partie de nos mesures de sécurité pour protéger votre organisation.</span>
+    </div>
+  </div>
+</div>

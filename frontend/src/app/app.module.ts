@@ -12,7 +12,7 @@ import { OfflineIndicatorComponent } from './components/offline-indicator/offlin
 import { NotificationsComponent } from './components/notifications.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { SettingsComponent } from './components/settings/settings.component';
-import { AccessDeniedComponent } from './components/access-denied/access-denied.component';
+import { AccessDeniedComponent } from './components/access-denied.component';
 import { AdminOnlyDirective } from './directives/admin-only.directive';
 
 import { AuthGuard } from './guards/auth.guard';
@@ -21,6 +21,9 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { AdminAccessInterceptor } from './interceptors/admin-access.interceptor';
 import { NgChartsModule } from 'ng2-charts';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 import { APP_INITIALIZER } from '@angular/core';
 import { AuthService } from './services/auth.service';
 
@@ -48,7 +51,10 @@ export function appInitializer(authService: AuthService) {
     ReactiveFormsModule,
     AppRoutingModule,
     NgChartsModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatCardModule,
+    MatIconModule,
+    MatButtonModule
   ],
   providers: [
     AuthGuard,
