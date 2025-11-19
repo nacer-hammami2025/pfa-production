@@ -42,19 +42,19 @@ export const environment = {
   integrations: {
     google: {
       clientId: '310821257679-u275u71vsiuv2qv67sqq2s3q2pdlteun.apps.googleusercontent.com',
-      redirectUri: 'https://nacer-dev.me/integrations/google-calendar/callback'
+      redirectUri: 'https://nacer-dev.me/api/integrations/google-calendar/callback'
     },
     outlook: {
       clientId: 'your_outlook_client_id_here',
-      redirectUri: 'https://nacer-dev.me/integrations/outlook/callback'
+      redirectUri: 'https://nacer-dev.me/api/integrations/outlook/callback'
     },
     slack: {
       clientId: 'your_slack_client_id_here',
-      redirectUri: 'https://nacer-dev.me/integrations/slack/callback'
+      redirectUri: 'https://nacer-dev.me/api/integrations/slack/callback'
     },
     trello: {
       apiKey: 'your_trello_api_key_here',
-      redirectUri: 'https://nacer-dev.me/integrations/trello/callback'
+      redirectUri: 'https://nacer-dev.me/api/integrations/trello/callback'
     }
   }
 };

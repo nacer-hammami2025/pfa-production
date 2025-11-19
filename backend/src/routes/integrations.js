@@ -28,7 +28,7 @@ router.post('/google-calendar/connect', auth, async (req, res) => {
     const oauth2Client = new google.auth.OAuth2(
       process.env.GOOGLE_CLIENT_ID,
       process.env.GOOGLE_CLIENT_SECRET,
-      `${process.env.FRONTEND_URL}/integrations/google-calendar/callback`
+      `${process.env.FRONTEND_URL || 'https://nacer-dev.me'}/api/integrations/google-calendar/callback`
     );
 
     const { tokens } = await oauth2Client.getToken(code);
@@ -414,6 +414,53 @@ router.delete('/:provider', auth, async (req, res) => {
     res.json({ message: `${provider} disconnected successfully` });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+});
+
+// OAuth Callback Routes - Redirect to frontend with parameters
+router.get('/google-calendar/callback', (req, res) => {
+  const { code, state, error } = req.query;
+  const frontendUrl = process.env.FRONTEND_URL || 'https://nacer-dev.me';
+  
+  if (error) {
+    // Redirect to integrations page with error
+    res.redirect(`${frontendUrl}/integrations?error=${error}&provider=google-calendar`);
+  } else {
+    // Redirect to integrations page with OAuth code
+    res.redirect(`${frontendUrl}/integrations/google-calendar/callback?code=${code}&state=google-calendar`);
+  }
+});
+
+router.get('/outlook/callback', (req, res) => {
+  const { code, state, error } = req.query;
+  const frontendUrl = process.env.FRONTEND_URL || 'https://nacer-dev.me';
+  
+  if (error) {
+    res.redirect(`${frontendUrl}/integrations?error=${error}&provider=outlook`);
+  } else {
+    res.redirect(`${frontendUrl}/integrations/outlook/callback?code=${code}&state=outlook`);
+  }
+});
+
+router.get('/slack/callback', (req, res) => {
+  const { code, state, error } = req.query;
+  const frontendUrl = process.env.FRONTEND_URL || 'https://nacer-dev.me';
+  
+  if (error) {
+    res.redirect(`${frontendUrl}/integrations?error=${error}&provider=slack`);
+  } else {
+    res.redirect(`${frontendUrl}/integrations/slack/callback?code=${code}&state=slack`);
+  }
+});
+
+router.get('/trello/callback', (req, res) => {
+  const { token, error } = req.query; // Trello uses 'token' instead of 'code'
+  const frontendUrl = process.env.FRONTEND_URL || 'https://nacer-dev.me';
+  
+  if (error) {
+    res.redirect(`${frontendUrl}/integrations?error=${error}&provider=trello`);
+  } else {
+    res.redirect(`${frontendUrl}/integrations/trello/callback?code=${token}&state=trello`);
   }
 });
 
