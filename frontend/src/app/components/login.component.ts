@@ -134,10 +134,19 @@ export class LoginComponent implements OnInit {
 
   private handleLoginError(error: any): void {
     // Gérer les erreurs avec messages du backend
-    if (error.error && error.error.errors && error.error.errors.length > 0) {
+    if (error.status === 403) {
+      // SÉCURITÉ: Tentative d'accès avec un rôle inapproprié - rediriger vers access-denied
+      console.log('🚨 TENTATIVE D\'ACCÈS NON AUTORISÉ DÉTECTÉE', error);
+      this.router.navigate(['/access-denied'], { 
+        queryParams: { 
+          reason: 'role-mismatch',
+          attempted: this.userType,
+          message: error.error?.errors?.[0]?.msg || 'Accès refusé'
+        }
+      });
+      return;
+    } else if (error.error && error.error.errors && error.error.errors.length > 0) {
       this.errorMessage = error.error.errors[0].msg;
-    } else if (error.status === 403) {
-      this.errorMessage = 'Accès refusé. Vérifiez vos identifiants et le type de compte.';
     } else if (error.status === 401 || error.status === 400) {
       this.errorMessage = 'Email ou mot de passe incorrect';
     } else if (error.status === 0) {

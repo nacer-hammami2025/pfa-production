@@ -207,6 +207,17 @@ router.post(
         return res.status(400).json({ errors: [{ msg: 'Invalid credentials' }] });
       }
 
+      // VALIDATION CRITIQUE: Vérifier que le rôle demandé correspond au rôle réel
+      if (requestedRole && requestedRole !== user.role) {
+        console.log('[LOGIN] ❌ SECURITY BREACH ATTEMPT - User:', email, 'Real role:', user.role, 'Requested role:', requestedRole);
+        return res.status(403).json({ 
+          errors: [{ 
+            msg: 'Accès refusé. Vous ne pouvez pas vous connecter avec ce type de compte.',
+            details: `Votre compte est de type "${user.role}" mais vous tentez de vous connecter comme "${requestedRole}".`
+          }] 
+        });
+      }
+
       // Vérifier si MFA est activé
       if (user.mfaEnabled && user.mfaSecret) {
         console.log('[LOGIN] MFA required for:', email);
