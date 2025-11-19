@@ -90,8 +90,16 @@ export class AuthService {
 
       const success = this.handleAuthResponse(res);
       return { success };
-    } catch (err) {
+    } catch (err: any) {
       console.error('Login error:', err);
+      
+      // IMPORTANT: Pour les erreurs 403 (accès refusé), on relance l'erreur HTTP telle quelle
+      // pour que login.component.ts puisse détecter error.status === 403
+      if (err?.status === 403) {
+        throw err; // Relancer l'HttpErrorResponse sans transformation
+      }
+      
+      // Pour les autres erreurs, on transforme en Error classique
       throw this.handleError(err);
     }
   }
