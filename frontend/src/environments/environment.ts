@@ -1,5 +1,6 @@
 export const environment = {
   production: false,
+  apiUrl: '/api',
   integrations: {
     google: {
       clientId: '310821257679-u275u71vsiuv2qv67sqq2s3q2pdlteun.apps.googleusercontent.com',

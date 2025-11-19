@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 export interface JwtPayload {
   sub?: string;
@@ -25,7 +26,7 @@ export interface AuthResponse {
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private base = '/api'; // Use relative path for proxy
+  private base = environment.apiUrl;
   private readonly tokenKey = 'pfa_token';
   private currentUserSubject = new BehaviorSubject<any>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
@@ -36,22 +37,30 @@ export class AuthService {
   }
 
   // Méthode pour initialiser l'état d'authentification de manière asynchrone
-  public initializeAuthState(): Promise<void> {
-    return new Promise((resolve) => {
+  public async initializeAuthState(): Promise<void> {
+    try {
       const token = this.getToken();
       if (token) {
         const payload = this.decodePayload(token);
         if (payload && this.isTokenValid(payload)) {
-          // Extract role from payload
+          // Extract role from payload first (offline-first approach)
           const role = payload['user']?.['role'] || payload['role'];
           const userWithRole = { ...payload, role };
           this.currentUserSubject.next(userWithRole);
+          
+          // Try to validate with server in background (non-blocking)
+          this.validateTokenWithServer().catch(serverError => {
+            console.warn('Background server validation failed:', serverError);
+            // Keep the local user data, server validation is optional
+          });
         } else {
           this.logout(); // Token invalide ou expiré
         }
       }
-      resolve();
-    });
+    } catch (error) {
+      console.warn('Auth initialization failed:', error);
+      this.logout();
+    }
   }
 
   async register(name: string, email: string, password: string): Promise<boolean> {
@@ -234,14 +243,33 @@ export class AuthService {
 
   private handleError(error: any): Error {
     let errorMessage = 'Une erreur inattendue est survenue';
+    
+    console.error('AuthService Error Details:', {
+      error: error,
+      status: error?.status,
+      statusText: error?.statusText,
+      url: error?.url,
+      message: error?.message,
+      errorObject: error?.error
+    });
+    
     if (error instanceof HttpErrorResponse) {
       // Check if there's an error array (validation errors)
       if (error.error?.errors && Array.isArray(error.error.errors)) {
         errorMessage = error.error.errors.map((e: any) => e.msg).join(', ');
+      } else if (error.status === 0) {
+        errorMessage = 'Impossible de se connecter au serveur. Vérifiez votre connexion internet.';
+      } else if (error.status === 404) {
+        errorMessage = 'Service non disponible. Veuillez réessayer plus tard.';
+      } else if (error.status >= 500) {
+        errorMessage = 'Erreur serveur temporaire. Veuillez réessayer.';
       } else {
-        errorMessage = error.error?.message || error.message || 'Une erreur serveur est survenue';
+        errorMessage = error.error?.message || error.message || `Erreur ${error.status}: ${error.statusText}`;
       }
+    } else if (error?.name === 'TimeoutError') {
+      errorMessage = 'Délai de connexion expiré. Veuillez réessayer.';
     }
+    
     return new Error(errorMessage);
   }
 
@@ -255,5 +283,22 @@ export class AuthService {
       }
     }
     return 'user'; // Default to 'user' if no valid role is found
+  }
+
+  // Valider le token avec le serveur
+  private async validateTokenWithServer(): Promise<any> {
+    try {
+      const res = await this.http.get<any>(`${this.base}/auth/me`).toPromise();
+      if (res && res.user) {
+        // Update current user with server data
+        this.currentUserSubject.next(res.user);
+        return res.user;
+      }
+      throw new Error('Invalid server response');
+    } catch (error) {
+      // Don't throw error, just log it and continue with local validation
+      console.warn('Server validation failed:', error);
+      throw error;
+    }
   }
 }
