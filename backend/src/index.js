@@ -151,6 +151,15 @@ try {
   console.error('[INDEX] Error loading users route:', err.message);
   console.error('[INDEX] Full error:', err);
 }
+try {
+  const teamCreationRequestsRoute = require('./routes/team-creation-requests');
+  console.log('[INDEX] Team creation requests route loaded successfully');
+  app.use('/api/team-creation-requests', teamCreationRequestsRoute);
+  console.log('[INDEX] Team creation requests route registered');
+} catch (err) {
+  console.error('[INDEX] Error loading team creation requests route:', err.message);
+  console.error('[INDEX] Full error:', err);
+}
 
 // Serve uploaded files
 const path = require('path');
