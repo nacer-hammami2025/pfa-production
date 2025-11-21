@@ -177,6 +177,15 @@ try {
   console.error('[INDEX] Error loading persistent notifications route:', err.message);
   console.error('[INDEX] Full error:', err);
 }
+try {
+  const teamsRoute = require('./routes/teams');
+  console.log('[INDEX] Teams route loaded successfully');
+  app.use('/api/teams', teamsRoute);
+  console.log('[INDEX] Teams route registered');
+} catch (err) {
+  console.error('[INDEX] Error loading teams route:', err.message);
+  console.error('[INDEX] Full error:', err);
+}
 
 // Serve uploaded files
 const path = require('path');

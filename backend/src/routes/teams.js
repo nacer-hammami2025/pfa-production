@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
-const Team = require('../../models/Team');
+const Team = require('../models/Team');
 
 // Create a new team
 router.post('/', auth, async (req, res) => {
