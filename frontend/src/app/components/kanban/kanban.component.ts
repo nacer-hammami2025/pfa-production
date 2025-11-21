@@ -69,6 +69,8 @@ export class KanbanComponent implements OnInit {
   }
 
   drop(event: CdkDragDrop<KanbanTask[]>, newStatus: 'todo' | 'in-progress' | 'done'): void {
+    console.log('🔄 Drop event:', { previousContainer: event.previousContainer.id, container: event.container.id, newStatus });
+
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
@@ -78,8 +80,9 @@ export class KanbanComponent implements OnInit {
         event.previousIndex,
         event.currentIndex
       );
-      
+
       const task = event.container.data[event.currentIndex];
+      console.log('📋 Task moved:', { taskId: task._id, title: task.title, newStatus });
       this.updateTaskStatus(task._id, newStatus);
     }
   }
@@ -87,14 +90,20 @@ export class KanbanComponent implements OnInit {
   updateTaskStatus(taskId: string, status: string): void {
     // Map Kanban status to API status
     const apiStatus = status; // status is already 'todo', 'in-progress', or 'done'
+    console.log('🚀 Updating task status:', { taskId, status, apiStatus });
 
     // Find the task to get its title for the notification
     const allTasks = [...this.todoTasks, ...this.inProgressTasks, ...this.doneTasks];
     const task = allTasks.find(t => t._id === taskId);
+    console.log('📝 Found task:', task);
 
     this.taskService.updateTask(taskId, { status: apiStatus } as any).subscribe({
       next: (updatedTask: any) => {
-        console.log('✅ Statut mis à jour:', updatedTask.status || status);
+        console.log('✅ Status updated successfully:', updatedTask);
+        console.log('📊 Updated task status:', updatedTask.status || status);
+
+        // Update the task in the local arrays to reflect the change
+        this.updateLocalTaskStatus(taskId, status);
 
         // Show success notification
         const statusLabels = {
@@ -113,7 +122,7 @@ export class KanbanComponent implements OnInit {
         });
       },
       error: (err) => {
-        console.error('❌ Erreur lors de la mise à jour du statut:', err);
+        console.error('❌ Error updating status:', err);
 
         // Show error notification
         this.notificationService.addNotification({
@@ -128,7 +137,38 @@ export class KanbanComponent implements OnInit {
         this.loadTasks();
       }
     });
-  }  createTask(): void {
+  }
+
+  updateLocalTaskStatus(taskId: string, newStatus: string): void {
+    // Update the task status in the local arrays
+    const allTasks = [...this.todoTasks, ...this.inProgressTasks, ...this.doneTasks];
+    const taskIndex = allTasks.findIndex(t => t._id === taskId);
+
+    if (taskIndex !== -1) {
+      const task = allTasks[taskIndex];
+      task.status = newStatus as 'todo' | 'in-progress' | 'done';
+      console.log('🔄 Local task status updated:', { taskId, newStatus, taskTitle: task.title });
+    }
+
+    // Reorganize tasks into correct arrays based on new status
+    this.reorganizeTasks();
+  }
+
+  reorganizeTasks(): void {
+    const allTasks = [...this.todoTasks, ...this.inProgressTasks, ...this.doneTasks];
+
+    this.todoTasks = allTasks.filter(t => t.status === 'todo');
+    this.inProgressTasks = allTasks.filter(t => t.status === 'in-progress');
+    this.doneTasks = allTasks.filter(t => t.status === 'done');
+
+    console.log('🔄 Tasks reorganized:', {
+      todo: this.todoTasks.length,
+      inProgress: this.inProgressTasks.length,
+      done: this.doneTasks.length
+    });
+  }
+
+  createTask(): void {
     if (!this.newTask.title) return;
     
     this.loading = true;
