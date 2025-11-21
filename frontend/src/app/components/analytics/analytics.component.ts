@@ -151,121 +151,206 @@ interface TrendData {
   `,
   styles: [`
     .analytics-dashboard {
-      padding: 20px;
-      max-width: 1200px;
+      padding: 30px;
+      max-width: 1400px;
       margin: 0 auto;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
     .analytics-header {
       text-align: center;
-      margin-bottom: 30px;
+      margin-bottom: 40px;
+      color: white;
     }
 
     .analytics-header h1 {
-      color: #2c3e50;
-      font-size: 2.5rem;
-      margin-bottom: 10px;
+      font-size: 3rem;
+      margin-bottom: 15px;
+      font-weight: 700;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      background: linear-gradient(45deg, #fff, #f0f8ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
     .analytics-subtitle {
-      color: #7f8c8d;
-      font-size: 1.1rem;
+      font-size: 1.2rem;
+      opacity: 0.9;
+      font-weight: 300;
     }
 
     .metrics-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-      margin-bottom: 40px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+      margin-bottom: 50px;
     }
 
     .metric-card {
-      background: white;
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
       display: flex;
       align-items: center;
-      gap: 15px;
-      transition: transform 0.2s ease;
+      gap: 20px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .metric-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #f5576c);
+      background-size: 300% 100%;
+      animation: gradientShift 3s ease infinite;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
 
     .metric-card:hover {
-      transform: translateY(-2px);
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
     }
 
     .metric-icon {
-      font-size: 2rem;
-      width: 60px;
-      height: 60px;
+      font-size: 3rem;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      border-radius: 12px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
       color: white;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+      flex-shrink: 0;
     }
 
     .metric-content h3 {
-      font-size: 2rem;
-      font-weight: bold;
+      margin: 0 0 8px 0;
+      font-size: 1.1rem;
       color: #2c3e50;
-      margin: 0 0 5px 0;
+      font-weight: 600;
     }
 
-    .metric-content p {
-      color: #7f8c8d;
+    .metric-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #667eea;
       margin: 0;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+
+    .metric-label {
+      color: #7f8c8d;
       font-size: 0.9rem;
+      margin: 0;
+      font-weight: 500;
     }
 
     .charts-section {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+      grid-template-columns: 1fr 1fr;
       gap: 30px;
-      margin-bottom: 40px;
+      margin-bottom: 50px;
+    }
+
+    @media (max-width: 1024px) {
+      .charts-section {
+        grid-template-columns: 1fr;
+      }
     }
 
     .chart-container {
-      background: white;
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .chart-container:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
     }
 
     .chart-container h2 {
       color: #2c3e50;
-      margin-bottom: 20px;
       font-size: 1.5rem;
+      margin-bottom: 25px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
     .trend-chart {
-      margin-top: 20px;
+      margin-bottom: 20px;
     }
 
-    .trend-bars {
+    .chart-placeholder {
       display: flex;
       align-items: end;
       justify-content: space-between;
       height: 200px;
       margin-bottom: 20px;
+      padding: 20px;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      border-radius: 15px;
+      position: relative;
+    }
+
+    .trend-bars {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 60px;
+      position: relative;
     }
 
     .bar {
       display: flex;
       flex-direction: column;
       align-items: center;
-      width: 40px;
+      width: 25px;
       position: relative;
+      margin: 0 2px;
+      border-radius: 4px 4px 0 0;
+      transition: all 0.3s ease;
+      cursor: pointer;
     }
 
     .bar.completed {
       background: linear-gradient(to top, #27ae60, #2ecc71);
-      margin-right: 5px;
+      box-shadow: 0 2px 8px rgba(39, 174, 96, 0.3);
     }
 
     .bar.created {
       background: linear-gradient(to top, #e74c3c, #c0392b);
+      box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+      margin-top: 5px;
+    }
+
+    .bar:hover {
+      transform: scale(1.1);
     }
 
     .bar-value {
@@ -274,39 +359,54 @@ interface TrendData {
       color: #2c3e50;
       font-weight: bold;
       font-size: 0.8rem;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 2px 6px;
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .bar:hover .bar-value {
+      opacity: 1;
     }
 
     .bar-label {
-      margin-top: 10px;
+      margin-top: 15px;
       font-size: 0.8rem;
       color: #7f8c8d;
       text-align: center;
+      font-weight: 500;
     }
 
     .chart-legend {
       display: flex;
       justify-content: center;
-      gap: 20px;
+      gap: 30px;
+      margin-top: 20px;
     }
 
     .legend-item {
       display: flex;
       align-items: center;
       gap: 8px;
+      font-size: 0.9rem;
+      color: #2c3e50;
+      font-weight: 500;
     }
 
     .legend-color {
-      width: 12px;
-      height: 12px;
-      border-radius: 2px;
+      width: 16px;
+      height: 16px;
+      border-radius: 3px;
     }
 
     .legend-color.completed {
-      background: #27ae60;
+      background: linear-gradient(to right, #27ae60, #2ecc71);
     }
 
     .legend-color.created {
-      background: #e74c3c;
+      background: linear-gradient(to right, #e74c3c, #c0392b);
     }
 
     .category-stats {
@@ -316,32 +416,41 @@ interface TrendData {
     }
 
     .category-item {
-      padding: 15px;
-      border: 1px solid #ecf0f1;
-      border-radius: 8px;
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      border-radius: 12px;
+      padding: 20px;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .category-item:hover {
+      transform: translateX(5px);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     }
 
     .category-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
 
     .category-name {
-      font-weight: bold;
+      font-weight: 600;
       color: #2c3e50;
+      font-size: 1.1rem;
     }
 
     .category-count {
       color: #7f8c8d;
       font-size: 0.9rem;
+      font-weight: 500;
     }
 
     .category-progress {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
     }
 
     .progress-bar {
@@ -350,34 +459,59 @@ interface TrendData {
       background: #ecf0f1;
       border-radius: 4px;
       overflow: hidden;
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
     }
 
     .progress-fill {
       height: 100%;
-      background: linear-gradient(90deg, #3498db, #2980b9);
+      background: linear-gradient(90deg, #667eea, #764ba2);
       border-radius: 4px;
-      transition: width 0.3s ease;
+      transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+
+    .progress-fill::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      animation: shimmer 2s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
     }
 
     .progress-text {
+      font-weight: 600;
+      color: #667eea;
       font-size: 0.9rem;
-      font-weight: bold;
-      color: #2c3e50;
       min-width: 45px;
+      text-align: right;
     }
 
-    .insights-section, .tips-section {
-      background: white;
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    .insights-section {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 30px;
       margin-bottom: 30px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
-    .insights-section h2, .tips-section h2 {
+    .insights-section h2 {
       color: #2c3e50;
-      margin-bottom: 20px;
       font-size: 1.5rem;
+      margin-bottom: 20px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
     .insights-grid {
@@ -387,95 +521,123 @@ interface TrendData {
     }
 
     .insight-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-radius: 15px;
+      padding: 20px;
       display: flex;
       align-items: flex-start;
       gap: 15px;
-      padding: 15px;
-      border: 1px solid #ecf0f1;
-      border-radius: 8px;
-      background: #f8f9fa;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .insight-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
     }
 
     .insight-icon {
-      font-size: 1.5rem;
-      width: 40px;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      border-radius: 8px;
-      color: white;
+      font-size: 2rem;
       flex-shrink: 0;
     }
 
-    .insight-content h4 {
-      color: #2c3e50;
-      margin: 0 0 5px 0;
+    .insight-content h3 {
+      margin: 0 0 8px 0;
       font-size: 1.1rem;
+      font-weight: 600;
     }
 
     .insight-content p {
-      color: #7f8c8d;
       margin: 0;
-      font-size: 0.9rem;
+      opacity: 0.9;
+      line-height: 1.5;
     }
 
-    .tips-list {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
+    .tips-section {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
-    .tip-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 15px;
-      padding: 15px;
-      border: 1px solid #ecf0f1;
-      border-radius: 8px;
-      background: #f8f9fa;
-    }
-
-    .tip-number {
-      width: 30px;
-      height: 30px;
+    .tips-section h2 {
+      color: #2c3e50;
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      font-weight: 600;
       display: flex;
       align-items: center;
-      justify-content: center;
-      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-      color: white;
-      border-radius: 50%;
-      font-weight: bold;
-      flex-shrink: 0;
+      gap: 10px;
     }
 
-    .tip-content h4 {
+    .tips-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 20px;
+    }
+
+    .tip-card {
+      background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+      border-radius: 15px;
+      padding: 25px;
+      border: 1px solid rgba(0,0,0,0.05);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tip-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: linear-gradient(to bottom, #667eea, #764ba2);
+    }
+
+    .tip-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+
+    .tip-card h3 {
+      margin: 0 0 12px 0;
       color: #2c3e50;
-      margin: 0 0 5px 0;
-      font-size: 1.1rem;
+      font-size: 1.2rem;
+      font-weight: 600;
     }
 
-    .tip-content p {
-      color: #7f8c8d;
+    .tip-card p {
       margin: 0;
-      font-size: 0.9rem;
+      color: #5a6c7d;
+      line-height: 1.6;
     }
 
     @media (max-width: 768px) {
       .analytics-dashboard {
-        padding: 10px;
+        padding: 20px;
+      }
+
+      .analytics-header h1 {
+        font-size: 2.5rem;
       }
 
       .metrics-grid {
         grid-template-columns: 1fr;
+        gap: 20px;
       }
 
       .charts-section {
         grid-template-columns: 1fr;
+        gap: 20px;
       }
 
-      .insights-grid {
+      .insights-grid,
+      .tips-grid {
         grid-template-columns: 1fr;
       }
     }
@@ -520,14 +682,74 @@ export class AnalyticsComponent implements OnInit, OnDestroy {
       combineLatest([
         this.taskService.getTasks(),
         this.taskService.getTaskStats()
-      ]).subscribe(([tasks, stats]) => {
-        this.calculateProductivityMetrics(tasks);
-        this.calculateCategoryStats(tasks);
-        this.generateTrendData(tasks);
-        this.generateInsights(tasks, stats);
-        this.generateProductivityTips();
+      ]).subscribe({
+        next: ([tasks, stats]) => {
+          console.log('Analytics data loaded:', { tasksCount: tasks.length, stats });
+          this.calculateProductivityMetrics(tasks);
+          this.calculateCategoryStats(tasks);
+          this.generateTrendData(tasks);
+          this.generateInsights(tasks, stats);
+          this.generateProductivityTips();
+        },
+        error: (error) => {
+          console.error('Error loading analytics data:', error);
+          // Initialize with default data on error
+          this.initializeDefaultData();
+        }
       })
     );
+  }
+
+  private initializeDefaultData(): void {
+    // Initialize with sample data for demonstration
+    this.productivityMetrics = {
+      tasksCompletedToday: 0,
+      tasksCompletedThisWeek: 0,
+      averageTasksPerDay: 0,
+      completionRate: 0,
+      streakDays: 0,
+      mostProductiveDay: 'Aucun',
+      mostProductiveHour: 9
+    };
+
+    this.categoryStats = [
+      { category: 'Travail', total: 0, completed: 0, completionRate: 0, averageCompletionTime: 0 },
+      { category: 'Personnel', total: 0, completed: 0, completionRate: 0, averageCompletionTime: 0 },
+      { category: 'Courses', total: 0, completed: 0, completionRate: 0, averageCompletionTime: 0 },
+      { category: 'Santé', total: 0, completed: 0, completionRate: 0, averageCompletionTime: 0 },
+      { category: 'Éducation', total: 0, completed: 0, completionRate: 0, averageCompletionTime: 0 },
+      { category: 'Autre', total: 0, completed: 0, completionRate: 0, averageCompletionTime: 0 }
+    ];
+
+    this.generateDefaultTrendData();
+    this.generateInsights([], { 
+      total: 0, 
+      completed: 0, 
+      pending: 0, 
+      overdue: 0, 
+      byPriority: { low: 0, medium: 0, high: 0, urgent: 0 }, 
+      byCategory: { work: 0, personal: 0, shopping: 0, health: 0, education: 0, other: 0 }, 
+      completionRate: 0 
+    });
+    this.generateProductivityTips();
+  }
+
+  private generateDefaultTrendData(): void {
+    const now = new Date();
+    this.trendData = [];
+
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
+      this.trendData.push({
+        date: date.toISOString().split('T')[0],
+        completed: 0,
+        created: 0,
+        productivity: 0
+      });
+    }
+
+    this.maxCompletedTasks = 1;
+    this.maxCreatedTasks = 1;
   }
 
   private calculateProductivityMetrics(tasks: Task[]): void {
