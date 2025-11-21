@@ -160,12 +160,21 @@ try {
   console.error('[INDEX] Full error:', err);
 }
 try {
-  const teamCreationRequestsRoute = require('../routes/team-creation-requests');
+  const teamCreationRequestsRoute = require('./routes/team-creation-requests');
   console.log('[INDEX] Team creation requests route loaded successfully');
   app.use('/api/team-creation-requests', teamCreationRequestsRoute);
   console.log('[INDEX] Team creation requests route registered');
 } catch (err) {
   console.error('[INDEX] Error loading team creation requests route:', err.message);
+  console.error('[INDEX] Full error:', err);
+}
+try {
+  const persistentNotificationsRoute = require('../routes/persistent-notifications');
+  console.log('[INDEX] Persistent notifications route loaded successfully');
+  app.use('/api/notifications', persistentNotificationsRoute);
+  console.log('[INDEX] Persistent notifications route registered');
+} catch (err) {
+  console.error('[INDEX] Error loading persistent notifications route:', err.message);
   console.error('[INDEX] Full error:', err);
 }
 

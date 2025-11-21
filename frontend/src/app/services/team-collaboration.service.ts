@@ -15,7 +15,7 @@ import {
 })
 export class TeamCollaborationService {
   private base = '/api';
-  private apiUrl = `${this.base}/api/teams`;
+  private apiUrl = `${this.base}/teams`;
 
   // BehaviorSubjects for reactive state
   private currentTeamSubject = new BehaviorSubject<Team | null>(null);
