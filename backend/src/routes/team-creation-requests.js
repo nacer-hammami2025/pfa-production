@@ -1,225 +1,292 @@
 const express = require('express');
 const router = express.Router();
-const auth = require('../middleware/auth');
-const TeamCreationRequest = require('../../models/TeamCreationRequest');
-const Team = require('../../models/Team');
-const User = require('../../models/User');
-const Notification = require('../../models/Notification');
+const TeamCreationRequest = require('../models/TeamCreationRequest');
+const Team = require('../models/Team');
+const User = require('../models/User');
+const PersistentNotification = require('../models/PersistentNotification');
+const authenticateToken = require('../middleware/auth');
+const requireAdmin = require('../middleware/admin');
 
-// Create a team creation request
-router.post('/request', auth, async (req, res) => {
+// Create a new team creation request
+router.post('/request', authenticateToken, async (req, res) => {
   try {
+    console.log('🔥 DEMANDE CRÉATION ÉQUIPE REÇUE:', req.body);
+    console.log('👤 Utilisateur:', req.user);
+    
     const { teamName, teamDescription } = req.body;
+
+    if (!teamName || teamName.trim().length < 3) {
+      console.log('❌ Nom équipe invalide:', teamName);
+      return res.status(400).json({
+        message: 'Le nom de l\'équipe doit contenir au moins 3 caractères'
+      });
+    }
 
     // Check if user already has a pending request for this team name
     const existingRequest = await TeamCreationRequest.findOne({
-      requester: req.user.id,
-      teamName: teamName,
+      requester: req.user.userId,
+      teamName: teamName.trim(),
       status: 'pending'
     });
 
     if (existingRequest) {
       return res.status(400).json({
-        message: 'Vous avez déjà une demande en attente pour cette équipe.'
+        message: 'Vous avez déjà une demande en attente pour cette équipe'
       });
     }
 
     // Create the request
     const request = new TeamCreationRequest({
-      requester: req.user.id,
-      teamName,
-      teamDescription
+      requester: req.user.userId,
+      teamName: teamName.trim(),
+      teamDescription: teamDescription ? teamDescription.trim() : ''
     });
 
     await request.save();
 
-    // Find all admins to notify them
+    // Create notification for admins
     const admins = await User.find({ role: 'admin' });
-
-    // Create notifications for all admins
+    console.log(`👑 ${admins.length} admin(s) trouvé(s) pour notification`);
+    
     const notifications = admins.map(admin => ({
       user: admin._id,
-      type: 'team_creation_request',
-      title: 'Nouvelle demande de création d\'équipe',
-      message: `${req.user.username} souhaite créer l'équipe "${teamName}"`,
-      data: {
-        requestId: request._id,
-        requesterId: req.user.id,
-        requesterName: req.user.username,
-        teamName: teamName
-      },
+      type: 'info', 
+      title: '🏢 Nouvelle demande d\'\'équipe',
+      message: `👤 ${req.user.username} souhaite créer l\'\'équipe "${teamName}". Cliquez pour examiner la demande.`,
+      category: 'admin',
       priority: 'high',
+      action: {
+        label: '🔍 Examiner la demande',
+        callback: '/admin/team-requests'
+      },
+      persistent: true,
       read: false
     }));
 
-    await Notification.insertMany(notifications);
-
-    // Populate the request with user info for response
-    await request.populate('requester', 'username email');
+    await PersistentNotification.insertMany(notifications);
+    console.log('📨 Notifications admin créées avec succès');
 
     res.status(201).json({
-      message: 'Demande de création d\'équipe soumise avec succès.',
-      request
-    });
-  } catch (error) {
-    console.error('Error creating team creation request:', error);
-    res.status(500).json({ message: 'Erreur lors de la création de la demande.' });
-  }
-});
-
-// Get team creation requests (for admins)
-router.get('/requests', auth, async (req, res) => {
-  try {
-    // Check if user is admin
-    if (req.user.role !== 'admin') {
-      return res.status(403).json({ message: 'Accès non autorisé.' });
-    }
-
-    const { status, page = 1, limit = 10 } = req.query;
-    const query = status ? { status } : {};
-
-    const requests = await TeamCreationRequest.find(query)
-      .populate('requester', 'username email')
-      .populate('reviewedBy', 'username email')
-      .sort({ createdAt: -1 })
-      .limit(limit * 1)
-      .skip((page - 1) * limit);
-
-    const total = await TeamCreationRequest.countDocuments(query);
-
-    res.json({
-      requests,
-      pagination: {
-        page: parseInt(page),
-        limit: parseInt(limit),
-        total,
-        pages: Math.ceil(total / limit)
+      message: 'Demande de création d\'équipe soumise avec succès',
+      request: {
+        _id: request._id,
+        teamName: request.teamName,
+        teamDescription: request.teamDescription,
+        status: request.status,
+        createdAt: request.createdAt
       }
     });
+
   } catch (error) {
-    console.error('Error fetching team creation requests:', error);
-    res.status(500).json({ message: 'Erreur lors de la récupération des demandes.' });
+    console.error('Error creating team creation request:', error);
+    res.status(500).json({
+      message: 'Erreur lors de la création de la demande'
+    });
   }
 });
 
 // Get user's own team creation requests
-router.get('/my-requests', auth, async (req, res) => {
+router.get('/my-requests', authenticateToken, async (req, res) => {
   try {
-    const requests = await TeamCreationRequest.find({ requester: req.user.id })
-      .populate('reviewedBy', 'username email')
-      .sort({ createdAt: -1 });
+    const requests = await TeamCreationRequest.find({
+      requester: req.user.userId
+    })
+    .populate('reviewedBy', 'username email')
+    .sort({ createdAt: -1 });
 
     res.json(requests);
   } catch (error) {
-    console.error('Error fetching user team creation requests:', error);
-    res.status(500).json({ message: 'Erreur lors de la récupération de vos demandes.' });
+    console.error('Error fetching user requests:', error);
+    res.status(500).json({
+      message: 'Erreur lors de la récupération des demandes'
+    });
   }
 });
 
-// Approve or reject a team creation request (admin only)
-router.put('/requests/:id', auth, async (req, res) => {
+// Get all team creation requests (admin only)
+router.get('/requests', authenticateToken, requireAdmin, async (req, res) => {
   try {
-    // Check if user is admin
-    if (req.user.role !== 'admin') {
-      return res.status(403).json({ message: 'Accès non autorisé.' });
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const status = req.query.status;
+    const skip = (page - 1) * limit;
+
+    let query = {};
+    if (status && status !== 'all') {
+      query.status = status;
     }
 
-    const { id } = req.params;
-    const { action, reviewComment } = req.body; // action: 'approve' or 'reject'
-
-    if (!['approve', 'reject'].includes(action)) {
-      return res.status(400).json({ message: 'Action invalide.' });
-    }
-
-    const request = await TeamCreationRequest.findById(id)
-      .populate('requester', 'username email');
-
-    if (!request) {
-      return res.status(404).json({ message: 'Demande non trouvée.' });
-    }
-
-    if (request.status !== 'pending') {
-      return res.status(400).json({ message: 'Cette demande a déjà été traitée.' });
-    }
-
-    // Update the request
-    request.status = action === 'approve' ? 'approved' : 'rejected';
-    request.reviewedBy = req.user.id;
-    request.reviewComment = reviewComment;
-    request.reviewedAt = new Date();
-
-    await request.save();
-
-    // If approved, create the team
-    let createdTeam = null;
-    if (action === 'approve') {
-      const team = new Team({
-        name: request.teamName,
-        description: request.teamDescription,
-        owner: request.requester._id,
-        members: [{ user: request.requester._id, role: 'owner' }]
-      });
-
-      createdTeam = await team.save();
-    }
-
-    // Create notification for the requester
-    const notificationMessage = action === 'approve'
-      ? `Votre demande de création de l'équipe "${request.teamName}" a été approuvée. L'équipe a été créée avec succès.`
-      : `Votre demande de création de l'équipe "${request.teamName}" a été rejetée.${reviewComment ? ` Raison: ${reviewComment}` : ''}`;
-
-    const userNotification = new Notification({
-      user: request.requester._id,
-      type: action === 'approve' ? 'team_creation_approved' : 'team_creation_rejected',
-      title: action === 'approve' ? 'Équipe créée avec succès' : 'Demande d\'équipe rejetée',
-      message: notificationMessage,
-      data: {
-        requestId: request._id,
-        teamName: request.teamName,
-        teamId: createdTeam?._id,
-        reviewComment: reviewComment,
-        reviewerName: req.user.username
-      },
-      priority: 'normal',
-      read: false
-    });
-
-    await userNotification.save();
-
-    // Populate the updated request
-    await request.populate('reviewedBy', 'username email');
+    const total = await TeamCreationRequest.countDocuments(query);
+    const requests = await TeamCreationRequest.find(query)
+      .populate('requester', 'username email')
+      .populate('reviewedBy', 'username email')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
 
     res.json({
-      message: `Demande ${action === 'approve' ? 'approuvée' : 'rejetée'} avec succès.`,
-      request,
-      team: createdTeam
+      requests,
+      pagination: {
+        page,
+        limit,
+        total,
+        pages: Math.ceil(total / limit)
+      }
     });
+
   } catch (error) {
-    console.error('Error processing team creation request:', error);
-    res.status(500).json({ message: 'Erreur lors du traitement de la demande.' });
+    console.error('Error fetching team creation requests:', error);
+    res.status(500).json({
+      message: 'Erreur lors de la récupération des demandes'
+    });
+  }
+});
+
+// Get pending requests count (for admin dashboard)
+router.get('/requests/count', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const count = await TeamCreationRequest.countDocuments({ status: 'pending' });
+    res.json({ count });
+  } catch (error) {
+    console.error('Error counting pending requests:', error);
+    res.status(500).json({
+      message: 'Erreur lors du comptage des demandes'
+    });
   }
 });
 
 // Get a specific team creation request
-router.get('/requests/:id', auth, async (req, res) => {
+router.get('/requests/:id', authenticateToken, async (req, res) => {
   try {
     const request = await TeamCreationRequest.findById(req.params.id)
       .populate('requester', 'username email')
       .populate('reviewedBy', 'username email');
 
     if (!request) {
-      return res.status(404).json({ message: 'Demande non trouvée.' });
+      return res.status(404).json({
+        message: 'Demande non trouvée'
+      });
     }
 
-    // Check if user is admin or the requester
-    if (req.user.role !== 'admin' && request.requester._id.toString() !== req.user.id) {
-      return res.status(403).json({ message: 'Accès non autorisé.' });
+    // Check if user is the requester or an admin
+    if (request.requester._id.toString() !== req.user.userId && req.user.role !== 'admin') {
+      return res.status(403).json({
+        message: 'Accès non autorisé'
+      });
     }
 
     res.json(request);
   } catch (error) {
     console.error('Error fetching team creation request:', error);
-    res.status(500).json({ message: 'Erreur lors de la récupération de la demande.' });
+    res.status(500).json({
+      message: 'Erreur lors de la récupération de la demande'
+    });
+  }
+});
+
+// Approve or reject a team creation request (admin only)
+router.put('/requests/:id', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const { action, reviewComment } = req.body;
+
+    if (!['approve', 'reject'].includes(action)) {
+      return res.status(400).json({
+        message: 'Action invalide. Utilisez "approve" ou "reject"'
+      });
+    }
+
+    const request = await TeamCreationRequest.findById(req.params.id)
+      .populate('requester', 'username email');
+
+    if (!request) {
+      return res.status(404).json({
+        message: 'Demande non trouvée'
+      });
+    }
+
+    if (request.status !== 'pending') {
+      return res.status(400).json({
+        message: 'Cette demande a déjà été traitée'
+      });
+    }
+
+    // Update the request
+    request.status = action === 'approve' ? 'approved' : 'rejected';
+    request.reviewedBy = req.user.userId;
+    request.reviewComment = reviewComment ? reviewComment.trim() : '';
+    request.reviewedAt = new Date();
+
+    await request.save();
+
+    let team = null;
+
+    // If approved, create the team
+    if (action === 'approve') {
+      team = new Team({
+        name: request.teamName,
+        description: request.teamDescription,
+        owner: request.requester._id,
+        members: [{
+          user: request.requester._id,
+          role: 'owner',
+          joinedAt: new Date()
+        }],
+        createdAt: new Date(),
+        updatedAt: new Date()
+      });
+
+      await team.save();
+    }
+
+    // Create notification for the requester
+    const notificationMessage = action === 'approve'
+      ? `🎉 Excellente nouvelle ! Votre demande de création d'équipe "${request.teamName}" a été approuvée par un administrateur. L'équipe a été créée avec succès et vous êtes maintenant le propriétaire !`
+      : `❌ Désolé, votre demande de création d'équipe "${request.teamName}" a été rejetée.${reviewComment ? ` 💬 Raison : ${reviewComment}` : ''}`;
+
+    const userNotification = new PersistentNotification({
+      user: request.requester._id,
+      type: action === 'approve' ? 'success' : 'warning',
+      title: `🏢 Demande d'équipe ${action === 'approve' ? '✅ APPROUVÉE' : '❌ REJETÉE'}`,
+      message: notificationMessage,
+      category: 'admin',
+      priority: 'high',
+      action: action === 'approve' ? {
+        label: '🚀 Voir mon équipe',
+        callback: '/teams'
+      } : undefined,
+      persistent: true,
+      read: false
+    });
+
+    await userNotification.save();
+    console.log(`📬 Notification ${action} envoyée à l'utilisateur ${request.requester.username}`);
+
+    res.json({
+      message: `Demande ${action === 'approve' ? 'approuvée' : 'rejetée'} avec succès`,
+      request: {
+        _id: request._id,
+        teamName: request.teamName,
+        status: request.status,
+        reviewedBy: {
+          _id: req.user.userId,
+          username: req.user.username,
+          email: req.user.email
+        },
+        reviewComment: request.reviewComment,
+        reviewedAt: request.reviewedAt
+      },
+      team: team ? {
+        _id: team._id,
+        name: team.name,
+        description: team.description
+      } : null
+    });
+
+  } catch (error) {
+    console.error('Error reviewing team creation request:', error);
+    res.status(500).json({
+      message: 'Erreur lors du traitement de la demande'
+    });
   }
 });
 
