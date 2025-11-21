@@ -22,7 +22,7 @@ async function createAdminUser() {
     if (!adminUser) {
       console.log('Creating admin user...');
       const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash('admin123', salt);
+      const hashedPassword = await bcrypt.hash(process.env.ADMIN_PASSWORD || 'CHANGE_THIS_PASSWORD_IN_PRODUCTION', salt);
 
       adminUser = new User({
         name: 'Admin User',
@@ -34,7 +34,7 @@ async function createAdminUser() {
       await adminUser.save();
       console.log('✅ Admin user created successfully!');
       console.log(`Email: ${adminEmail}`);
-      console.log(`Password: admin123`);
+      console.log(`Password: [SET IN ADMIN_PASSWORD ENV VAR]`);
     } else {
       console.log('Admin user already exists');
       if (adminUser.role !== 'admin') {

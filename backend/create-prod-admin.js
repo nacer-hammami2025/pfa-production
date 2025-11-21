@@ -4,8 +4,13 @@ const User = require('./src/models/User');
 
 async function createProdAdmin() {
   try {
-    // Use production MongoDB URI
-    const mongoUri = 'mongodb+srv://mohamednacerhammami:Hammami2025@devdashcluster.wksgu.mongodb.net/DevDashboard?retryWrites=true&w=majority';
+    // Use production MongoDB URI from environment
+    const mongoUri = process.env.MONGODB_URI;
+    
+    if (!mongoUri) {
+      console.error('❌ MONGODB_URI environment variable not set!');
+      process.exit(1);
+    }
     
     console.log('Connecting to production MongoDB...');
     await mongoose.connect(mongoUri);
@@ -25,7 +30,7 @@ async function createProdAdmin() {
     if (!adminUser) {
       console.log('Creating admin user in production...');
       const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash('admin123', salt);
+      const hashedPassword = await bcrypt.hash(process.env.ADMIN_PASSWORD || 'CHANGE_THIS_PASSWORD_IN_PRODUCTION', salt);
 
       adminUser = new User({
         name: 'Admin User',
@@ -37,7 +42,7 @@ async function createProdAdmin() {
       await adminUser.save();
       console.log('✅ Admin user created successfully in production!');
       console.log(`Email: ${adminEmail}`);
-      console.log(`Password: admin123`);
+      console.log(`Password: [SET IN ADMIN_PASSWORD ENV VAR]`);
     } else {
       console.log('Admin user already exists in production');
       if (adminUser.role !== 'admin') {

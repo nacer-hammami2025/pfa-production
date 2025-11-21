@@ -3,7 +3,7 @@ const User = require('./backend/src/models/User');
 
 async function test() {
   try {
-    await mongoose.connect('mongodb+srv://mohamednacerhammami:J6Xi7CEiuJMKYyN@devdashcluster.ivyoi9j.mongodb.net/devdash?retryWrites=true&w=majority&appName=DevDashCluster');
+    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/taskflow');
     console.log('Connected');
     const users = await User.find({});
     console.log('Users:', users.length);

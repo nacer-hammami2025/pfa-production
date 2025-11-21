@@ -3,7 +3,7 @@ const https = require('https');
 const userData = {
   name: 'Super Admin',
   email: 'superadmin@taskflow.com',
-  password: 'SuperAdmin123!',
+  password: process.env.ADMIN_PASSWORD || 'CHANGE_THIS_PASSWORD_IN_PRODUCTION',
   role: 'admin'
 };
 
@@ -38,7 +38,7 @@ const req = https.request(options, (res) => {
     if (res.statusCode === 201) {
       console.log('✅ Admin user created successfully!');
       console.log('Email: admin@taskflow.com');
-      console.log('Password: admin123');
+      console.log('Password: [SET IN ADMIN_PASSWORD ENV VAR]');
     } else {
       console.log('❌ Failed to create admin user');
     }

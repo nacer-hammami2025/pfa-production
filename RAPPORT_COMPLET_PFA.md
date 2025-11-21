@@ -2183,7 +2183,7 @@ networks:
 ```
 NODE_ENV=production
 PORT=10000
-MONGODB_URI=mongodb+srv://mohamednacerhammami:Hammami2025@devdashcluster.ivyoi9j.mongodb.net/DevDashboard
+MONGODB_URI=mongodb+srv://[USERNAME]:[PASSWORD]@[CLUSTER].mongodb.net/[DATABASE]
 JWT_SECRET=super-secret-jwt-key-for-production-2025
 SESSION_SECRET=super-secret-session-key-for-production-2025
 FRONTEND_URL=https://nacer-dev.me
