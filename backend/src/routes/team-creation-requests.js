@@ -12,6 +12,8 @@ router.post('/request', authenticateToken, async (req, res) => {
   try {
     console.log('🔥 DEMANDE CRÉATION ÉQUIPE REÇUE:', req.body);
     console.log('👤 Utilisateur:', req.user);
+    console.log('🔍 req.user.id:', req.user ? req.user.id : 'UNDEFINED');
+    console.log('🔍 req.user keys:', req.user ? Object.keys(req.user) : 'req.user is null/undefined');
     
     const { teamName, teamDescription } = req.body;
 
@@ -24,7 +26,7 @@ router.post('/request', authenticateToken, async (req, res) => {
 
     // Check if user already has a pending request for this team name
     const existingRequest = await TeamCreationRequest.findOne({
-      requester: req.user.userId,
+      requester: req.user.id,
       teamName: teamName.trim(),
       status: 'pending'
     });
@@ -37,7 +39,7 @@ router.post('/request', authenticateToken, async (req, res) => {
 
     // Create the request
     const request = new TeamCreationRequest({
-      requester: req.user.userId,
+      requester: req.user.id,
       teamName: teamName.trim(),
       teamDescription: teamDescription ? teamDescription.trim() : ''
     });
@@ -169,7 +171,7 @@ router.get('/requests/:id', authenticateToken, async (req, res) => {
     }
 
     // Check if user is the requester or an admin
-    if (request.requester._id.toString() !== req.user.userId && req.user.role !== 'admin') {
+    if (request.requester._id.toString() !== req.user.id && req.user.role !== 'admin') {
       return res.status(403).json({
         message: 'Accès non autorisé'
       });
@@ -212,7 +214,7 @@ router.put('/requests/:id', authenticateToken, requireAdmin, async (req, res) =>
 
     // Update the request
     request.status = action === 'approve' ? 'approved' : 'rejected';
-    request.reviewedBy = req.user.userId;
+    request.reviewedBy = req.user.id;
     request.reviewComment = reviewComment ? reviewComment.trim() : '';
     request.reviewedAt = new Date();
 
@@ -268,7 +270,7 @@ router.put('/requests/:id', authenticateToken, requireAdmin, async (req, res) =>
         teamName: request.teamName,
         status: request.status,
         reviewedBy: {
-          _id: req.user.userId,
+          _id: req.user.id,
           username: req.user.username,
           email: req.user.email
         },
