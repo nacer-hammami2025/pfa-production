@@ -26,9 +26,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { APP_INITIALIZER } from '@angular/core';
 import { AuthService } from './services/auth.service';
+import { PersistentNotificationService } from './services/persistent-notification.service';
 
-export function appInitializer(authService: AuthService) {
-  return () => authService.initializeAuthState();
+export function appInitializer(authService: AuthService, persistentNotificationService: PersistentNotificationService) {
+  return async () => {
+    await authService.initializeAuthState();
+    // Load persistent notifications after auth is initialized
+    persistentNotificationService.displayPersistentNotifications();
+  };
 }
 
 @NgModule({
@@ -73,7 +78,7 @@ export function appInitializer(authService: AuthService) {
       provide: APP_INITIALIZER,
       useFactory: appInitializer,
       multi: true,
-      deps: [AuthService]
+      deps: [AuthService, PersistentNotificationService]
     }
   ],
   bootstrap: [AppComponent]

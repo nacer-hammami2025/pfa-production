@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { TeamCollaborationService } from '../../services/team-collaboration.service';
 import { NotificationService } from '../../services/notification.service';
+import { TeamCreationRequestService } from '../../services/team-creation-request.service';
 import { AuthService } from '../../services/auth.service';
 import {
   Team,
@@ -52,6 +53,7 @@ export class TeamCollaborationComponent implements OnInit, OnDestroy {
     public teamService: TeamCollaborationService,
     private authService: AuthService,
     private notificationService: NotificationService,
+    private teamCreationRequestService: TeamCreationRequestService,
     private fb: FormBuilder
   ) {
     this.createTeamForm = this.fb.group({
@@ -189,23 +191,28 @@ export class TeamCollaborationComponent implements OnInit, OnDestroy {
       this.isLoading = true;
       const formValue = this.createTeamForm.value;
 
-      this.teamService.createTeam(formValue).subscribe({
-        next: (team) => {
+      const requestData = {
+        teamName: formValue.name,
+        teamDescription: formValue.description
+      };
+
+      this.teamCreationRequestService.createRequest(requestData).subscribe({
+        next: (response: any) => {
           this.notificationService.addNotification({
             type: 'success',
-            title: 'Équipe créée',
-            message: `L'équipe "${team.name}" a été créée avec succès.`
+            title: 'Demande soumise',
+            message: `Votre demande de création d'équipe "${formValue.name}" a été soumise et est en attente d'approbation par un administrateur.`
           });
           this.createTeamForm.reset();
           this.showCreateTeamModal = false;
           this.isLoading = false;
         },
-        error: (error) => {
-          console.error('Error creating team:', error);
+        error: (error: any) => {
+          console.error('Error submitting team creation request:', error);
           this.notificationService.addNotification({
             type: 'error',
             title: 'Erreur',
-            message: 'Impossible de créer l\'équipe.'
+            message: 'Impossible de soumettre la demande de création d\'équipe.'
           });
           this.isLoading = false;
         }

@@ -10,7 +10,7 @@ export interface Notification {
   timestamp: Date;
   read: boolean;
   priority?: 'low' | 'medium' | 'high';
-  category?: 'task' | 'productivity' | 'motivation' | 'reminder';
+  category?: 'task' | 'productivity' | 'motivation' | 'reminder' | 'admin';
   action?: {
     label: string;
     callback: () => void;

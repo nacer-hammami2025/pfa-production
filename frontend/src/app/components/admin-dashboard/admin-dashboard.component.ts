@@ -30,6 +30,10 @@ import { Router } from '@angular/router';
             <i class="icon">🏢</i>
             <span>Équipes</span>
           </a>
+          <a routerLink="/admin/team-requests" routerLinkActive="active" class="nav-item">
+            <i class="icon">📋</i>
+            <span>Demandes d'équipe</span>
+          </a>
         </nav>
 
         <div class="sidebar-footer">

@@ -4,6 +4,7 @@ import { AdminDashboardComponent } from './admin-dashboard.component';
 import { AdminDashboardHomeComponent } from './admin-dashboard-home/admin-dashboard-home.component';
 import { AdminUserManagementComponent } from './admin-user-management.component';
 import { AdminTeamManagementComponent } from './admin-team-management.component';
+import { TeamRequestsComponent } from './team-requests/team-requests.component';
 
 const routes: Routes = [
   {
@@ -12,7 +13,8 @@ const routes: Routes = [
     children: [
       { path: '', component: AdminDashboardHomeComponent },
       { path: 'users', component: AdminUserManagementComponent },
-      { path: 'teams', component: AdminTeamManagementComponent }
+      { path: 'teams', component: AdminTeamManagementComponent },
+      { path: 'team-requests', component: TeamRequestsComponent }
     ]
   }
 ];

@@ -1,0 +1,207 @@
+<div class="team-requests-container">
+  <div class="header-section">
+    <div class="header-content">
+      <h1>🛡️ Gestion des Demandes d'Équipes</h1>
+      <p class="subtitle">Approuvez ou rejetez les demandes de création d'équipes</p>
+    </div>
+    <div class="stats-card">
+      <div class="stat-item">
+        <div class="stat-number">{{ getPendingRequestsCount() }}</div>
+        <div class="stat-label">En attente</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">{{ totalRequests }}</div>
+        <div class="stat-label">Total</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="filters-section">
+    <div class="filter-group">
+      <label for="statusFilter">Statut:</label>
+      <select
+        id="statusFilter"
+        [(ngModel)]="statusFilter"
+        (change)="onStatusFilterChange()"
+        class="filter-select">
+        <option value="all">Toutes</option>
+        <option value="pending">En attente</option>
+        <option value="approved">Approuvées</option>
+        <option value="rejected">Rejetées</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label for="searchInput">Rechercher:</label>
+      <input
+        id="searchInput"
+        type="text"
+        [(ngModel)]="searchTerm"
+        (input)="onSearchChange()"
+        placeholder="Nom d'équipe, utilisateur..."
+        class="filter-input">
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>Chargement des demandes...</p>
+  </div>
+
+  <!-- Requests List -->
+  <div *ngIf="!loading" class="requests-container">
+    <div *ngIf="filteredRequests.length === 0" class="empty-state">
+      <div class="empty-icon">📋</div>
+      <h3>Aucune demande trouvée</h3>
+      <p>Il n'y a pas de demandes correspondant à vos critères.</p>
+    </div>
+
+    <div *ngFor="let request of filteredRequests" class="request-card" [class.pending]="request.status === 'pending'">
+      <div class="request-header">
+        <div class="request-info">
+          <h3 class="team-name">{{ request.teamName }}</h3>
+          <div class="requester-info">
+            <span class="requester-name">👤 {{ request.requester.username }}</span>
+            <span class="requester-email">{{ request.requester.email }}</span>
+          </div>
+        </div>
+        <div class="request-status">
+          <span class="status-badge" [ngClass]="getStatusBadgeClass(request.status)">
+            {{ getStatusText(request.status) }}
+          </span>
+        </div>
+      </div>
+
+      <div class="request-content">
+        <p *ngIf="request.teamDescription" class="team-description">
+          {{ request.teamDescription }}
+        </p>
+        <div class="request-meta">
+          <span class="request-date">
+            📅 Demandé le {{ formatDate(request.createdAt) }}
+          </span>
+          <span *ngIf="request.reviewedAt" class="review-date">
+            ✅ Traité le {{ formatDate(request.reviewedAt) }}
+          </span>
+        </div>
+      </div>
+
+      <div class="request-actions" *ngIf="request.status === 'pending'">
+        <button
+          class="btn-approve"
+          (click)="openReviewModal(request)"
+          title="Approuver la demande">
+          ✅ Approuver
+        </button>
+        <button
+          class="btn-reject"
+          (click)="openReviewModal(request)"
+          title="Rejeter la demande">
+          ❌ Rejeter
+        </button>
+      </div>
+
+      <div *ngIf="request.status !== 'pending'" class="request-review">
+        <div class="review-info">
+          <span class="reviewer">
+            👨‍💼 Traité par {{ request.reviewedBy?.username || 'Admin' }}
+          </span>
+          <p *ngIf="request.reviewComment" class="review-comment">
+            💬 {{ request.reviewComment }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div *ngIf="!loading && totalPages > 1" class="pagination">
+    <button
+      class="pagination-btn"
+      [disabled]="currentPage === 1"
+      (click)="loadRequests(currentPage - 1)">
+      ← Précédent
+    </button>
+
+    <span class="pagination-info">
+      Page {{ currentPage }} sur {{ totalPages }}
+    </span>
+
+    <button
+      class="pagination-btn"
+      [disabled]="currentPage === totalPages"
+      (click)="loadRequests(currentPage + 1)">
+      Suivant →
+    </button>
+  </div>
+</div>
+
+<!-- Review Modal -->
+<div *ngIf="showReviewModal" class="modal-overlay" (click)="closeReviewModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Traiter la demande</h2>
+      <button class="modal-close" (click)="closeReviewModal()">×</button>
+    </div>
+
+    <div *ngIf="selectedRequest" class="modal-body">
+      <div class="request-summary">
+        <h3>{{ selectedRequest.teamName }}</h3>
+        <p class="requester">Demandé par: {{ selectedRequest.requester.username }}</p>
+        <p *ngIf="selectedRequest.teamDescription" class="description">
+          {{ selectedRequest.teamDescription }}
+        </p>
+      </div>
+
+      <form [formGroup]="reviewForm" (ngSubmit)="submitReview()" class="review-form">
+        <div class="form-group">
+          <label class="form-label">Décision:</label>
+          <div class="radio-group">
+            <label class="radio-option">
+              <input
+                type="radio"
+                formControlName="action"
+                value="approve"
+                class="radio-input">
+              <span class="radio-label approve-label">✅ Approuver</span>
+            </label>
+            <label class="radio-option">
+              <input
+                type="radio"
+                formControlName="action"
+                value="reject"
+                class="radio-input">
+              <span class="radio-label reject-label">❌ Rejeter</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="reviewComment" class="form-label">Commentaire (optionnel):</label>
+          <textarea
+            id="reviewComment"
+            formControlName="reviewComment"
+            class="form-textarea"
+            placeholder="Ajoutez un commentaire pour expliquer votre décision..."
+            rows="3">
+          </textarea>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" (click)="closeReviewModal()">
+            Annuler
+          </button>
+          <button
+            type="submit"
+            class="btn-submit"
+            [disabled]="reviewing || !reviewForm.valid">
+            <span *ngIf="reviewing" class="loading-spinner-small"></span>
+            {{ reviewing ? 'Traitement...' : 'Confirmer' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

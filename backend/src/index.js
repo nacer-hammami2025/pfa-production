@@ -95,7 +95,15 @@ app.get('/api/health', (req, res) => {
 });
 
 // Prometheus metrics endpoint
-app.get('/api/metrics', metricsHandler);// Routes
+app.get('/api/metrics', metricsHandler);try {
+  const persistentNotificationsRoute = require('./routes/persistent-notifications');
+  console.log('[INDEX] Persistent notifications route loaded successfully');
+  app.use('/api/notifications', persistentNotificationsRoute);
+  console.log('[INDEX] Persistent notifications route registered');
+} catch (err) {
+  console.error('[INDEX] Error loading persistent notifications route:', err.message);
+  console.error('[INDEX] Full error:', err);
+}
 console.log('[INDEX] About to load auth routes...');
 try {
   const authRoute = require('./routes/auth');
