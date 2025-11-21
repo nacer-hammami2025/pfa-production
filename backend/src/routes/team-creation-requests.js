@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const TeamCreationRequest = require('../models/TeamCreationRequest');
+const TeamCreationRequest = require('../../models/TeamCreationRequest');
 const Team = require('../models/Team');
 const User = require('../models/User');
-const PersistentNotification = require('../models/PersistentNotification');
+const PersistentNotification = require('../../models/PersistentNotification');
 const authenticateToken = require('../middleware/auth');
 const requireAdmin = require('../middleware/admin');
 

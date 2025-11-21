@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const PersistentNotification = require('../models/PersistentNotification');
-const authenticateToken = require('../middleware/auth');
+const authenticateToken = require('../src/middleware/auth');
 
 // Get user's persistent notifications
 router.get('/user', authenticateToken, async (req, res) => {
