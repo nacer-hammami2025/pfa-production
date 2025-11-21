@@ -190,6 +190,8 @@ export class TeamCollaborationComponent implements OnInit, OnDestroy {
     if (this.createTeamForm.valid) {
       this.isLoading = true;
       const formValue = this.createTeamForm.value;
+      
+      console.log('🚀 Tentative création équipe:', formValue);
 
       const requestData = {
         teamName: formValue.name,
@@ -198,25 +200,36 @@ export class TeamCollaborationComponent implements OnInit, OnDestroy {
 
       this.teamCreationRequestService.createRequest(requestData).subscribe({
         next: (response: any) => {
+          console.log('✅ Réponse serveur:', response);
           this.notificationService.addNotification({
             type: 'success',
-            title: 'Demande soumise',
-            message: `Votre demande de création d'équipe "${formValue.name}" a été soumise et est en attente d'approbation par un administrateur.`
+            title: '🎉 Demande soumise avec succès',
+            message: `Votre demande de création d'équipe "${formValue.name}" a été soumise et est en attente d'approbation par un administrateur.`,
+            category: 'admin',
+            priority: 'high',
+            persistent: true
           });
           this.createTeamForm.reset();
           this.showCreateTeamModal = false;
           this.isLoading = false;
         },
         error: (error: any) => {
-          console.error('Error submitting team creation request:', error);
+          console.error('❌ Erreur détaillée:', error);
           this.notificationService.addNotification({
             type: 'error',
-            title: 'Erreur',
-            message: 'Impossible de soumettre la demande de création d\'équipe.'
+            title: '❌ Erreur de connexion',
+            message: error.status === 0 ? '🔌 Backend non disponible. Vérifiez la connexion serveur.' : 
+                     error.status === 401 ? '🔐 Session expirée. Reconnectez-vous.' :
+                     error.status === 403 ? '❌ Permissions insuffisantes.' :
+                     `❌ Erreur ${error.status}: ${error.error?.message || error.message}`,
+            category: 'admin',
+            priority: 'high'
           });
           this.isLoading = false;
         }
       });
+    } else {
+      console.log('❌ Formulaire invalide:', this.createTeamForm.errors);
     }
   }
 

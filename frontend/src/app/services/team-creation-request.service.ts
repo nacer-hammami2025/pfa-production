@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { tap, catchError } from 'rxjs/operators';
+import { throwError } from 'rxjs';
 
 export interface TeamCreationRequest {
   _id: string;
@@ -46,7 +47,16 @@ export class TeamCreationRequestService {
 
   // Create a new team creation request
   createRequest(requestData: CreateTeamRequestData): Observable<{ message: string; request: TeamCreationRequest }> {
-    return this.http.post<{ message: string; request: TeamCreationRequest }>(`${this.apiUrl}/request`, requestData);
+    return this.http.post<{ message: string; request: TeamCreationRequest }>(`${this.apiUrl}/request`, requestData)
+      .pipe(
+        tap(response => {
+          console.log('✅ Demande créée:', response);
+        }),
+        catchError(error => {
+          console.error('❌ Erreur création demande:', error);
+          return throwError(() => error);
+        })
+      );
   }
 
   // Get all team creation requests (admin only)

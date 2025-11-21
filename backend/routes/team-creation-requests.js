@@ -1,17 +1,22 @@
 const express = require('express');
 const router = express.Router();
 const TeamCreationRequest = require('../models/TeamCreationRequest');
-const Team = require('../models/Team');
-const User = require('../models/User');
+const Team = require('../src/models/Team');
+const User = require('../src/models/User');
 const PersistentNotification = require('../models/PersistentNotification');
-const { authenticateToken, isAdmin } = require('../middleware/auth');
+const authenticateToken = require('../src/middleware/auth');
+const requireAdmin = require('../src/middleware/admin');
 
 // Create a new team creation request
 router.post('/request', authenticateToken, async (req, res) => {
   try {
+    console.log('🔥 DEMANDE CRÉATION ÉQUIPE REÇUE:', req.body);
+    console.log('👤 Utilisateur:', req.user);
+    
     const { teamName, teamDescription } = req.body;
 
     if (!teamName || teamName.trim().length < 3) {
+      console.log('❌ Nom équipe invalide:', teamName);
       return res.status(400).json({
         message: 'Le nom de l\'équipe doit contenir au moins 3 caractères'
       });
@@ -41,15 +46,17 @@ router.post('/request', authenticateToken, async (req, res) => {
 
     // Create notification for admins
     const admins = await User.find({ role: 'admin' });
+    console.log(`👑 ${admins.length} admin(s) trouvé(s) pour notification`);
+    
     const notifications = admins.map(admin => ({
       user: admin._id,
-      type: 'info',
-      title: 'Nouvelle demande de création d\'équipe',
-      message: `${req.user.username} souhaite créer l\'équipe "${teamName}"`,
+      type: 'info', 
+      title: '🏢 Nouvelle demande d\'\'équipe',
+      message: `👤 ${req.user.username} souhaite créer l\'\'équipe "${teamName}". Cliquez pour examiner la demande.`,
       category: 'admin',
       priority: 'high',
       action: {
-        label: 'Voir la demande',
+        label: '🔍 Examiner la demande',
         callback: '/admin/team-requests'
       },
       persistent: true,
@@ -57,6 +64,7 @@ router.post('/request', authenticateToken, async (req, res) => {
     }));
 
     await PersistentNotification.insertMany(notifications);
+    console.log('📨 Notifications admin créées avec succès');
 
     res.status(201).json({
       message: 'Demande de création d\'équipe soumise avec succès',
@@ -96,7 +104,7 @@ router.get('/my-requests', authenticateToken, async (req, res) => {
 });
 
 // Get all team creation requests (admin only)
-router.get('/requests', authenticateToken, isAdmin, async (req, res) => {
+router.get('/requests', authenticateToken, requireAdmin, async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
@@ -135,7 +143,7 @@ router.get('/requests', authenticateToken, isAdmin, async (req, res) => {
 });
 
 // Get pending requests count (for admin dashboard)
-router.get('/requests/count', authenticateToken, isAdmin, async (req, res) => {
+router.get('/requests/count', authenticateToken, requireAdmin, async (req, res) => {
   try {
     const count = await TeamCreationRequest.countDocuments({ status: 'pending' });
     res.json({ count });
@@ -177,7 +185,7 @@ router.get('/requests/:id', authenticateToken, async (req, res) => {
 });
 
 // Approve or reject a team creation request (admin only)
-router.put('/requests/:id', authenticateToken, isAdmin, async (req, res) => {
+router.put('/requests/:id', authenticateToken, requireAdmin, async (req, res) => {
   try {
     const { action, reviewComment } = req.body;
 
@@ -232,21 +240,26 @@ router.put('/requests/:id', authenticateToken, isAdmin, async (req, res) => {
 
     // Create notification for the requester
     const notificationMessage = action === 'approve'
-      ? `Votre demande de création d'équipe "${request.teamName}" a été approuvée. L'équipe a été créée avec succès !`
-      : `Votre demande de création d'équipe "${request.teamName}" a été rejetée.${reviewComment ? ` Raison : ${reviewComment}` : ''}`;
+      ? `🎉 Excellente nouvelle ! Votre demande de création d'équipe "${request.teamName}" a été approuvée par un administrateur. L'équipe a été créée avec succès et vous êtes maintenant le propriétaire !`
+      : `❌ Désolé, votre demande de création d'équipe "${request.teamName}" a été rejetée.${reviewComment ? ` 💬 Raison : ${reviewComment}` : ''}`;
 
     const userNotification = new PersistentNotification({
       user: request.requester._id,
       type: action === 'approve' ? 'success' : 'warning',
-      title: `Demande d'équipe ${action === 'approve' ? 'approuvée' : 'rejetée'}`,
+      title: `🏢 Demande d'équipe ${action === 'approve' ? '✅ APPROUVÉE' : '❌ REJETÉE'}`,
       message: notificationMessage,
       category: 'admin',
       priority: 'high',
+      action: action === 'approve' ? {
+        label: '🚀 Voir mon équipe',
+        callback: '/teams'
+      } : undefined,
       persistent: true,
       read: false
     });
 
     await userNotification.save();
+    console.log(`📬 Notification ${action} envoyée à l'utilisateur ${request.requester.username}`);
 
     res.json({
       message: `Demande ${action === 'approve' ? 'approuvée' : 'rejetée'} avec succès`,

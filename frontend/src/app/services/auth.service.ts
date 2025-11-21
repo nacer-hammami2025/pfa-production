@@ -48,6 +48,9 @@ export class AuthService {
           const userWithRole = { ...payload, role };
           this.currentUserSubject.next(userWithRole);
           
+          // Charger les notifications persistantes après connexion
+          console.log('🔔 Chargement des notifications pour:', userWithRole.name || 'utilisateur');
+          
           // Try to validate with server in background (non-blocking)
           this.validateTokenWithServer().catch(serverError => {
             console.warn('Background server validation failed:', serverError);

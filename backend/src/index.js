@@ -10,7 +10,7 @@ process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
 
-require('dotenv').config();
+require('dotenv').config({ path: '../.env' });
 const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/db');
@@ -96,7 +96,7 @@ app.get('/api/health', (req, res) => {
 
 // Prometheus metrics endpoint
 app.get('/api/metrics', metricsHandler);try {
-  const persistentNotificationsRoute = require('./routes/persistent-notifications');
+  const persistentNotificationsRoute = require('../routes/persistent-notifications');
   console.log('[INDEX] Persistent notifications route loaded successfully');
   app.use('/api/notifications', persistentNotificationsRoute);
   console.log('[INDEX] Persistent notifications route registered');
@@ -160,7 +160,7 @@ try {
   console.error('[INDEX] Full error:', err);
 }
 try {
-  const teamCreationRequestsRoute = require('./routes/team-creation-requests');
+  const teamCreationRequestsRoute = require('../routes/team-creation-requests');
   console.log('[INDEX] Team creation requests route loaded successfully');
   app.use('/api/team-creation-requests', teamCreationRequestsRoute);
   console.log('[INDEX] Team creation requests route registered');

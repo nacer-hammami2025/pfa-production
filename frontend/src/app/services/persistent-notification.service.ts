@@ -38,10 +38,15 @@ export class PersistentNotificationService {
 
   // Display persistent notifications in the UI
   displayPersistentNotifications(): void {
+    console.log('🔄 Chargement des notifications persistantes...');
     this.loadPersistentNotifications().subscribe({
-      next: (notifications) => {
-        notifications.forEach(notification => {
+      next: (response: any) => {
+        const notifications = response.notifications || response;
+        console.log(`📬 ${notifications.length} notification(s) trouvée(s)`);
+        
+        notifications.forEach((notification: PersistentNotification) => {
           if (!notification.read) {
+            console.log('📨 Affichage notification:', notification.title);
             this.notificationService.addNotification({
               type: notification.type,
               title: notification.title,
@@ -53,6 +58,7 @@ export class PersistentNotificationService {
                 callback: () => {
                   // Handle action callback (could navigate to a route)
                   if (notification.action?.callback) {
+                    console.log('🔗 Navigation vers:', notification.action.callback);
                     window.location.href = notification.action.callback;
                   }
                 }
@@ -60,11 +66,19 @@ export class PersistentNotificationService {
               persistent: notification.persistent,
               autoHide: false // Persistent notifications should not auto-hide
             });
+            
+            // Marquer comme lue automatiquement après affichage
+            setTimeout(() => {
+              this.markAsRead(notification._id).subscribe({
+                next: () => console.log('✅ Notification marquée comme lue'),
+                error: (err) => console.error('❌ Erreur marquage lecture:', err)
+              });
+            }, 5000);
           }
         });
       },
       error: (error) => {
-        console.error('Error loading persistent notifications:', error);
+        console.error('❌ Erreur chargement notifications persistantes:', error);
       }
     });
   }
