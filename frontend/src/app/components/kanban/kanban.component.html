@@ -20,6 +20,7 @@
         [cdkDropListConnectedTo]="[inProgressList, doneList]"
         (cdkDropListDropped)="drop($event, 'todo')"
         class="task-list">
+        <div class="drop-zone-indicator">Déposer ici</div>
         <div 
           *ngFor="let task of todoTasks" 
           cdkDrag
@@ -53,6 +54,7 @@
         [cdkDropListConnectedTo]="[todoList, doneList]"
         (cdkDropListDropped)="drop($event, 'in-progress')"
         class="task-list">
+        <div class="drop-zone-indicator">Déposer ici</div>
         <div 
           *ngFor="let task of inProgressTasks" 
           cdkDrag
@@ -86,6 +88,7 @@
         [cdkDropListConnectedTo]="[todoList, inProgressList]"
         (cdkDropListDropped)="drop($event, 'done')"
         class="task-list">
+        <div class="drop-zone-indicator">Déposer ici</div>
         <div 
           *ngFor="let task of doneTasks" 
           cdkDrag

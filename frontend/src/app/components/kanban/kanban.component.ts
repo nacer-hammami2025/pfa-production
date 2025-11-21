@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { TaskService } from '../../services/task.service';
+import { NotificationService } from '../../services/notification.service';
 
 interface KanbanTask {
   _id: string;
@@ -42,7 +43,10 @@ export class KanbanComponent implements OnInit {
   newSubtask = '';
   newComment = '';
 
-  constructor(private taskService: TaskService) {}
+  constructor(
+    private taskService: TaskService,
+    private notificationService: NotificationService
+  ) {}
 
   ngOnInit(): void {
     this.loadTasks();
@@ -81,16 +85,50 @@ export class KanbanComponent implements OnInit {
   }
 
   updateTaskStatus(taskId: string, status: string): void {
-    const apiStatus = status === 'in-progress' ? 'in-progress' : 
-                     status === 'done' ? 'completed' : 'pending';
-    
-    this.taskService.updateTask(taskId, { status: apiStatus } as any).subscribe({
-      next: () => console.log('✅ Statut mis à jour'),
-      error: (err) => console.error('❌ Erreur:', err)
-    });
-  }
+    // Map Kanban status to API status
+    const apiStatus = status; // status is already 'todo', 'in-progress', or 'done'
 
-  createTask(): void {
+    // Find the task to get its title for the notification
+    const allTasks = [...this.todoTasks, ...this.inProgressTasks, ...this.doneTasks];
+    const task = allTasks.find(t => t._id === taskId);
+
+    this.taskService.updateTask(taskId, { status: apiStatus } as any).subscribe({
+      next: (updatedTask: any) => {
+        console.log('✅ Statut mis à jour:', updatedTask.status || status);
+
+        // Show success notification
+        const statusLabels = {
+          'todo': 'À faire',
+          'in-progress': 'En cours',
+          'done': 'Terminé'
+        };
+        const statusLabel = statusLabels[status as keyof typeof statusLabels] || status;
+
+        this.notificationService.addNotification({
+          type: 'success',
+          title: 'Statut mis à jour',
+          message: `"${task?.title || 'Tâche'}" déplacée vers "${statusLabel}"`,
+          category: 'task',
+          autoHide: true
+        });
+      },
+      error: (err) => {
+        console.error('❌ Erreur lors de la mise à jour du statut:', err);
+
+        // Show error notification
+        this.notificationService.addNotification({
+          type: 'error',
+          title: 'Erreur',
+          message: 'Impossible de mettre à jour le statut de la tâche',
+          category: 'task',
+          autoHide: true
+        });
+
+        // Reload tasks to revert the UI change on error
+        this.loadTasks();
+      }
+    });
+  }  createTask(): void {
     if (!this.newTask.title) return;
     
     this.loading = true;
