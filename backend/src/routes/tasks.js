@@ -85,6 +85,39 @@ router.get('/stats', auth, async (req, res) => {
   }
 });
 
+// GET /api/tasks/project/:projectId - get tasks for a specific project
+router.get('/project/:projectId', auth, async (req, res) => {
+  try {
+    const { projectId } = req.params;
+
+    // Verify user has access to this project
+    const Project = require('../models/Project');
+    const project = await Project.findById(projectId);
+
+    if (!project) {
+      return res.status(404).json({ msg: 'Project not found' });
+    }
+
+    // Check if user is owner or member of the project
+    const hasAccess = project.owner.toString() === req.user.id ||
+                     project.members.some(member => member.toString() === req.user.id);
+
+    if (!hasAccess) {
+      return res.status(403).json({ msg: 'Access denied to this project' });
+    }
+
+    // Get tasks for this project
+    const tasks = await Task.find({ project: projectId })
+      .populate('owner', 'name email')
+      .sort({ createdAt: -1 });
+
+    res.json(tasks);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+});
+
 // POST /api/tasks - create
 router.post('/', auth, async (req, res) => {
   try {
@@ -92,7 +125,7 @@ router.post('/', auth, async (req, res) => {
     console.log('👤 User ID:', req.user.id);
     console.log('📋 Données reçues:', req.body);
 
-    const { title, description, priority, category, dueDate, tags } = req.body;
+    const { title, description, priority, category, dueDate, tags, project } = req.body;
 
     const taskData = {
       title,
@@ -101,13 +134,22 @@ router.post('/', auth, async (req, res) => {
       category: category || 'other',
       dueDate: dueDate ? new Date(dueDate) : undefined,
       tags: tags || [],
-      owner: req.user.id
+      owner: req.user.id,
+      project: project || undefined
     };
 
     console.log('💾 Données à sauvegarder:', taskData);
 
     const task = new Task(taskData);
     await task.save();
+
+    // If task is associated with a project, add it to the project's tasks array
+    if (project) {
+      const Project = require('../models/Project');
+      await Project.findByIdAndUpdate(project, {
+        $push: { tasks: task._id }
+      });
+    }
 
     console.log('✅ Tâche sauvegardée avec succès:', task._id);
     res.json(task);

@@ -21,6 +21,7 @@ export interface Task {
   dueDate?: string;
   tags: string[];
   owner: string;
+  project?: string; // Reference to project ID
   createdAt: string;
   updatedAt: string;
   subtasks?: Subtask[];
@@ -58,6 +59,7 @@ export interface CreateTaskDTO {
   category?: Category;
   dueDate?: string;
   tags?: string[];
+  project?: string; // Optional project ID
 }
 
 export interface UpdateTaskDTO {
@@ -185,6 +187,12 @@ export class TaskService {
         console.error('❌ Erreur lors de la création de tâche:', error);
         return this.handleError(error);
       })
+    );
+  }
+
+  getTasksByProject(projectId: string): Observable<Task[]> {
+    return this.http.get<Task[]>(`${this.base}/tasks/project/${projectId}`).pipe(
+      catchError(this.handleError)
     );
   }
 

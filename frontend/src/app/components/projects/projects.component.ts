@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ProjectService, Project } from '../../services/project.service';
+import { TaskService, Task, CreateTaskDTO } from '../../services/task.service';
 import { AuthService } from '../../services/auth.service';
 import { AdminService } from '../../services/admin.service';
 
@@ -23,6 +24,10 @@ export class ProjectsComponent implements OnInit {
   allUsers: any[] = [];
   isAdmin = false;
   
+  // Task management
+  projectTasks: Task[] = [];
+  showCreateTaskModal = false;
+  
   newProject = {
     name: '',
     description: '',
@@ -39,8 +44,16 @@ export class ProjectsComponent implements OnInit {
     dueDate: ''
   };
 
+  newTask: CreateTaskDTO = {
+    title: '',
+    description: '',
+    priority: 'medium',
+    category: 'work'
+  };
+
   constructor(
     private projectService: ProjectService,
+    private taskService: TaskService,
     private authService: AuthService,
     private adminService: AdminService
   ) {}
@@ -129,10 +142,25 @@ export class ProjectsComponent implements OnInit {
       next: (fullProject) => {
         this.selectedProject = fullProject;
         this.showDetailModal = true;
+        
+        // Load project tasks
+        this.loadProjectTasks(fullProject._id);
+      },
+      error: (err) => {
+        console.error('Erreur chargement projet:', err);
+        this.loading = false;
+      }
+    });
+  }
+
+  loadProjectTasks(projectId: string): void {
+    this.taskService.getTasksByProject(projectId).subscribe({
+      next: (tasks) => {
+        this.projectTasks = tasks;
         this.loading = false;
       },
       error: (err) => {
-        console.error('Erreur:', err);
+        console.error('Erreur chargement tâches:', err);
         this.loading = false;
       }
     });
@@ -241,5 +269,64 @@ export class ProjectsComponent implements OnInit {
       description: '',
       dueDate: ''
     };
+  }
+
+  // Task management methods
+  openCreateTaskModal(): void {
+    this.newTask = {
+      title: '',
+      description: '',
+      priority: 'medium',
+      category: 'work'
+    };
+    this.showCreateTaskModal = true;
+  }
+
+  closeCreateTaskModal(): void {
+    this.showCreateTaskModal = false;
+  }
+
+  createTaskInProject(): void {
+    if (!this.selectedProject || !this.newTask.title.trim()) return;
+
+    const taskData: CreateTaskDTO = {
+      ...this.newTask,
+      project: this.selectedProject._id
+    };
+
+    this.taskService.createTask(taskData).subscribe({
+      next: (createdTask) => {
+        this.projectTasks.unshift(createdTask); // Add to beginning of list
+        this.closeCreateTaskModal();
+        // Optionally reload project to get updated task count
+        this.loadProjects();
+      },
+      error: (err) => {
+        console.error('Erreur création tâche:', err);
+      }
+    });
+  }
+
+  toggleTaskCompletion(task: Task): void {
+    this.taskService.toggleTaskCompleted(task._id).subscribe({
+      next: (updatedTask) => {
+        const index = this.projectTasks.findIndex(t => t._id === task._id);
+        if (index !== -1) {
+          this.projectTasks[index] = updatedTask;
+        }
+      },
+      error: (err) => console.error('Erreur toggle tâche:', err)
+    });
+  }
+
+  // Utility methods for task styling
+  getTaskPriorityColor(priority: string): string {
+    switch (priority) {
+      case 'low': return '#10b981';
+      case 'medium': return '#f59e0b';
+      case 'high': return '#ef4444';
+      case 'urgent': return '#dc2626';
+      default: return '#6b7280';
+    }
   }
 }
