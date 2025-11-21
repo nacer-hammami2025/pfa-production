@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const TeamCreationRequest = require('../models/TeamCreationRequest');
-const Team = require('../src/models/Team');
-const User = require('../src/models/User');
+const Team = require('../models/Team');
+const User = require('../models/User');
 const PersistentNotification = require('../models/PersistentNotification');
-const authenticateToken = require('../src/middleware/auth');
-const requireAdmin = require('../src/middleware/admin');
+const authenticateToken = require('../middleware/auth');
+const requireAdmin = require('../middleware/admin');
 
 // Create a new team creation request
 router.post('/request', authenticateToken, async (req, res) => {
