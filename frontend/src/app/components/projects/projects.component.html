@@ -90,18 +90,18 @@
             ✅
           </button>
           <button 
-            *ngIf="project.status !== 'archived'"
-            class="btn-action btn-archive" 
-            (click)="$event.stopPropagation(); updateProjectStatus('archived', project)"
-            title="Archiver le projet">
-            📦
-          </button>
-          <button 
             *ngIf="project.status !== 'on-hold'"
             class="btn-action btn-hold" 
             (click)="$event.stopPropagation(); updateProjectStatus('on-hold', project)"
             title="Mettre en pause">
             ⏸️
+          </button>
+          <button 
+            *ngIf="project.status !== 'archived'"
+            class="btn-action btn-archive" 
+            (click)="$event.stopPropagation(); updateProjectStatus('archived', project)"
+            title="Archiver le projet">
+            📦
           </button>
         </div>
       </div>
@@ -301,6 +301,12 @@
 
         <!-- Actions -->
         <div class="modal-actions">
+          <button 
+            *ngIf="selectedProject.status !== 'archived'"
+            class="btn-warning" 
+            (click)="updateProjectStatus('archived')">
+            📦 Archiver le projet
+          </button>
           <button class="btn-danger" (click)="deleteProject()">
             🗑️ Supprimer le projet
           </button>
