@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { NotificationService, Notification } from '../services/notification.service';
+import { PersistentNotificationService, PersistentNotification } from '../services/persistent-notification.service';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -14,12 +15,47 @@ import { Subscription } from 'rxjs';
       </div>
 
       <div class="notifications-content">
-        <div *ngIf="notifications.length === 0" class="no-notifications">
+        <div *ngIf="getAllNotifications().length === 0" class="no-notifications">
           <div class="no-notifications-icon">🔔</div>
           <p>Aucune notification pour le moment</p>
           <span class="no-notifications-subtitle">Nous vous avertirons dès qu'il y aura du nouveau ! 🚀</span>
         </div>
 
+        <!-- Notifications Persistantes (Backend) -->
+        <div *ngFor="let notification of persistentNotifications" class="notification-item"
+             [class.unread]="!notification.read"
+             [class.success]="isSuccessNotificationPersistent(notification)"
+             [class.rejection]="isRejectionNotificationPersistent(notification)"
+             [class.celebration]="isCelebrationNotificationPersistent(notification)"
+             (click)="markPersistentAsRead(notification)">
+          <div class="notification-icon" 
+               [class.success-icon]="isSuccessNotificationPersistent(notification)" 
+               [class.rejection-icon]="isRejectionNotificationPersistent(notification)">
+            <span [innerHTML]="getNotificationIconPersistent(notification.type)"></span>
+            <div *ngIf="isSuccessNotificationPersistent(notification)" class="confetti-burst"></div>
+          </div>
+          <div class="notification-content">
+            <div class="notification-title">{{ getEmotionalTitlePersistent(notification) }}</div>
+            <div class="notification-message">{{ getEmotionalMessagePersistent(notification) }}</div>
+            <div class="notification-time">{{ getTimeAgoPersistent(notification.createdAt) }}</div>
+            <div *ngIf="isSuccessNotificationPersistent(notification)" class="emotional-note success-note">
+              🎉 Félicitations ! Votre équipe va pouvoir commencer ses projets ! 🚀
+            </div>
+            <div *ngIf="isRejectionNotificationPersistent(notification)" class="emotional-note rejection-note">
+              💙 Ne vous découragez pas, ajustez votre demande et réessayez ! ✨
+            </div>
+          </div>
+          <div class="notification-actions" *ngIf="notification.action">
+            <button class="action-btn" 
+                    [class.success-action]="isSuccessNotificationPersistent(notification)"
+                    [class.rejection-action]="isRejectionNotificationPersistent(notification)"
+                    (click)="executePersistentAction(notification)">
+              {{ notification.action.label }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Notifications Locales -->
         <div *ngFor="let notification of notifications" class="notification-item"
              [class.unread]="!notification.read"
              [class.success]="isSuccessNotification(notification)"
@@ -523,23 +559,48 @@ import { Subscription } from 'rxjs';
 })
 export class NotificationsComponent implements OnInit, OnDestroy {
   notifications: Notification[] = [];
+  persistentNotifications: PersistentNotification[] = [];
   private subscription?: Subscription;
+  private persistentSubscription?: Subscription;
 
   @Output() closePanel = new EventEmitter<void>();
 
-  constructor(private notificationService: NotificationService) {}
+  constructor(
+    private notificationService: NotificationService,
+    private persistentNotificationService: PersistentNotificationService
+  ) {}
 
   ngOnInit() {
+    // Charger les notifications locales
     this.subscription = this.notificationService.getNotifications().subscribe(
       notifications => {
         this.notifications = notifications;
       }
     );
+    
+    // Charger les notifications persistantes du backend
+    this.loadPersistentNotifications();
+  }
+
+  loadPersistentNotifications() {
+    this.persistentNotificationService.loadPersistentNotifications().subscribe({
+      next: (response: any) => {
+        const notifications = response.notifications || response;
+        this.persistentNotifications = notifications;
+        console.log('🔔 Notifications persistantes chargées:', notifications.length);
+      },
+      error: (error) => {
+        console.error('❌ Erreur chargement notifications:', error);
+      }
+    });
   }
 
   ngOnDestroy() {
     if (this.subscription) {
       this.subscription.unsubscribe();
+    }
+    if (this.persistentSubscription) {
+      this.persistentSubscription.unsubscribe();
     }
   }
 
@@ -631,5 +692,90 @@ export class NotificationsComponent implements OnInit, OnDestroy {
       return `${notification.message} 💪 Ajustez votre demande et réessayez, vous pouvez y arriver !`;
     }
     return notification.message;
+  }
+
+  // 🎉 MÉTHODES POUR NOTIFICATIONS PERSISTANTES (Backend) 🎉
+  getAllNotifications(): (Notification | PersistentNotification)[] {
+    return [...this.persistentNotifications, ...this.notifications];
+  }
+
+  isSuccessNotificationPersistent(notification: PersistentNotification): boolean {
+    return notification.message?.toLowerCase().includes('approuvée') || 
+           notification.message?.toLowerCase().includes('accepté') ||
+           notification.title?.toLowerCase().includes('approuvée') ||
+           notification.title?.toLowerCase().includes('accepté') ||
+           notification.type === 'success';
+  }
+
+  isRejectionNotificationPersistent(notification: PersistentNotification): boolean {
+    return notification.message?.toLowerCase().includes('rejetée') || 
+           notification.message?.toLowerCase().includes('refusé') ||
+           notification.title?.toLowerCase().includes('rejetée') ||
+           notification.title?.toLowerCase().includes('refusé') ||
+           (notification.type === 'warning' && !this.isSuccessNotificationPersistent(notification));
+  }
+
+  isCelebrationNotificationPersistent(notification: PersistentNotification): boolean {
+    return this.isSuccessNotificationPersistent(notification);
+  }
+
+  getEmotionalTitlePersistent(notification: PersistentNotification): string {
+    if (this.isSuccessNotificationPersistent(notification)) {
+      return `🎉 ${notification.title} - Félicitations !`;
+    }
+    if (this.isRejectionNotificationPersistent(notification)) {
+      return `💙 ${notification.title} - Ne perdez pas espoir`;
+    }
+    return `✨ ${notification.title}`;
+  }
+
+  getEmotionalMessagePersistent(notification: PersistentNotification): string {
+    return notification.message; // Le backend envoie déjà les messages émotionnels
+  }
+
+  getNotificationIconPersistent(type: string): string {
+    switch (type) {
+      case 'success': return '🎉';
+      case 'warning': return '💙';
+      case 'error': return '❌';
+      case 'info': return '📢';
+      default: return '🔔';
+    }
+  }
+
+  getTimeAgoPersistent(timestamp: string): string {
+    const now = new Date();
+    const timeDiff = now.getTime() - new Date(timestamp).getTime();
+
+    const minutes = Math.floor(timeDiff / (1000 * 60));
+    const hours = Math.floor(timeDiff / (1000 * 60 * 60));
+    const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+
+    if (minutes < 1) return 'À l\'instant';
+    if (minutes < 60) return `Il y a ${minutes}min`;
+    if (hours < 24) return `Il y a ${hours}h`;
+    return `Il y a ${days}j`;
+  }
+
+  markPersistentAsRead(notification: PersistentNotification) {
+    if (!notification.read) {
+      this.persistentNotificationService.markAsRead(notification._id).subscribe({
+        next: () => {
+          notification.read = true;
+          console.log('✅ Notification marquée comme lue');
+        },
+        error: (error) => {
+          console.error('❌ Erreur marquage notification:', error);
+        }
+      });
+    }
+  }
+
+  executePersistentAction(notification: PersistentNotification) {
+    if (notification.action && notification.action.callback) {
+      // Ici on pourrait naviguer vers la route spécifiée
+      console.log('🔗 Action:', notification.action.callback);
+      // Exemple: this.router.navigate([notification.action.callback]);
+    }
   }
 }
