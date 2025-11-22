@@ -289,9 +289,9 @@
     </div>
   </footer>
 
-  <!-- Professional Notification Panel -->
-  <div class='notification-overlay' [class.open]='showNotifications' (click)='closeNotifications($event)'>
-    <div class='notification-panel-container' (click)='$event.stopPropagation()'>
+  <!-- Professional Notification Panel V2 FORCE -->
+  <div class='notification-overlay-v2' [class.open]='showNotifications' (click)='closeNotifications($event)'>
+    <div class='notification-panel-container-v2' (click)='$event.stopPropagation()'>
       <app-notifications (closePanelEvent)='closeNotifications()'></app-notifications>
     </div>
   </div>
