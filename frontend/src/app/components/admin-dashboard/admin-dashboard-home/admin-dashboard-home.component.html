@@ -301,6 +301,255 @@
       </div>
     </div>
 
+    <!-- ADMIN PROJECTS MANAGEMENT SECTION -->
+    <div class="admin-projects-section">
+      <div class="section-header">
+        <h2>🔧 Gestion des Projets</h2>
+        <div class="section-actions">
+          <button class="btn-refresh" [class.loading]="isLoading" [disabled]="isLoading" (click)="loadProjects()">
+            <span class="icon">🔄</span>
+            <span>Actualiser</span>
+          </button>
+          <button class="btn-primary" (click)="openCreateProjectModal()">
+            <span class="icon">➕</span>
+            <span>Nouveau Projet</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Projects Filters -->
+      <div class="projects-filters">
+        <div class="filter-group">
+          <label>Filtrer par statut:</label>
+          <div class="status-filter-buttons">
+            <button
+              [class.active]="projectFilterStatus === 'all'"
+              (click)="projectFilterStatus = 'all'; filterProjects()">
+              📋 Tous ({{ projects.length }})
+            </button>
+            <button
+              [class.active]="projectFilterStatus === 'planning'"
+              (click)="projectFilterStatus = 'planning'; filterProjects()">
+              📝 Planification ({{ getProjectsByStatus('planning').length }})
+            </button>
+            <button
+              [class.active]="projectFilterStatus === 'active'"
+              (click)="projectFilterStatus = 'active'; filterProjects()">
+              ⚡ Actif ({{ getProjectsByStatus('active').length }})
+            </button>
+            <button
+              [class.active]="projectFilterStatus === 'completed'"
+              (click)="projectFilterStatus = 'completed'; filterProjects()">
+              ✅ Terminé ({{ getProjectsByStatus('completed').length }})
+            </button>
+          </div>
+        </div>
+        <div class="search-group">
+          <input
+            type="text"
+            [(ngModel)]="projectSearchTerm"
+            (ngModelChange)="filterProjects()"
+            placeholder="🔍 Rechercher un projet..."
+            class="search-input">
+        </div>
+      </div>
+
+      <!-- Projects Table -->
+      <div class="projects-table-container">
+        <div *ngIf="filteredProjects.length === 0" class="no-projects">
+          <div class="no-projects-icon">📁</div>
+          <div class="no-projects-text">Aucun projet trouvé</div>
+          <div class="no-projects-subtext">Créez votre premier projet pour commencer</div>
+        </div>
+
+        <div *ngIf="filteredProjects.length > 0" class="projects-table">
+          <div class="table-header">
+            <div class="col-name">Nom du Projet</div>
+            <div class="col-status">Statut</div>
+            <div class="col-progress">Progression</div>
+            <div class="col-members">Membres</div>
+            <div class="col-priority">Priorité</div>
+            <div class="col-actions">Actions</div>
+          </div>
+
+          <div *ngFor="let project of filteredProjects" class="table-row">
+            <div class="col-name">
+              <div class="project-name-cell">
+                <div class="project-color" [style.background]="project.color || '#667eea'"></div>
+                <div class="project-info">
+                  <div class="project-title">{{ project.name }}</div>
+                  <div class="project-description">{{ project.description || 'Aucune description' }}</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-status">
+              <span class="status-badge-admin" [class]="'status-' + project.status">
+                {{ getStatusLabel(project.status) }}
+              </span>
+            </div>
+
+            <div class="col-progress">
+              <div class="progress-container">
+                <div class="progress-bar-admin">
+                  <div class="progress-fill-admin" [style.width.%]="project.progress || 0"></div>
+                </div>
+                <span class="progress-text">{{ project.progress || 0 }}%</span>
+              </div>
+            </div>
+
+            <div class="col-members">
+              <div class="members-cell">
+                <span class="members-count">👥 {{ project.members?.length || 0 }}</span>
+              </div>
+            </div>
+
+            <div class="col-priority">
+              <span class="priority-badge-admin" [class]="'priority-' + project.priority">
+                {{ getPriorityLabel(project.priority) }}
+              </span>
+            </div>
+
+            <div class="col-actions">
+              <div class="action-buttons">
+                <button class="btn-edit" (click)="editProject(project)" title="Modifier">
+                  ✏️
+                </button>
+                <button class="btn-delete" (click)="deleteProject(project)" title="Supprimer">
+                  🗑️
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Create Project Modal -->
+<div *ngIf="showCreateProjectModal" class="modal-overlay" (click)="closeModals()">
+  <div class="modal-content project-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>➕ Créer un Nouveau Projet</h3>
+      <button class="close-btn" (click)="closeModals()">✕</button>
+    </div>
+
+    <form (ngSubmit)="createProject()" class="modal-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nom du projet *</label>
+          <input type="text" [(ngModel)]="newProject.name" name="name" required class="form-input" placeholder="Entrez le nom du projet">
+        </div>
+        <div class="form-group">
+          <label>Priorité</label>
+          <select [(ngModel)]="newProject.priority" name="priority" class="form-input">
+            <option value="low">🟢 Basse</option>
+            <option value="medium">🟡 Moyenne</option>
+            <option value="high">🟠 Haute</option>
+            <option value="critical">🔴 Critique</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Description</label>
+        <textarea [(ngModel)]="newProject.description" name="description" rows="3" class="form-input" placeholder="Description du projet"></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Date de début</label>
+          <input type="date" [(ngModel)]="newProject.startDate" name="startDate" class="form-input">
+        </div>
+        <div class="form-group">
+          <label>Date de fin</label>
+          <input type="date" [(ngModel)]="newProject.endDate" name="endDate" class="form-input">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Couleur du projet</label>
+        <input type="color" [(ngModel)]="newProject.color" name="color" class="form-input color-input">
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" (click)="closeModals()">Annuler</button>
+        <button type="submit" class="btn-primary">Créer le Projet</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Edit Project Modal -->
+<div *ngIf="showEditProjectModal && selectedProject" class="modal-overlay" (click)="closeModals()">
+  <div class="modal-content project-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>✏️ Modifier le Projet</h3>
+      <button class="close-btn" (click)="closeModals()">✕</button>
+    </div>
+
+    <form (ngSubmit)="updateProject()" class="modal-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nom du projet *</label>
+          <input type="text" [(ngModel)]="selectedProject.name" name="editName" required class="form-input">
+        </div>
+        <div class="form-group">
+          <label>Statut</label>
+          <select [(ngModel)]="selectedProject.status" name="editStatus" class="form-input">
+            <option value="planning">📝 Planification</option>
+            <option value="active">⚡ Actif</option>
+            <option value="on-hold">⏸️ En Pause</option>
+            <option value="completed">✅ Terminé</option>
+            <option value="archived">📦 Archivé</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Priorité</label>
+          <select [(ngModel)]="selectedProject.priority" name="editPriority" class="form-input">
+            <option value="low">🟢 Basse</option>
+            <option value="medium">🟡 Moyenne</option>
+            <option value="high">🟠 Haute</option>
+            <option value="critical">🔴 Critique</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Progression (%)</label>
+          <input type="number" [(ngModel)]="selectedProject.progress" name="editProgress" min="0" max="100" class="form-input">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Description</label>
+        <textarea [(ngModel)]="selectedProject.description" name="editDescription" rows="3" class="form-input"></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Date de début</label>
+          <input type="date" [(ngModel)]="selectedProject.startDate" name="editStartDate" class="form-input">
+        </div>
+        <div class="form-group">
+          <label>Date de fin</label>
+          <input type="date" [(ngModel)]="selectedProject.endDate" name="editEndDate" class="form-input">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Couleur du projet</label>
+        <input type="color" [(ngModel)]="selectedProject.color" name="editColor" class="form-input color-input">
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" (click)="closeModals()">Annuler</button>
+        <button type="submit" class="btn-primary">Mettre à Jour</button>
+      </div>
+    </form>
   </div>
 </div>
 

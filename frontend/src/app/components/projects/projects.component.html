@@ -25,17 +25,27 @@
       <button 
         [class.active]="filterStatus === 'planning'"
         (click)="filterStatus = 'planning'; applyFilters()">
-        Planification
+        📝 Planification
       </button>
       <button 
         [class.active]="filterStatus === 'active'"
         (click)="filterStatus = 'active'; applyFilters()">
-        Actif
+        ⚡ Actif
+      </button>
+      <button 
+        [class.active]="filterStatus === 'on-hold'"
+        (click)="filterStatus = 'on-hold'; applyFilters()">
+        ⏸️ En Pause
       </button>
       <button 
         [class.active]="filterStatus === 'completed'"
         (click)="filterStatus = 'completed'; applyFilters()">
-        Terminé
+        ✅ Terminé
+      </button>
+      <button 
+        [class.active]="filterStatus === 'archived'"
+        (click)="filterStatus = 'archived'; applyFilters()">
+        📦 Archivé
       </button>
     </div>
   </div>

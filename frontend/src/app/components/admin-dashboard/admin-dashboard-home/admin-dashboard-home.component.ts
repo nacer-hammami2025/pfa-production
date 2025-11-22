@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
 import { Chart, ChartOptions, ChartData, registerables } from 'chart.js';
 import { AdminService } from 'src/app/services/admin.service';
+import { ProjectService, Project } from 'src/app/services/project.service';
 
 Chart.register(...registerables);
 
@@ -34,6 +35,25 @@ export class AdminDashboardHomeComponent implements OnInit, AfterViewInit, OnDes
   topUsers: any[] = [];
   topTeams: any[] = [];
   recentActivities: any[] = [];
+
+  // PROJECT MANAGEMENT PROPERTIES
+  projects: Project[] = [];
+  filteredProjects: Project[] = [];
+  projectFilterStatus = 'all';
+  projectSearchTerm = '';
+  showCreateProjectModal = false;
+  showEditProjectModal = false;
+  selectedProject: Project | null = null;
+
+  newProject = {
+    name: '',
+    description: '',
+    priority: 'medium' as 'low' | 'medium' | 'high' | 'critical',
+    color: '#667eea',
+    startDate: '',
+    endDate: '',
+    members: [] as string[]
+  };
 
   // Charts
   private performanceChart: Chart | null = null;
@@ -175,10 +195,11 @@ export class AdminDashboardHomeComponent implements OnInit, AfterViewInit, OnDes
     cutout: '65%'
   };
 
-  constructor(private adminService: AdminService, private cdr: ChangeDetectorRef) {}
+  constructor(private adminService: AdminService, private cdr: ChangeDetectorRef, private projectService: ProjectService) {}
 
   ngOnInit(): void {
     this.loadDashboardData();
+    this.loadProjects(); // Charger les projets au démarrage
   }
 
   ngAfterViewInit(): void {
@@ -558,5 +579,146 @@ AUCUNE donnée fictive ne sera affichée - le dashboard reste vide jusqu'à rés
   ngOnDestroy(): void {
     // Nettoyer les graphiques
     this.destroyCharts();
+  }
+
+  // ==========================================
+  // PROJECT MANAGEMENT METHODS
+  // ==========================================
+
+  loadProjects(): void {
+    this.projectService.getProjects().subscribe({
+      next: (projects) => {
+        this.projects = projects;
+        this.filterProjects();
+        console.log('✅ Projets chargés:', projects.length);
+      },
+      error: (err) => {
+        console.error('❌ Erreur chargement projets:', err);
+        alert('Erreur lors du chargement des projets');
+      }
+    });
+  }
+
+  filterProjects(): void {
+    this.filteredProjects = this.projects.filter(project => {
+      const matchesStatus = this.projectFilterStatus === 'all' || project.status === this.projectFilterStatus;
+      const matchesSearch = !this.projectSearchTerm ||
+        project.name.toLowerCase().includes(this.projectSearchTerm.toLowerCase()) ||
+        project.description?.toLowerCase().includes(this.projectSearchTerm.toLowerCase());
+      return matchesStatus && matchesSearch;
+    });
+  }
+
+  getProjectsByStatus(status: string): Project[] {
+    return this.projects.filter(p => p.status === status);
+  }
+
+  getStatusLabel(status: string): string {
+    const labels: { [key: string]: string } = {
+      'planning': '📝 Planification',
+      'active': '⚡ Actif',
+      'on-hold': '⏸️ En Pause',
+      'completed': '✅ Terminé',
+      'archived': '📦 Archivé'
+    };
+    return labels[status] || status;
+  }
+
+  getPriorityLabel(priority: string): string {
+    const labels: { [key: string]: string } = {
+      'low': '🟢 Basse',
+      'medium': '🟡 Moyenne',
+      'high': '🟠 Haute',
+      'critical': '🔴 Critique'
+    };
+    return labels[priority] || priority;
+  }
+
+  openCreateProjectModal(): void {
+    this.showCreateProjectModal = true;
+    this.resetNewProject();
+  }
+
+  resetNewProject(): void {
+    this.newProject = {
+      name: '',
+      description: '',
+      priority: 'medium',
+      color: '#667eea',
+      startDate: '',
+      endDate: '',
+      members: []
+    };
+  }
+
+  createProject(): void {
+    if (!this.newProject.name.trim()) {
+      alert('Le nom du projet est obligatoire');
+      return;
+    }
+
+    this.projectService.createProject(this.newProject).subscribe({
+      next: (project) => {
+        this.projects.unshift(project);
+        this.filterProjects();
+        this.showCreateProjectModal = false;
+        this.resetNewProject();
+        alert('✅ Projet créé avec succès !');
+      },
+      error: (err) => {
+        console.error('❌ Erreur création projet:', err);
+        alert('Erreur lors de la création du projet');
+      }
+    });
+  }
+
+  editProject(project: Project): void {
+    this.selectedProject = { ...project };
+    this.showEditProjectModal = true;
+  }
+
+  updateProject(): void {
+    if (!this.selectedProject) return;
+
+    this.projectService.updateProject(this.selectedProject._id, this.selectedProject).subscribe({
+      next: (updatedProject) => {
+        const index = this.projects.findIndex(p => p._id === updatedProject._id);
+        if (index !== -1) {
+          this.projects[index] = updatedProject;
+          this.filterProjects();
+        }
+        this.showEditProjectModal = false;
+        this.selectedProject = null;
+        alert('✅ Projet mis à jour avec succès !');
+      },
+      error: (err) => {
+        console.error('❌ Erreur mise à jour projet:', err);
+        alert('Erreur lors de la mise à jour du projet');
+      }
+    });
+  }
+
+  deleteProject(project: Project): void {
+    if (!confirm(`Êtes-vous sûr de vouloir supprimer le projet "${project.name}" ? Cette action est irréversible.`)) {
+      return;
+    }
+
+    this.projectService.deleteProject(project._id).subscribe({
+      next: () => {
+        this.projects = this.projects.filter(p => p._id !== project._id);
+        this.filterProjects();
+        alert('✅ Projet supprimé avec succès !');
+      },
+      error: (err) => {
+        console.error('❌ Erreur suppression projet:', err);
+        alert('Erreur lors de la suppression du projet');
+      }
+    });
+  }
+
+  closeModals(): void {
+    this.showCreateProjectModal = false;
+    this.showEditProjectModal = false;
+    this.selectedProject = null;
   }
 }

@@ -6,10 +6,10 @@ async function testAdminAPIUsers() {
   try {
     console.log('🔐 Test de connexion admin...');
     
-    // Connexion admin
+    // Connexion admin avec le vrai compte superadmin
     const loginRes = await axios.post(`${PROD_URL}/auth/login`, {
-      email: 'admin@taskflow.com',
-      password: 'admin123'
+      email: 'superadmin@taskflow.com',
+      password: 'superadmin123'
     }, { timeout: 10000 });
 
     console.log('✅ Connexion admin réussie');
