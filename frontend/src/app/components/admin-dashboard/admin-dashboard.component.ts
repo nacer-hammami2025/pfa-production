@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-admin-dashboard',
+  styleUrls: ['../fantastic-animations.css'],
   template: `
     <div class="admin-layout">
       <!-- SIDEBAR NAVIGATION -->
@@ -18,21 +19,33 @@ import { Router } from '@angular/router';
         </div>
 
         <nav class="sidebar-nav">
-          <a routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-item">
+          <a routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-item miraculous-admin-dashboard">
             <i class="icon">📊</i>
             <span>Dashboard</span>
+            <div class="cosmic-aura"></div>
+            <div class="quantum-particles"></div>
+            <div class="celestial-glow"></div>
           </a>
-          <a routerLink="/admin/users" routerLinkActive="active" class="nav-item">
+          <a routerLink="/admin/users" routerLinkActive="active" class="nav-item miraculous-admin-users">
             <i class="icon">👥</i>
             <span>Utilisateurs</span>
+            <div class="interdimensional-portal"></div>
+            <div class="plasma-energy"></div>
+            <div class="stellar-burst"></div>
           </a>
-          <a routerLink="/admin/teams" routerLinkActive="active" class="nav-item">
+          <a routerLink="/admin/teams" routerLinkActive="active" class="nav-item miraculous-admin-teams">
             <i class="icon">🏢</i>
             <span>Équipes</span>
+            <div class="galactic-nebula"></div>
+            <div class="cosmic-winds"></div>
+            <div class="aurora-borealis"></div>
           </a>
-          <a routerLink="/admin/team-requests" routerLinkActive="active" class="nav-item">
+          <a routerLink="/admin/team-requests" routerLinkActive="active" class="nav-item miraculous-admin-requests">
             <i class="icon">📋</i>
             <span>Demandes d'équipe</span>
+            <div class="dimensional-rift"></div>
+            <div class="quantum-field"></div>
+            <div class="crystalline-matrix"></div>
           </a>
         </nav>
 
