@@ -72,14 +72,23 @@ export class AdminService {
   private teamsCache$: Observable<AdminTeam[]> | null = null;
   private cacheTimeout = 60000; // 1 minute
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    console.log('🔧 AdminService initialisé avec baseUrl:', this.baseUrl);
+  }
 
   getDashboardSummary(forceRefresh = false): Observable<AdminDashboardSummary> {
     if (!forceRefresh && this.dashboardCache$) {
       return this.dashboardCache$;
     }
     
-    this.dashboardCache$ = this.http.get<AdminDashboardSummary>(`${this.baseUrl}/dashboard-summary`).pipe(
+    console.log('🔄 Appel API dashboard summary:', `${this.baseUrl}/dashboard/summary`);
+    
+    this.dashboardCache$ = this.http.get<AdminDashboardSummary>(`${this.baseUrl}/dashboard/summary`).pipe(
+      tap((data) => {
+        console.log('✅ API dashboard summary - Réponse reçue:', data);
+        console.log('📊 Totals récupérés:', data.totals);
+        console.log('👥 Recent users récupérés:', data.recentUsers?.length || 0);
+      }),
       map((data: any) => ({
         totals: data.totals,
         weeklyStats: {
@@ -101,6 +110,15 @@ export class AdminService {
         }, this.cacheTimeout);
       }),
       catchError(err => {
+        console.error('❌ ERREUR API /admin/dashboard/summary:', err);
+        console.error('🚨 Détails de l\'erreur API dashboard:', {
+          status: err.status,
+          statusText: err.statusText,
+          url: err.url,
+          message: err.message,
+          error: err.error
+        });
+        
         this.dashboardCache$ = null;
         throw err;
       })

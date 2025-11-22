@@ -211,20 +211,29 @@
           <span class="panel-badge">Ce mois</span>
         </div>
         <div class="panel-content">
-          <div class="user-item" *ngFor="let user of topUsers; let i = index">
-            <div class="user-rank" [class]="'rank-' + (i + 1)">{{ i + 1 }}</div>
-            <div class="user-avatar">{{ user.avatar }}</div>
-            <div class="user-info">
-              <div class="user-name">{{ user.name }}</div>
-              <div class="user-stats">
-                <span class="tasks-count">{{ user.tasksCompleted }} tâches</span>
-                <span class="efficiency" [class.high]="user.efficiency >= 90">
-                  {{ user.efficiency }}% efficacité
-                </span>
+          <div *ngIf="topUsers && topUsers.length > 0; else noTopUsersTemplate">
+            <div class="user-item" *ngFor="let user of topUsers; let i = index">
+              <div class="user-rank" [class]="'rank-' + (i + 1)">{{ i + 1 }}</div>
+              <div class="user-avatar">{{ user.avatar }}</div>
+              <div class="user-info">
+                <div class="user-name">{{ user.name }}</div>
+                <div class="user-stats">
+                  <span class="tasks-count">{{ user.tasksCompleted }} tâches</span>
+                  <span class="efficiency" [class.high]="user.efficiency >= 90">
+                    {{ user.efficiency }}% efficacité
+                  </span>
+                </div>
               </div>
+              <div class="user-badge" *ngIf="i === 0">👑</div>
             </div>
-            <div class="user-badge" *ngIf="i === 0">👑</div>
           </div>
+          <ng-template #noTopUsersTemplate>
+            <div class="empty-state">
+              <div class="empty-icon">📊</div>
+              <div class="empty-text">Aucune donnée utilisateur disponible</div>
+              <div class="empty-subtext">Les statistiques apparaîtront lorsque les utilisateurs commenceront à utiliser la plateforme</div>
+            </div>
+          </ng-template>
         </div>
       </div>
 
@@ -235,21 +244,30 @@
           <span class="panel-badge">Performance</span>
         </div>
         <div class="panel-content">
-          <div class="team-item" *ngFor="let team of topTeams">
-            <div class="team-icon">{{ team.icon }}</div>
-            <div class="team-info">
-              <div class="team-name">{{ team.name }}</div>
-              <div class="team-meta">
-                <span>{{ team.members }} membres</span>
-                <span>•</span>
-                <span>{{ team.tasksCompleted }} tâches</span>
+          <div *ngIf="topTeams && topTeams.length > 0; else noTopTeamsTemplate">
+            <div class="team-item" *ngFor="let team of topTeams">
+              <div class="team-icon">{{ team.icon }}</div>
+              <div class="team-info">
+                <div class="team-name">{{ team.name }}</div>
+                <div class="team-meta">
+                  <span>{{ team.members }} membres</span>
+                  <span>•</span>
+                  <span>{{ team.tasksCompleted }} tâches</span>
+                </div>
+                <div class="progress-bar">
+                  <div class="progress-fill" [style.width.%]="team.progress"></div>
+                </div>
               </div>
-              <div class="progress-bar">
-                <div class="progress-fill" [style.width.%]="team.progress"></div>
-              </div>
+              <div class="team-progress-label">{{ team.progress }}%</div>
             </div>
-            <div class="team-progress-label">{{ team.progress }}%</div>
           </div>
+          <ng-template #noTopTeamsTemplate>
+            <div class="empty-state">
+              <div class="empty-icon">👥</div>
+              <div class="empty-text">Aucune équipe disponible</div>
+              <div class="empty-subtext">Les équipes apparaîtront lorsque des projets collaboratifs seront créés</div>
+            </div>
+          </ng-template>
         </div>
       </div>
 
@@ -260,16 +278,25 @@
           <span class="panel-badge">En direct</span>
         </div>
         <div class="panel-content">
-          <div class="activity-item" *ngFor="let activity of recentActivities">
-            <div class="activity-icon">{{ activity.icon }}</div>
-            <div class="activity-info">
-              <div class="activity-text">
-                <strong>{{ activity.user }}</strong> {{ activity.action }}
-                <span class="activity-target">{{ activity.target }}</span>
+          <div *ngIf="recentActivities && recentActivities.length > 0; else noActivitiesTemplate">
+            <div class="activity-item" *ngFor="let activity of recentActivities">
+              <div class="activity-icon">{{ activity.icon }}</div>
+              <div class="activity-info">
+                <div class="activity-text">
+                  <strong>{{ activity.user }}</strong> {{ activity.action }}
+                  <span class="activity-target">{{ activity.target }}</span>
+                </div>
+                <div class="activity-time">{{ activity.time }}</div>
               </div>
-              <div class="activity-time">{{ activity.time }}</div>
             </div>
           </div>
+          <ng-template #noActivitiesTemplate>
+            <div class="empty-state">
+              <div class="empty-icon">🕐</div>
+              <div class="empty-text">Aucune activité récente</div>
+              <div class="empty-subtext">Les activités utilisateur apparaîtront ici en temps réel</div>
+            </div>
+          </ng-template>
         </div>
       </div>
     </div>
