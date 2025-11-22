@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { NotificationService } from '../services/notification.service';
+import { PersistentNotificationService } from '../services/persistent-notification.service';
 import { TaskService } from '../services/task.service';
 import { VoiceCommandsService } from '../services/voice-commands.service';
 import { Subscription } from 'rxjs';
@@ -45,6 +46,7 @@ export class AppComponent implements OnInit, OnDestroy {
     public authService: AuthService,
     private router: Router,
     private notificationService: NotificationService,
+    private persistentNotificationService: PersistentNotificationService,
     private taskService: TaskService, // Inject TaskService
     private voiceCommandsService: VoiceCommandsService
   ) {
@@ -71,6 +73,9 @@ export class AppComponent implements OnInit, OnDestroy {
         this.notificationService.getUnreadCount().subscribe(count => {
           this.unreadCount = count;
         });
+        // Load persistent notifications (team requests, etc.)
+        console.log('🔔 Chargement des notifications persistantes...');
+        this.persistentNotificationService.displayPersistentNotifications();
       }
     });
 
@@ -167,6 +172,10 @@ export class AppComponent implements OnInit, OnDestroy {
 
   toggleNotifications() {
     this.showNotifications = !this.showNotifications;
+  }
+
+  closeNotifications(event?: Event) {
+    this.showNotifications = false;
   }
 
   checkOverdueTasks() {

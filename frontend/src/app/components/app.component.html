@@ -94,9 +94,12 @@
       <!-- Actions Utilisateur -->
       <div class='header-actions'>
         <!-- Notifications -->
-        <button class='action-btn notification-btn' (click)='toggleNotifications()' title='Notifications'>
+        <button class='action-btn notification-btn' 
+                (click)='toggleNotifications()' 
+                title='Notifications'
+                [attr.data-count]='unreadCount'
+                [class.has-new]='unreadCount > 0'>
           <i class='icon'>🔔</i>
-          <span class='badge' *ngIf='unreadCount > 0'>{{unreadCount}}</span>
         </button>
 
         <!-- Theme Toggle -->
@@ -286,15 +289,10 @@
     </div>
   </footer>
 
-  <!-- Notification Panel -->
-  <div class='notification-panel' [class.open]='showNotifications'>
-    <div class='panel-header'>
-      <h3>Notifications</h3>
-      <button class='close-btn' (click)='toggleNotifications()'>✕</button>
-    </div>
-    <div class='panel-content'>
-      <p class='empty-state' *ngIf='unreadCount === 0'>Aucune nouvelle notification</p>
-      <!-- Notifications will be loaded here -->
+  <!-- Professional Notification Panel -->
+  <div class='notification-overlay' [class.open]='showNotifications' (click)='closeNotifications($event)'>
+    <div class='notification-panel-container' (click)='$event.stopPropagation()'>
+      <app-notifications (closePanelEvent)='closeNotifications()'></app-notifications>
     </div>
   </div>
 

@@ -1192,3 +1192,126 @@
 .loading {
   animation: spin 1s linear infinite;
 }
+
+/* ============================================
+   PROFESSIONAL NOTIFICATION PANEL
+   ============================================ */
+
+.notification-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  z-index: 10000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.notification-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.notification-panel-container {
+  position: absolute;
+  top: 80px;
+  right: 20px;
+  width: 420px;
+  max-width: calc(100vw - 40px);
+  max-height: calc(100vh - 120px);
+  background: var(--bg-card);
+  border-radius: 20px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+  border: 1px solid var(--border-color);
+  transform: translateY(-20px) scale(0.95);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  overflow: hidden;
+}
+
+.notification-overlay.open .notification-panel-container {
+  transform: translateY(0) scale(1);
+}
+
+/* Notification Button Enhancement */
+.notification-btn {
+  position: relative;
+  overflow: visible;
+}
+
+.notification-btn .icon {
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+}
+
+.notification-btn:hover .icon {
+  transform: scale(1.1);
+  filter: drop-shadow(0 0 8px rgba(102, 126, 234, 0.6));
+}
+
+/* Badge de notification */
+.notification-btn::after {
+  content: attr(data-count);
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 10px;
+  min-width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+  transform: scale(0);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.notification-btn[data-count]:not([data-count="0"])::after {
+  transform: scale(1);
+}
+
+/* Animation de pulsation pour nouvelles notifications */
+@keyframes notificationPulse {
+  0%, 100% { 
+    transform: scale(1);
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+  }
+  50% { 
+    transform: scale(1.05);
+    box-shadow: 0 4px 16px rgba(239, 68, 68, 0.6);
+  }
+}
+
+.notification-btn.has-new::after {
+  animation: notificationPulse 2s ease-in-out infinite;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .notification-panel-container {
+    top: 70px;
+    right: 10px;
+    left: 10px;
+    width: auto;
+    max-width: none;
+  }
+}
+
+/* Dark Mode Support */
+.app-container.dark-mode .notification-overlay {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.app-container.dark-mode .notification-panel-container {
+  background: var(--bg-card);
+  border-color: #4a5568;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+}
