@@ -1,6 +1,691 @@
 /* ============================================
-   ANIMATIONS FANTASTIQUES POUR ROLES UTILISATEUR
+   ANIMATIONS FANTASTIQUES POUR ROLES UTILISATEUR ET DASHBOARD
    ============================================ */
+
+/* ============================================
+   EFFETS MIRACULEUX POUR ÉLÉMENTS DASHBOARD
+   ============================================ */
+
+/* Effet miraculeux pour TÂCHES */
+.nav-link[routerLink*="tasks"], .menu-link[routerLink*="tasks"] {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-link[routerLink*="tasks"]:hover, .menu-link[routerLink*="tasks"]:hover {
+  background: linear-gradient(135deg, #4ecdc4, #44a08d) !important;
+  color: white !important;
+  transform: translateY(-3px) !important;
+  box-shadow: 0 8px 25px rgba(78, 205, 196, 0.4) !important;
+  animation: taskMiracle 2s ease-in-out infinite !important;
+}
+
+.nav-link[routerLink*="tasks"]::before, .menu-link[routerLink*="tasks"]::before {
+  content: '✨';
+  position: absolute;
+  top: -10px;
+  right: 10px;
+  opacity: 0;
+  animation: taskSparkle 1.5s ease-in-out infinite;
+}
+
+/* Effet miraculeux pour KANBAN */
+.nav-link[routerLink*="kanban"], .menu-link[routerLink*="kanban"] {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-link[routerLink*="kanban"]:hover, .menu-link[routerLink*="kanban"]:hover {
+  background: linear-gradient(135deg, #667eea, #764ba2, #f093fb) !important;
+  color: white !important;
+  transform: scale(1.05) rotate(1deg) !important;
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5) !important;
+  animation: kanbanMagic 2.5s ease-in-out infinite !important;
+}
+
+.nav-link[routerLink*="kanban"]::after, .menu-link[routerLink*="kanban"]::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  animation: kanbanSweep 3s ease-in-out infinite;
+}
+
+/* Effet miraculeux pour PROJETS */
+.nav-link[routerLink*="projects"], .menu-link[routerLink*="projects"] {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-link[routerLink*="projects"]:hover, .menu-link[routerLink*="projects"]:hover {
+  background: linear-gradient(135deg, #ff9a56, #ff6b6b, #ee5a52) !important;
+  color: white !important;
+  transform: translateY(-5px) scale(1.03) !important;
+  box-shadow: 0 15px 35px rgba(255, 154, 86, 0.6) !important;
+  animation: projectsGlow 2s ease-in-out infinite !important;
+}
+
+.nav-link[routerLink*="projects"]::before, .menu-link[routerLink*="projects"]::before {
+  content: '🌟';
+  position: absolute;
+  top: 50%;
+  left: -20px;
+  transform: translateY(-50%);
+  opacity: 0;
+  animation: projectsOrbit 3s linear infinite;
+}
+
+/* Effet miraculeux pour OUTILS */
+.nav-link:has(.icon:contains("🛠️")), .dropdown-toggle:has(.icon:contains("🛠️")) {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-link:has(.icon:contains("🛠️")):hover, .dropdown-toggle:has(.icon:contains("🛠️")):hover {
+  background: linear-gradient(135deg, #ffeaa7, #fdcb6e, #e17055) !important;
+  color: white !important;
+  transform: rotate(-2deg) scale(1.08) !important;
+  box-shadow: 0 12px 28px rgba(253, 203, 110, 0.5) !important;
+  animation: toolsVibration 1.5s ease-in-out infinite !important;
+}
+
+/* Effet miraculeux pour ANALYTICS */
+.nav-link[routerLink*="analytics"], .menu-link[routerLink*="analytics"], 
+.dropdown-toggle:has(.icon:contains("📊")) {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-link[routerLink*="analytics"]:hover, .menu-link[routerLink*="analytics"]:hover,
+.dropdown-toggle:has(.icon:contains("📊")):hover {
+  background: linear-gradient(135deg, #a29bfe, #6c5ce7, #fd79a8) !important;
+  color: white !important;
+  transform: translateY(-4px) !important;
+  box-shadow: 0 20px 40px rgba(162, 155, 254, 0.6) !important;
+  animation: analyticsDataFlow 2.5s ease-in-out infinite !important;
+}
+
+.nav-link[routerLink*="analytics"]::after, .menu-link[routerLink*="analytics"]::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+  opacity: 0;
+  animation: analyticsPulse 2s ease-in-out infinite;
+}
+
+/* Effet miraculeux pour ÉQUIPES */
+.nav-link[routerLink*="teams"], .menu-link[routerLink*="teams"] {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-link[routerLink*="teams"]:hover, .menu-link[routerLink*="teams"]:hover {
+  background: linear-gradient(135deg, #00b894, #00cec9, #74b9ff) !important;
+  color: white !important;
+  transform: scale(1.06) !important;
+  box-shadow: 0 15px 35px rgba(0, 184, 148, 0.5) !important;
+  animation: teamsUnity 2s ease-in-out infinite !important;
+}
+
+.nav-link[routerLink*="teams"]::before, .menu-link[routerLink*="teams"]::before {
+  content: '👤👤👤';
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 8px;
+  opacity: 0;
+  animation: teamsGather 2.5s ease-in-out infinite;
+}
+
+/* Effet miraculeux pour INTÉGRATIONS */
+.nav-link[routerLink*="integrations"], .menu-link[routerLink*="integrations"] {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-link[routerLink*="integrations"]:hover, .menu-link[routerLink*="integrations"]:hover {
+  background: linear-gradient(135deg, #e17055, #f39c12, #f1c40f) !important;
+  color: white !important;
+  transform: rotate(3deg) scale(1.04) !important;
+  box-shadow: 0 18px 38px rgba(225, 112, 85, 0.6) !important;
+  animation: integrationsConnect 2s ease-in-out infinite !important;
+}
+
+.nav-link[routerLink*="integrations"]::after, .menu-link[routerLink*="integrations"]::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  background: radial-gradient(circle, #fff, transparent);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  animation: integrationsRipple 2s ease-out infinite;
+}
+
+/* Effets spéciaux pour les icônes */
+.nav-link:hover .icon, .menu-link:hover .icon {
+  animation: iconBounce 1s ease-in-out infinite !important;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8)) !important;
+}
+
+/* Effet de halo pour les dropdowns */
+.dropdown-menu {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.98)) !important;
+  backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: 15px !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1) !important;
+  animation: dropdownMagicAppear 0.5s ease-out !important;
+}
+
+.dropdown-menu li a:hover {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1)) !important;
+  transform: translateX(10px) !important;
+  transition: all 0.3s ease !important;
+}
+
+/* Effet pour les badges pro */
+.pro-badge {
+  background: linear-gradient(135deg, #667eea, #764ba2) !important;
+  animation: proBadgeGlow 2s ease-in-out infinite !important;
+}
+
+/* ANIMATIONS EXTRAORDINAIRES */
+
+@keyframes taskMiracle {
+  0%, 100% { transform: translateY(-3px) scale(1); }
+  50% { transform: translateY(-8px) scale(1.02); }
+}
+
+@keyframes taskSparkle {
+  0%, 100% { opacity: 0; transform: translateY(0) rotate(0deg); }
+  50% { opacity: 1; transform: translateY(-10px) rotate(180deg); }
+}
+
+@keyframes kanbanMagic {
+  0%, 100% { transform: scale(1.05) rotate(1deg); }
+  33% { transform: scale(1.08) rotate(-1deg); }
+  66% { transform: scale(1.06) rotate(2deg); }
+}
+
+@keyframes kanbanSweep {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+@keyframes projectsGlow {
+  0%, 100% { box-shadow: 0 15px 35px rgba(255, 154, 86, 0.6); }
+  50% { box-shadow: 0 20px 45px rgba(255, 154, 86, 0.8); }
+}
+
+@keyframes projectsOrbit {
+  0% { left: -20px; opacity: 0; }
+  50% { left: 50%; opacity: 1; }
+  100% { left: calc(100% + 20px); opacity: 0; }
+}
+
+@keyframes toolsVibration {
+  0%, 100% { transform: rotate(-2deg) scale(1.08); }
+  25% { transform: rotate(2deg) scale(1.1); }
+  75% { transform: rotate(-1deg) scale(1.06); }
+}
+
+@keyframes analyticsDataFlow {
+  0%, 100% { 
+    background: linear-gradient(135deg, #a29bfe, #6c5ce7, #fd79a8);
+    transform: translateY(-4px);
+  }
+  50% { 
+    background: linear-gradient(135deg, #fd79a8, #a29bfe, #6c5ce7);
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes analyticsPulse {
+  0%, 100% { opacity: 0; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+@keyframes teamsUnity {
+  0%, 100% { transform: scale(1.06); }
+  50% { transform: scale(1.1) rotate(1deg); }
+}
+
+@keyframes teamsGather {
+  0%, 100% { opacity: 0; transform: translateX(-50%) translateY(-5px); }
+  50% { opacity: 1; transform: translateX(-50%) translateY(-15px); }
+}
+
+@keyframes integrationsConnect {
+  0%, 100% { transform: rotate(3deg) scale(1.04); }
+  50% { transform: rotate(-2deg) scale(1.08); }
+}
+
+@keyframes integrationsRipple {
+  0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(4); opacity: 0; }
+}
+
+@keyframes iconBounce {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-5px) scale(1.2); }
+}
+
+@keyframes dropdownMagicAppear {
+  0% { 
+    opacity: 0; 
+    transform: translateY(-20px) scale(0.9); 
+    filter: blur(10px);
+  }
+  100% { 
+    opacity: 1; 
+    transform: translateY(0) scale(1); 
+    filter: blur(0);
+  }
+}
+
+@keyframes proBadgeGlow {
+  0%, 100% { 
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    box-shadow: 0 2px 10px rgba(102, 126, 234, 0.3);
+  }
+  50% { 
+    background: linear-gradient(135deg, #764ba2, #667eea);
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.6);
+  }
+}
+
+/* ============================================
+   STYLES MIRACULEUX POUR CLASSES SPÉCIALES
+   ============================================ */
+
+/* TÂCHES MIRACULEUSES */
+.miraculous-tasks {
+  position: relative;
+  overflow: hidden;
+}
+
+.miraculous-tasks:hover {
+  background: linear-gradient(135deg, #4ecdc4, #44a08d, #2d5aa0) !important;
+  color: white !important;
+  transform: translateY(-5px) scale(1.05) !important;
+  box-shadow: 0 15px 40px rgba(78, 205, 196, 0.6) !important;
+  border-radius: 15px !important;
+}
+
+.miracle-particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.miracle-particles .particle {
+  position: absolute;
+  opacity: 0;
+  font-size: 12px;
+  animation: miracleFloat 2s ease-in-out infinite;
+}
+
+.miracle-particles .p1 { top: 20%; left: 80%; animation-delay: 0s; }
+.miracle-particles .p2 { top: 60%; right: 10%; animation-delay: 0.7s; }
+.miracle-particles .p3 { bottom: 30%; left: 15%; animation-delay: 1.4s; }
+
+/* KANBAN MIRACULEUX */
+.miraculous-kanban {
+  position: relative;
+  overflow: hidden;
+}
+
+.miraculous-kanban:hover {
+  background: linear-gradient(135deg, #667eea, #764ba2, #f093fb, #f5576c) !important;
+  background-size: 300% 300% !important;
+  animation: kanbanFlow 3s ease infinite !important;
+  color: white !important;
+  transform: scale(1.08) rotate(2deg) !important;
+  box-shadow: 0 20px 50px rgba(102, 126, 234, 0.7) !important;
+  border-radius: 20px !important;
+}
+
+.kanban-aura {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  background: radial-gradient(circle, rgba(102, 126, 234, 0.3) 0%, transparent 70%);
+  border-radius: 25px;
+  opacity: 0;
+  animation: kanbanAuraBreath 2s ease-in-out infinite;
+}
+
+.magic-sweep {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+  animation: magicSweep 3s ease-in-out infinite;
+}
+
+/* PROJETS MIRACULEUX */
+.miraculous-projects {
+  position: relative;
+  overflow: hidden;
+}
+
+.miraculous-projects:hover {
+  background: linear-gradient(135deg, #ff9a56, #ff6b6b, #ee5a52, #f39c12) !important;
+  color: white !important;
+  transform: translateY(-8px) scale(1.06) !important;
+  box-shadow: 0 25px 60px rgba(255, 154, 86, 0.8) !important;
+  border-radius: 18px !important;
+  animation: projectsCosmicGlow 2.5s ease-in-out infinite !important;
+}
+
+.cosmic-orbit {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 60px;
+  height: 60px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.orbit-star {
+  position: absolute;
+  font-size: 16px;
+  opacity: 0;
+  animation: cosmicOrbit 4s linear infinite;
+}
+
+/* OUTILS MIRACULEUX */
+.miraculous-tools:hover {
+  background: linear-gradient(135deg, #ffeaa7, #fdcb6e, #e17055, #d63031) !important;
+  color: white !important;
+  transform: rotate(-3deg) scale(1.1) !important;
+  box-shadow: 0 20px 45px rgba(253, 203, 110, 0.7) !important;
+  border-radius: 20px !important;
+  animation: toolsSpectacular 2s ease-in-out infinite !important;
+}
+
+.tools-glow-effect {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, rgba(255, 234, 167, 0.4) 0%, transparent 60%);
+  opacity: 0;
+  animation: toolsGlowPulse 2s ease-in-out infinite;
+}
+
+/* ANALYTICS MIRACULEUX */
+.miraculous-analytics:hover {
+  background: linear-gradient(135deg, #a29bfe, #6c5ce7, #fd79a8, #e84393) !important;
+  background-size: 400% 400% !important;
+  animation: analyticsDataStream 3s ease infinite !important;
+  color: white !important;
+  transform: translateY(-6px) !important;
+  box-shadow: 0 30px 70px rgba(162, 155, 254, 0.8) !important;
+  border-radius: 22px !important;
+}
+
+.analytics-data-flow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.2) 50%, transparent 70%);
+  opacity: 0;
+  animation: dataFlowAnimation 2s ease-in-out infinite;
+}
+
+.pulse-effect {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  animation: analyticsPulseEffect 2.5s ease-out infinite;
+}
+
+/* ÉQUIPES MIRACULEUSES */
+.miraculous-teams:hover {
+  background: linear-gradient(135deg, #00b894, #00cec9, #74b9ff, #0984e3) !important;
+  color: white !important;
+  transform: scale(1.1) !important;
+  box-shadow: 0 25px 55px rgba(0, 184, 148, 0.7) !important;
+  border-radius: 20px !important;
+  animation: teamsHarmony 2s ease-in-out infinite !important;
+}
+
+.team-unity-effect {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.unity-ring {
+  width: 50px;
+  height: 50px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  opacity: 0;
+  animation: unityRingExpand 2s ease-out infinite;
+}
+
+.member-icons {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 10px;
+  opacity: 0;
+  animation: membersGather 2.5s ease-in-out infinite;
+}
+
+/* INTÉGRATIONS MIRACULEUSES */
+.miraculous-integrations:hover {
+  background: linear-gradient(135deg, #e17055, #f39c12, #f1c40f, #e67e22) !important;
+  color: white !important;
+  transform: rotate(4deg) scale(1.08) !important;
+  box-shadow: 0 28px 65px rgba(225, 112, 85, 0.8) !important;
+  border-radius: 25px !important;
+  animation: integrationsSpectacle 2.5s ease-in-out infinite !important;
+}
+
+.connection-ripples {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.connection-ripples .ripple {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  opacity: 0;
+  animation: connectionRipple 3s ease-out infinite;
+}
+
+.connection-ripples .r1 { animation-delay: 0s; }
+.connection-ripples .r2 { animation-delay: 1s; }
+.connection-ripples .r3 { animation-delay: 2s; }
+
+/* ICÔNES ET TEXTES MIRACULEUX */
+.miraculous-icon {
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8)) !important;
+  animation: miraculousIconGlow 2s ease-in-out infinite !important;
+}
+
+.miraculous-text {
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.6) !important;
+  animation: miraculousTextShimmer 3s ease-in-out infinite !important;
+}
+
+.miraculous-arrow {
+  animation: arrowMagicBounce 1.5s ease-in-out infinite !important;
+}
+
+/* ============================================
+   ANIMATIONS MIRACULÉES ADDITIONNELLES
+   ============================================ */
+
+@keyframes miracleFloat {
+  0%, 100% { opacity: 0; transform: translateY(0) rotate(0deg); }
+  50% { opacity: 1; transform: translateY(-15px) rotate(180deg); }
+}
+
+@keyframes kanbanFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes kanbanAuraBreath {
+  0%, 100% { opacity: 0; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.2); }
+}
+
+@keyframes magicSweep {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+@keyframes projectsCosmicGlow {
+  0%, 100% { 
+    box-shadow: 0 25px 60px rgba(255, 154, 86, 0.8);
+    transform: translateY(-8px) scale(1.06);
+  }
+  50% { 
+    box-shadow: 0 30px 80px rgba(255, 154, 86, 1);
+    transform: translateY(-12px) scale(1.08);
+  }
+}
+
+@keyframes cosmicOrbit {
+  0% { 
+    opacity: 0; 
+    transform: rotate(0deg) translateX(30px) rotate(0deg);
+  }
+  50% { 
+    opacity: 1; 
+  }
+  100% { 
+    opacity: 0; 
+    transform: rotate(360deg) translateX(30px) rotate(-360deg);
+  }
+}
+
+@keyframes toolsSpectacular {
+  0%, 100% { transform: rotate(-3deg) scale(1.1); }
+  25% { transform: rotate(3deg) scale(1.12); }
+  75% { transform: rotate(-1deg) scale(1.08); }
+}
+
+@keyframes toolsGlowPulse {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes analyticsDataStream {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes dataFlowAnimation {
+  0% { opacity: 0; transform: translateX(-100%); }
+  50% { opacity: 1; }
+  100% { opacity: 0; transform: translateX(100%); }
+}
+
+@keyframes analyticsPulseEffect {
+  0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(6); opacity: 0; }
+}
+
+@keyframes teamsHarmony {
+  0%, 100% { transform: scale(1.1); }
+  50% { transform: scale(1.15) rotate(1deg); }
+}
+
+@keyframes unityRingExpand {
+  0% { opacity: 0; transform: scale(0); }
+  50% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.5); }
+}
+
+@keyframes membersGather {
+  0%, 100% { opacity: 0; transform: scale(0.5); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes integrationsSpectacle {
+  0%, 100% { transform: rotate(4deg) scale(1.08); }
+  50% { transform: rotate(-3deg) scale(1.12); }
+}
+
+@keyframes connectionRipple {
+  0% { 
+    opacity: 0; 
+    transform: translate(-50%, -50%) scale(0);
+  }
+  30% { 
+    opacity: 1; 
+  }
+  100% { 
+    opacity: 0; 
+    transform: translate(-50%, -50%) scale(3);
+  }
+}
+
+@keyframes miraculousIconGlow {
+  0%, 100% { filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8)); }
+  50% { filter: drop-shadow(0 0 20px rgba(255, 255, 255, 1)); }
+}
+
+@keyframes miraculousTextShimmer {
+  0%, 100% { text-shadow: 0 0 15px rgba(255, 255, 255, 0.6); }
+  50% { text-shadow: 0 0 25px rgba(255, 255, 255, 1); }
+}
+
+@keyframes arrowMagicBounce {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-3px) rotate(180deg); }
+}
 
 /* Badge Fantastique Principal */
 .user-badge-fantastic {

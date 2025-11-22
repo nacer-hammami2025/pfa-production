@@ -13,31 +13,42 @@
         <ul class='nav-list'>
           <!-- USER MENUS -->
           <li *ngIf='userRole === "user"' class='nav-item'>
-            <a routerLink='/tasks' routerLinkActive='active' class='nav-link'>
-              <i class='icon'>✓</i>
-              <span>Tâches</span>
+            <a routerLink='/tasks' routerLinkActive='active' class='nav-link miraculous-tasks'>
+              <i class='icon miraculous-icon'>✓</i>
+              <span class='miraculous-text'>Tâches</span>
+              <div class='miracle-particles'>
+                <span class='particle p1'>✨</span>
+                <span class='particle p2'>⭐</span>
+                <span class='particle p3'>💫</span>
+              </div>
             </a>
           </li>
           
           <li *ngIf='userRole === "user" || userRole === "admin"' class='nav-item'>
-            <a routerLink='/kanban' routerLinkActive='active' class='nav-link'>
-              <i class='icon'>📋</i>
-              <span>Kanban</span>
+            <a routerLink='/kanban' routerLinkActive='active' class='nav-link miraculous-kanban'>
+              <i class='icon miraculous-icon'>📋</i>
+              <span class='miraculous-text'>Kanban</span>
+              <div class='miracle-aura kanban-aura'></div>
+              <div class='magic-sweep'></div>
             </a>
           </li>
           
           <li *ngIf='userRole === "user" || userRole === "admin"' class='nav-item'>
-            <a routerLink='/projects' routerLinkActive='active' class='nav-link'>
-              <i class='icon'>📁</i>
-              <span>Projets</span>
+            <a routerLink='/projects' routerLinkActive='active' class='nav-link miraculous-projects'>
+              <i class='icon miraculous-icon'>📁</i>
+              <span class='miraculous-text'>Projets</span>
+              <div class='cosmic-orbit'>
+                <span class='orbit-star'>🌟</span>
+              </div>
             </a>
           </li>
           
           <li *ngIf='userRole === "user"' class='nav-item dropdown'>
-            <a class='nav-link dropdown-toggle' (click)='toggleToolsMenu($event)'>
-              <i class='icon'>🛠️</i>
-              <span>Outils</span>
-              <i class='arrow'>▼</i>
+            <a class='nav-link dropdown-toggle miraculous-tools' (click)='toggleToolsMenu($event)'>
+              <i class='icon miraculous-icon'>🛠️</i>
+              <span class='miraculous-text'>Outils</span>
+              <i class='arrow miraculous-arrow'>▼</i>
+              <div class='tools-glow-effect'></div>
             </a>
             <ul class='dropdown-menu' *ngIf='showToolsMenu'>
               <li><a routerLink='/voice-commands' routerLinkActive='active'><i>🎤</i> Commandes Vocales</a></li>
@@ -48,10 +59,12 @@
           </li>
 
           <li *ngIf='userRole === "user"' class='nav-item dropdown'>
-            <a class='nav-link dropdown-toggle' (click)='toggleAnalyticsMenu($event)'>
-              <i class='icon'>📊</i>
-              <span>Analytics</span>
-              <i class='arrow'>▼</i>
+            <a class='nav-link dropdown-toggle miraculous-analytics' (click)='toggleAnalyticsMenu($event)'>
+              <i class='icon miraculous-icon'>📊</i>
+              <span class='miraculous-text'>Analytics</span>
+              <i class='arrow miraculous-arrow'>▼</i>
+              <div class='analytics-data-flow'></div>
+              <div class='pulse-effect'></div>
             </a>
             <ul class='dropdown-menu' *ngIf='showAnalyticsMenu'>
               <li><a routerLink='/analytics' routerLinkActive='active'><i>📈</i> Tableau de Bord</a></li>
@@ -62,16 +75,25 @@
           </li>
 
           <li *ngIf='userRole === "user"' class='nav-item'>
-            <a routerLink='/teams' routerLinkActive='active' class='nav-link'>
-              <i class='icon'>👥</i>
-              <span>Équipes</span>
+            <a routerLink='/teams' routerLinkActive='active' class='nav-link miraculous-teams'>
+              <i class='icon miraculous-icon'>👥</i>
+              <span class='miraculous-text'>Équipes</span>
+              <div class='team-unity-effect'>
+                <div class='unity-ring'></div>
+                <div class='member-icons'>👤👤👤</div>
+              </div>
             </a>
           </li>
 
           <li *ngIf='userRole === "user"' class='nav-item'>
-            <a routerLink='/integrations' routerLinkActive='active' class='nav-link'>
-              <i class='icon'>🔗</i>
-              <span>Intégrations</span>
+            <a routerLink='/integrations' routerLinkActive='active' class='nav-link miraculous-integrations'>
+              <i class='icon miraculous-icon'>🔗</i>
+              <span class='miraculous-text'>Intégrations</span>
+              <div class='connection-ripples'>
+                <div class='ripple r1'></div>
+                <div class='ripple r2'></div>
+                <div class='ripple r3'></div>
+              </div>
             </a>
           </li>
 
