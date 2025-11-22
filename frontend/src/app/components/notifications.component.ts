@@ -53,10 +53,9 @@ import { Subscription } from 'rxjs';
       right: 20px;
       width: 380px;
       max-height: 600px;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(20px);
+      background: #ffffff;
       border-radius: 16px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      border: 1px solid #e2e8f0;
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
       z-index: 1001;
       overflow: hidden;
@@ -73,8 +72,8 @@ import { Subscription } from 'rxjs';
     }
 
     :host-context(.dark-mode) .notifications-panel {
-      background: rgba(15, 15, 35, 0.95);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: #2d3748;
+      border: 1px solid #4a5568;
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
     }
 
