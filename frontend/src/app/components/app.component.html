@@ -116,9 +116,16 @@
             </div>
             <span class='user-info'>
               <span class='user-name'>{{user?.email?.split('@')[0]}}</span>
-              <span class='user-badge' [class.admin]='isAdmin'>
-                <i class='badge-icon'>{{isAdmin ? '👑' : '⭐'}}</i>
-                <span>{{isAdmin ? 'Admin' : 'User'}}</span>
+              <span class='user-badge-fantastic' [class.admin]='isAdmin' [class.superadmin]='user?.role === "superadmin"'>
+                <div class='badge-glow-effect'></div>
+                <div class='badge-sparkles'>
+                  <span class='sparkle sparkle-1'>✨</span>
+                  <span class='sparkle sparkle-2'>⭐</span>
+                  <span class='sparkle sparkle-3'>💫</span>
+                </div>
+                <i class='badge-icon-fantastic'>{{user?.role === 'superadmin' ? '💎' : (isAdmin ? '👑' : '🌟')}}</i>
+                <span class='badge-text-fantastic'>{{user?.role === 'superadmin' ? 'SUPER ADMIN' : (isAdmin ? 'ADMIN' : 'USER')}}</span>
+                <div class='badge-trail'></div>
               </span>
             </span>
             <i class='arrow'>▼</i>
@@ -136,9 +143,15 @@
                 <div class='info-content'>
                   <h3 class='name-premium'>{{user?.email?.split('@')[0]}}</h3>
                   <p class='email-premium'>{{user?.email}}</p>
-                  <div class='role-badge-premium' [class.admin]='isAdmin'>
-                    <i>{{isAdmin ? '👑' : '⭐'}}</i>
-                    <span>{{isAdmin ? 'Admin' : 'User'}}</span>
+                  <div class='role-badge-fantastic' [class.admin]='isAdmin' [class.superadmin]='user?.role === "superadmin"'>
+                    <div class='role-aura'></div>
+                    <i class='role-icon-magical'>{{user?.role === 'superadmin' ? '💎' : (isAdmin ? '👑' : '🌟')}}</i>
+                    <span class='role-text-glowing'>{{user?.role === 'superadmin' ? 'SUPER ADMIN' : (isAdmin ? 'ADMIN' : 'USER')}}</span>
+                    <div class='role-particles'>
+                      <span class='particle particle-1'></span>
+                      <span class='particle particle-2'></span>
+                      <span class='particle particle-3'></span>
+                    </div>
                   </div>
                 </div>
               </div>
