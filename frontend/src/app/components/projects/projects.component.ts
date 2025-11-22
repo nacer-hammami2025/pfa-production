@@ -166,12 +166,13 @@ export class ProjectsComponent implements OnInit {
     });
   }
 
-  updateProjectStatus(status: string): void {
-    if (!this.selectedProject) return;
+  updateProjectStatus(status: string, project?: Project): void {
+    const projectToUpdate = project || this.selectedProject;
+    if (!projectToUpdate) return;
     
-    this.projectService.updateProject(this.selectedProject._id, { status: status as any }).subscribe({
+    this.projectService.updateProject(projectToUpdate._id, { status: status as any }).subscribe({
       next: (updated) => {
-        if (this.selectedProject) {
+        if (this.selectedProject && this.selectedProject._id === updated._id) {
           this.selectedProject.status = updated.status;
         }
         const index = this.projects.findIndex(p => p._id === updated._id);
@@ -179,6 +180,15 @@ export class ProjectsComponent implements OnInit {
           this.projects[index] = updated;
           this.applyFilters();
         }
+        // Show success message
+        const statusLabels = {
+          'planning': 'Planification',
+          'active': 'Actif', 
+          'on-hold': 'En pause',
+          'completed': 'Terminé',
+          'archived': 'Archivé'
+        };
+        alert(`✅ Projet "${projectToUpdate.name}" marqué comme ${statusLabels[status as keyof typeof statusLabels] || status}`);
       },
       error: (err) => console.error('Erreur:', err)
     });

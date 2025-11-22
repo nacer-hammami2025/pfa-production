@@ -320,10 +320,41 @@
   font-weight: 500;
 }
 
-.date {
-  font-size: 12px;
-  color: #718096;
-  font-weight: 500;
+.project-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-action {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: #f1f5f9;
+  color: #475569;
+  font-weight: 600;
+}
+
+.btn-action:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-complete:hover {
+  background: #10b981;
+  color: white;
+}
+
+.btn-archive:hover {
+  background: #6b7280;
+  color: white;
+}
+
+.btn-hold:hover {
+  background: #f59e0b;
+  color: white;
 }
 
 /* Enhanced Modal Styles */

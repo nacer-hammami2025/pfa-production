@@ -81,7 +81,29 @@
 
       <div class="project-footer">
         <span class="members-count">👥 {{project.members.length}} membre(s)</span>
-        <span class="date">{{formatDate(project.startDate)}}</span>
+        <div class="project-actions">
+          <button 
+            *ngIf="project.status !== 'completed'"
+            class="btn-action btn-complete" 
+            (click)="$event.stopPropagation(); updateProjectStatus('completed', project)"
+            title="Marquer comme terminé">
+            ✅
+          </button>
+          <button 
+            *ngIf="project.status !== 'archived'"
+            class="btn-action btn-archive" 
+            (click)="$event.stopPropagation(); updateProjectStatus('archived', project)"
+            title="Archiver le projet">
+            📦
+          </button>
+          <button 
+            *ngIf="project.status !== 'on-hold'"
+            class="btn-action btn-hold" 
+            (click)="$event.stopPropagation(); updateProjectStatus('on-hold', project)"
+            title="Mettre en pause">
+            ⏸️
+          </button>
+        </div>
       </div>
     </div>
   </div>

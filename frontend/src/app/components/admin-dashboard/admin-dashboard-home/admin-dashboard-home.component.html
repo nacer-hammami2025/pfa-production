@@ -338,9 +338,19 @@
               ⚡ Actif ({{ getProjectsByStatus('active').length }})
             </button>
             <button
+              [class.active]="projectFilterStatus === 'on-hold'"
+              (click)="projectFilterStatus = 'on-hold'; filterProjects()">
+              ⏸️ En Pause ({{ getProjectsByStatus('on-hold').length }})
+            </button>
+            <button
               [class.active]="projectFilterStatus === 'completed'"
               (click)="projectFilterStatus = 'completed'; filterProjects()">
               ✅ Terminé ({{ getProjectsByStatus('completed').length }})
+            </button>
+            <button
+              [class.active]="projectFilterStatus === 'archived'"
+              (click)="projectFilterStatus = 'archived'; filterProjects()">
+              📦 Archivé ({{ getProjectsByStatus('archived').length }})
             </button>
           </div>
         </div>
@@ -412,6 +422,27 @@
 
             <div class="col-actions">
               <div class="action-buttons">
+                <button 
+                  *ngIf="project.status !== 'completed'"
+                  class="btn-status" 
+                  (click)="updateProjectStatus(project, 'completed')"
+                  title="Marquer comme terminé">
+                  ✅
+                </button>
+                <button 
+                  *ngIf="project.status !== 'archived'"
+                  class="btn-status" 
+                  (click)="updateProjectStatus(project, 'archived')"
+                  title="Archiver">
+                  📦
+                </button>
+                <button 
+                  *ngIf="project.status !== 'on-hold'"
+                  class="btn-status" 
+                  (click)="updateProjectStatus(project, 'on-hold')"
+                  title="Mettre en pause">
+                  ⏸️
+                </button>
                 <button class="btn-edit" (click)="editProject(project)" title="Modifier">
                   ✏️
                 </button>

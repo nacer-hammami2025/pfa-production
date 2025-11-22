@@ -698,6 +698,30 @@ AUCUNE donnée fictive ne sera affichée - le dashboard reste vide jusqu'à rés
     });
   }
 
+  updateProjectStatus(project: Project, status: string): void {
+    this.projectService.updateProject(project._id, { status: status as any }).subscribe({
+      next: (updatedProject) => {
+        const index = this.projects.findIndex(p => p._id === updatedProject._id);
+        if (index !== -1) {
+          this.projects[index] = updatedProject;
+          this.filterProjects();
+        }
+        const statusLabels = {
+          'planning': 'Planification',
+          'active': 'Actif', 
+          'on-hold': 'En pause',
+          'completed': 'Terminé',
+          'archived': 'Archivé'
+        };
+        alert(`✅ Projet "${project.name}" marqué comme ${statusLabels[status as keyof typeof statusLabels] || status}`);
+      },
+      error: (err) => {
+        console.error('❌ Erreur mise à jour statut:', err);
+        alert('Erreur lors de la mise à jour du statut');
+      }
+    });
+  }
+
   deleteProject(project: Project): void {
     if (!confirm(`Êtes-vous sûr de vouloir supprimer le projet "${project.name}" ? Cette action est irréversible.`)) {
       return;
