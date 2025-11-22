@@ -662,22 +662,45 @@ export class AdminUserManagementComponent implements OnInit {
 
   loadUsers() {
     this.loading = true;
+    console.log('🔄 Chargement des utilisateurs réels depuis la base de données...');
+    
     this.adminService.getAllUsers().subscribe({
       next: (users) => {
+        console.log('✅ Utilisateurs réels chargés:', users.length, 'utilisateurs');
+        console.log('📋 Liste des utilisateurs:', users.map(u => ({
+          email: u.email,
+          role: u.role,
+          createdAt: u.createdAt
+        })));
+        
         this.users = users;
         this.filteredUsers = users;
         this.calculateStats();
         this.loading = false;
       },
       error: (err) => {
-        console.error('Erreur lors du chargement des utilisateurs:', err);
+        console.error('❌ ERREUR CRITIQUE - Impossible de charger les utilisateurs réels:', err);
+        console.error('🚨 Détails de l\'erreur:', {
+          status: err.status,
+          message: err.message,
+          url: err.url
+        });
+        
         this.loading = false;
-        // Données de démonstration
-        this.users = [
-          { _id: '1', email: 'admin@taskflow.com', role: 'admin', createdAt: new Date().toISOString() },
-          { _id: '2', email: 'user@taskflow.com', role: 'user', createdAt: new Date().toISOString() }
-        ];
-        this.filteredUsers = this.users;
+        
+        // AFFICHAGE D'ERREUR AU LIEU DE DONNÉES FICTIVES
+        alert(`❌ ERREUR CRITIQUE: Impossible de charger les utilisateurs réels de la base de données.
+        
+Détails de l'erreur:
+- Status: ${err.status || 'N/A'}
+- Message: ${err.message || 'Erreur inconnue'}
+- URL: ${err.url || 'N/A'}
+
+Ceci est un problème de production qui doit être résolu immédiatement.`);
+        
+        // Laisser la liste vide pour montrer le problème
+        this.users = [];
+        this.filteredUsers = [];
         this.calculateStats();
       }
     });

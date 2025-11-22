@@ -208,15 +208,30 @@ export class AdminDashboardHomeComponent implements OnInit, AfterViewInit, OnDes
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('Error loading admin dashboard summary:', err);
-        this.generateMockData(); // Fallback sur données mock
+        console.error('❌ ERREUR CRITIQUE - Dashboard home ne peut pas charger les données réelles:', err);
+        console.error('🚨 Détails de l\'erreur dashboard home:', {
+          status: err.status,
+          message: err.message,
+          url: err.url
+        });
         
-        setTimeout(() => {
-          this.createAdvancedCharts();
-        }, 100);
+        // NE PAS utiliser de données mock en production
+        // this.generateMockData(); // SUPPRIMÉ - Pas de données fictives !
         
         this.isLoading = false;
         this.cdr.detectChanges();
+        
+        // Alerter l'admin du problème
+        alert(`🚨 ERREUR CRITIQUE DE PRODUCTION
+        
+Le dashboard admin ne peut pas charger les données réelles de la base de données.
+
+Erreur: ${err.message || 'Erreur inconnue'}
+Status: ${err.status || 'N/A'}
+
+Action requise: Vérifier la connexion à la base de données et les routes API admin.
+
+AUCUNE donnée fictive ne sera affichée - le dashboard reste vide jusqu'à résolution.`);
       }
     });
   }

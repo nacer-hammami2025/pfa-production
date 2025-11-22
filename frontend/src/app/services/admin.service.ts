@@ -111,17 +111,39 @@ export class AdminService {
 
   getUsers(): Observable<AdminUser[]> {
     if (this.usersCache$) {
+      console.log('📋 Utilisation du cache utilisateurs');
       return this.usersCache$;
     }
     
+    console.log('🔄 Appel API pour récupérer les utilisateurs réels:', `${this.baseUrl}/users`);
+    
     this.usersCache$ = this.http.get<AdminUser[]>(`${this.baseUrl}/users`).pipe(
+      tap((users) => {
+        console.log('✅ API users - Réponse reçue:', users.length, 'utilisateurs');
+        console.log('📋 Détail des utilisateurs récupérés:', users.map(u => ({
+          id: u._id,
+          email: u.email,
+          role: u.role,
+          createdAt: u.createdAt
+        })));
+      }),
       shareReplay({ bufferSize: 1, refCount: true }),
       tap(() => {
         setTimeout(() => {
+          console.log('🔄 Cache utilisateurs expiré');
           this.usersCache$ = null;
         }, this.cacheTimeout);
       }),
       catchError(err => {
+        console.error('❌ ERREUR API /admin/users:', err);
+        console.error('🚨 Détails de l\'erreur API users:', {
+          status: err.status,
+          statusText: err.statusText,
+          url: err.url,
+          message: err.message,
+          error: err.error
+        });
+        
         this.usersCache$ = null;
         throw err;
       })
