@@ -6,49 +6,49 @@ import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-notifications',
   template: `
-    <div class="notifications-panel" [class.visible]="true">
-      <div class="notifications-header">
-        <h3>✨ Vos Notifications</h3>
-        <button class="close-btn" (click)="closePanelEvent()">
+    <div class="notifications-panel-v2" [class.visible]="true">
+      <div class="notifications-header-v2">
+        <h3>🎉 Notifications Émotionnelles</h3>
+        <button class="close-btn-v2" (click)="closePanelEvent()">
           <i class="close-icon">✕</i>
         </button>
       </div>
 
-      <div class="notifications-content">
-        <div *ngIf="getAllNotifications().length === 0" class="no-notifications">
+      <div class="notifications-content-v2">
+        <div *ngIf="getAllNotifications().length === 0" class="no-notifications-v2">
           <div class="no-notifications-icon">🔔</div>
           <p>Aucune notification pour le moment</p>
           <span class="no-notifications-subtitle">Nous vous avertirons dès qu'il y aura du nouveau ! 🚀</span>
         </div>
 
         <!-- Notifications Persistantes (Backend) -->
-        <div *ngFor="let notification of persistentNotifications" class="notification-item"
+        <div *ngFor="let notification of persistentNotifications" class="notification-item-v2"
              [class.unread]="!notification.read"
-             [class.success]="isSuccessNotificationPersistent(notification)"
-             [class.rejection]="isRejectionNotificationPersistent(notification)"
-             [class.celebration]="isCelebrationNotificationPersistent(notification)"
+             [class.success-v2]="isSuccessNotificationPersistent(notification)"
+             [class.rejection-v2]="isRejectionNotificationPersistent(notification)"
+             [class.celebration-v2]="isCelebrationNotificationPersistent(notification)"
              (click)="markPersistentAsRead(notification)">
-          <div class="notification-icon" 
-               [class.success-icon]="isSuccessNotificationPersistent(notification)" 
-               [class.rejection-icon]="isRejectionNotificationPersistent(notification)">
+          <div class="notification-icon-v2" 
+               [class.success-icon-v2]="isSuccessNotificationPersistent(notification)" 
+               [class.rejection-icon-v2]="isRejectionNotificationPersistent(notification)">
             <span [innerHTML]="getNotificationIconPersistent(notification.type)"></span>
-            <div *ngIf="isSuccessNotificationPersistent(notification)" class="confetti-burst"></div>
+            <div *ngIf="isSuccessNotificationPersistent(notification)" class="confetti-burst-v2"></div>
           </div>
-          <div class="notification-content">
-            <div class="notification-title">{{ getEmotionalTitlePersistent(notification) }}</div>
-            <div class="notification-message">{{ getEmotionalMessagePersistent(notification) }}</div>
-            <div class="notification-time">{{ getTimeAgoPersistent(notification.createdAt) }}</div>
-            <div *ngIf="isSuccessNotificationPersistent(notification)" class="emotional-note success-note">
+          <div class="notification-content-v2">
+            <div class="notification-title-v2">{{ getEmotionalTitlePersistent(notification) }}</div>
+            <div class="notification-message-v2">{{ getEmotionalMessagePersistent(notification) }}</div>
+            <div class="notification-time-v2">{{ getTimeAgoPersistent(notification.createdAt) }}</div>
+            <div *ngIf="isSuccessNotificationPersistent(notification)" class="emotional-note-v2 success-note-v2">
               🎉 Félicitations ! Votre équipe va pouvoir commencer ses projets ! 🚀
             </div>
-            <div *ngIf="isRejectionNotificationPersistent(notification)" class="emotional-note rejection-note">
+            <div *ngIf="isRejectionNotificationPersistent(notification)" class="emotional-note-v2 rejection-note-v2">
               💙 Ne vous découragez pas, ajustez votre demande et réessayez ! ✨
             </div>
           </div>
-          <div class="notification-actions" *ngIf="notification.action">
-            <button class="action-btn" 
-                    [class.success-action]="isSuccessNotificationPersistent(notification)"
-                    [class.rejection-action]="isRejectionNotificationPersistent(notification)"
+          <div class="notification-actions-v2" *ngIf="notification.action">
+            <button class="action-btn-v2" 
+                    [class.success-action-v2]="isSuccessNotificationPersistent(notification)"
+                    [class.rejection-action-v2]="isRejectionNotificationPersistent(notification)"
                     (click)="executePersistentAction(notification)">
               {{ notification.action.label }}
             </button>
@@ -56,11 +56,11 @@ import { Subscription } from 'rxjs';
         </div>
 
         <!-- Notifications Locales -->
-        <div *ngFor="let notification of notifications" class="notification-item"
+        <div *ngFor="let notification of notifications" class="notification-item-v2"
              [class.unread]="!notification.read"
-             [class.success]="isSuccessNotification(notification)"
-             [class.rejection]="isRejectionNotification(notification)"
-             [class.celebration]="isCelebrationNotification(notification)"
+             [class.success-v2]="isSuccessNotification(notification)"
+             [class.rejection-v2]="isRejectionNotification(notification)"
+             [class.celebration-v2]="isCelebrationNotification(notification)"
              (click)="markAsRead(notification)">
           <div class="notification-icon" [class.success-icon]="isSuccessNotification(notification)" [class.rejection-icon]="isRejectionNotification(notification)">
             <span [innerHTML]="getNotificationIcon(notification.type)"></span>
@@ -96,6 +96,208 @@ import { Subscription } from 'rxjs';
     </div>
   `,
   styles: [`
+    /* 🎉 NOTIFICATIONS V2 - FORCE OVERRIDE CACHE 🎉 */
+    .notifications-panel-v2 {
+      position: fixed !important;
+      top: 80px !important;
+      right: 20px !important;
+      width: 420px !important;
+      max-height: 650px !important;
+      background: #ffffff !important;
+      border-radius: 20px !important;
+      border: 2px solid #667eea !important;
+      box-shadow: 0 30px 80px rgba(102, 126, 234, 0.25) !important;
+      z-index: 10001 !important;
+      overflow: hidden !important;
+      transform: translateY(0) scale(1) !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+      backdrop-filter: none !important;
+    }
+
+    .notifications-header-v2 {
+      padding: 1.5rem !important;
+      background: linear-gradient(135deg, #667eea, #764ba2) !important;
+      color: white !important;
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+    }
+
+    .notifications-header-v2 h3 {
+      margin: 0 !important;
+      font-size: 1.3rem !important;
+      font-weight: 700 !important;
+      color: white !important;
+    }
+
+    .close-btn-v2 {
+      background: rgba(255, 255, 255, 0.2) !important;
+      border: 1px solid rgba(255, 255, 255, 0.3) !important;
+      color: white !important;
+      padding: 0.6rem !important;
+      border-radius: 12px !important;
+      cursor: pointer !important;
+      transition: all 0.3s ease !important;
+    }
+
+    .close-btn-v2:hover {
+      background: rgba(255, 255, 255, 0.3) !important;
+      transform: scale(1.05) !important;
+    }
+
+    .notifications-content-v2 {
+      max-height: 500px !important;
+      overflow-y: auto !important;
+      padding: 0 !important;
+    }
+
+    .notification-item-v2 {
+      padding: 1.5rem !important;
+      border-bottom: 1px solid #f1f5f9 !important;
+      display: flex !important;
+      align-items: flex-start !important;
+      gap: 1rem !important;
+      cursor: pointer !important;
+      transition: all 0.3s ease !important;
+      background: white !important;
+    }
+
+    .notification-item-v2:hover {
+      background: rgba(102, 126, 234, 0.05) !important;
+    }
+
+    .notification-item-v2.success-v2 {
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%) !important;
+      border-left: 4px solid #22c55e !important;
+      animation: successPulse 2s ease-in-out !important;
+    }
+
+    .notification-item-v2.rejection-v2 {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 127, 0.05) 100%) !important;
+      border-left: 4px solid #ef4444 !important;
+      animation: gentleGlow 3s ease-in-out !important;
+    }
+
+    .notification-icon-v2 {
+      flex-shrink: 0 !important;
+      width: 50px !important;
+      height: 50px !important;
+      border-radius: 50% !important;
+      background: linear-gradient(45deg, #667eea, #764ba2) !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      font-size: 1.5rem !important;
+      position: relative !important;
+    }
+
+    .success-icon-v2 {
+      background: linear-gradient(45deg, #22c55e, #16a34a) !important;
+      animation: successBounce 1s ease-out !important;
+    }
+
+    .rejection-icon-v2 {
+      background: linear-gradient(45deg, #ef4444, #dc2626) !important;
+      animation: empathyGlow 2s ease-in-out !important;
+    }
+
+    .notification-content-v2 {
+      flex: 1 !important;
+      min-width: 0 !important;
+    }
+
+    .notification-title-v2 {
+      font-weight: 700 !important;
+      color: #1a202c !important;
+      margin-bottom: 0.5rem !important;
+      font-size: 1.1rem !important;
+    }
+
+    .notification-message-v2 {
+      color: #4a5568 !important;
+      font-size: 0.95rem !important;
+      line-height: 1.5 !important;
+      margin-bottom: 0.5rem !important;
+    }
+
+    .notification-time-v2 {
+      color: #718096 !important;
+      font-size: 0.85rem !important;
+    }
+
+    .emotional-note-v2 {
+      margin-top: 1rem !important;
+      padding: 1rem !important;
+      border-radius: 12px !important;
+      font-size: 0.9rem !important;
+      font-weight: 600 !important;
+      line-height: 1.4 !important;
+    }
+
+    .success-note-v2 {
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(16, 185, 129, 0.1)) !important;
+      color: #166534 !important;
+      border: 2px solid rgba(34, 197, 94, 0.3) !important;
+      animation: joyPulse 3s ease-in-out infinite !important;
+    }
+
+    .rejection-note-v2 {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(79, 70, 229, 0.1)) !important;
+      color: #4338ca !important;
+      border: 2px solid rgba(99, 102, 241, 0.3) !important;
+      animation: comfortGlow 4s ease-in-out infinite !important;
+    }
+
+    .confetti-burst-v2 {
+      position: absolute !important;
+      top: -10px !important;
+      right: -10px !important;
+      width: 20px !important;
+      height: 20px !important;
+      background: radial-gradient(circle, #fbbf24, #f59e0b) !important;
+      border-radius: 50% !important;
+      animation: confetti 2s ease-out infinite !important;
+    }
+
+    @keyframes successPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.02); box-shadow: 0 8px 25px rgba(34, 197, 94, 0.3); }
+    }
+
+    @keyframes gentleGlow {
+      0%, 100% { box-shadow: 0 4px 15px rgba(239, 68, 68, 0.1); }
+      50% { box-shadow: 0 8px 25px rgba(239, 68, 68, 0.2); }
+    }
+
+    @keyframes successBounce {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+
+    @keyframes empathyGlow {
+      0%, 100% { filter: brightness(1); }
+      50% { filter: brightness(1.15); }
+    }
+
+    @keyframes confetti {
+      0% { transform: scale(0) rotate(0deg); opacity: 1; }
+      50% { transform: scale(1.5) rotate(180deg); opacity: 0.8; }
+      100% { transform: scale(0) rotate(360deg); opacity: 0; }
+    }
+
+    @keyframes joyPulse {
+      0%, 100% { background-color: rgba(34, 197, 94, 0.15); }
+      50% { background-color: rgba(34, 197, 94, 0.25); }
+    }
+
+    @keyframes comfortGlow {
+      0%, 100% { background-color: rgba(99, 102, 241, 0.15); }
+      50% { background-color: rgba(99, 102, 241, 0.25); }
+    }
+
+    /* ANCIENS STYLES */
     .notifications-panel {
       position: fixed;
       top: 80px;
