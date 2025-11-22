@@ -7,7 +7,7 @@ import { Subscription } from 'rxjs';
   template: `
     <div class="notifications-panel" [class.visible]="true">
       <div class="notifications-header">
-        <h3>Notifications</h3>
+        <h3>✨ Vos Notifications</h3>
         <button class="close-btn" (click)="closePanelEvent()">
           <i class="close-icon">✕</i>
         </button>
@@ -16,23 +16,36 @@ import { Subscription } from 'rxjs';
       <div class="notifications-content">
         <div *ngIf="notifications.length === 0" class="no-notifications">
           <div class="no-notifications-icon">🔔</div>
-          <p>No notifications yet</p>
-          <span class="no-notifications-subtitle">We'll notify you when something important happens</span>
+          <p>Aucune notification pour le moment</p>
+          <span class="no-notifications-subtitle">Nous vous avertirons dès qu'il y aura du nouveau ! 🚀</span>
         </div>
 
         <div *ngFor="let notification of notifications" class="notification-item"
              [class.unread]="!notification.read"
+             [class.success]="isSuccessNotification(notification)"
+             [class.rejection]="isRejectionNotification(notification)"
+             [class.celebration]="isCelebrationNotification(notification)"
              (click)="markAsRead(notification)">
-          <div class="notification-icon">
+          <div class="notification-icon" [class.success-icon]="isSuccessNotification(notification)" [class.rejection-icon]="isRejectionNotification(notification)">
             <span [innerHTML]="getNotificationIcon(notification.type)"></span>
+            <div *ngIf="isSuccessNotification(notification)" class="confetti-burst"></div>
           </div>
           <div class="notification-content">
-            <div class="notification-title">{{ notification.title }}</div>
-            <div class="notification-message">{{ notification.message }}</div>
+            <div class="notification-title">{{ getEmotionalTitle(notification) }}</div>
+            <div class="notification-message">{{ getEmotionalMessage(notification) }}</div>
             <div class="notification-time">{{ getTimeAgo(notification.timestamp) }}</div>
+            <div *ngIf="isSuccessNotification(notification)" class="emotional-note success-note">
+              🎉 Félicitations ! Votre équipe va pouvoir commencer ses projets ! 🚀
+            </div>
+            <div *ngIf="isRejectionNotification(notification)" class="emotional-note rejection-note">
+              💙 Ne vous découragez pas, ajustez votre demande et réessayez ! ✨
+            </div>
           </div>
           <div class="notification-actions" *ngIf="notification.action">
-            <button class="action-btn" (click)="executeAction(notification)">
+            <button class="action-btn" 
+                    [class.success-action]="isSuccessNotification(notification)"
+                    [class.rejection-action]="isRejectionNotification(notification)"
+                    (click)="executeAction(notification)">
               {{ notification.action.label }}
             </button>
           </div>
@@ -51,72 +64,104 @@ import { Subscription } from 'rxjs';
       position: fixed;
       top: 80px;
       right: 20px;
-      width: 380px;
-      max-height: 600px;
-      background: #ffffff;
-      border-radius: 16px;
+      width: 420px;
+      max-height: 650px;
+      background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+      border-radius: 20px;
       border: 1px solid #e2e8f0;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(255, 255, 255, 0.5);
       z-index: 1001;
       overflow: hidden;
-      transform: translateY(-10px);
+      transform: translateY(-20px) scale(0.95);
       opacity: 0;
       visibility: hidden;
-      transition: all 0.3s ease;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
     .notifications-panel.visible {
-      transform: translateY(0);
+      transform: translateY(0) scale(1);
       opacity: 1;
       visibility: visible;
     }
 
     :host-context(.dark-mode) .notifications-panel {
-      background: #2d3748;
+      background: linear-gradient(145deg, #2d3748 0%, #1a202c 100%);
       border: 1px solid #4a5568;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1);
     }
 
     .notifications-header {
       padding: 1.5rem 1.5rem 1rem;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
       display: flex;
       justify-content: space-between;
       align-items: center;
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.03), rgba(118, 75, 162, 0.02));
+      position: relative;
+    }
+
+    .notifications-header::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.3), transparent);
     }
 
     :host-context(.dark-mode) .notifications-header {
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.03));
     }
 
     .notifications-header h3 {
       margin: 0;
-      font-size: 1.25rem;
-      font-weight: 600;
-      color: #2c3e50;
+      font-size: 1.3rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: titleShimmer 3s ease-in-out infinite;
+    }
+
+    @keyframes titleShimmer {
+      0%, 100% { filter: brightness(1); }
+      50% { filter: brightness(1.2); }
     }
 
     :host-context(.dark-mode) .notifications-header h3 {
-      color: #e2e8f0;
+      background: linear-gradient(135deg, #818cf8, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
     .close-btn {
-      background: none;
-      border: none;
+      background: linear-gradient(45deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.05));
+      border: 1px solid rgba(102, 126, 234, 0.2);
       cursor: pointer;
-      padding: 0.5rem;
-      border-radius: 50%;
-      transition: all 0.3s ease;
-      color: #6c757d;
+      padding: 0.6rem;
+      border-radius: 12px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      color: #667eea;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
     }
 
     .close-btn:hover {
-      background: rgba(102, 126, 234, 0.1);
-      color: #667eea;
+      background: linear-gradient(45deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.1));
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
     }
 
     .close-icon {
-      font-size: 1.1rem;
+      font-size: 1.2rem;
+      font-weight: 700;
     }
 
     .notifications-content {
@@ -306,6 +351,148 @@ import { Subscription } from 'rxjs';
       background: rgba(102, 126, 234, 0.7);
     }
 
+    /* Notifications Émotionnelles PROFESSIONNELLES */
+    .notification-item.success {
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
+      border-left: 4px solid #22c55e;
+      animation: successPulse 2s ease-in-out;
+    }
+
+    .notification-item.rejection {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 127, 0.05) 100%);  
+      border-left: 4px solid #ef4444;
+      animation: gentleGlow 3s ease-in-out;
+    }
+
+    .notification-item.celebration {
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(245, 158, 11, 0.1) 100%);
+      border-left: 4px solid #fbbf24;
+      animation: celebrationShine 1.5s ease-in-out infinite;
+    }
+
+    .success-icon {
+      background: linear-gradient(45deg, #22c55e, #16a34a) !important;
+      animation: successBounce 1s ease-out;
+      position: relative;
+      overflow: visible;
+    }
+
+    .rejection-icon {
+      background: linear-gradient(45deg, #ef4444, #dc2626) !important;
+      animation: empathyGlow 2s ease-in-out;
+    }
+
+    .confetti-burst {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      width: 10px;
+      height: 10px;
+      background: radial-gradient(circle, #fbbf24, #f59e0b);
+      border-radius: 50%;
+      animation: confetti 2s ease-out;
+    }
+
+    .emotional-note {
+      margin-top: 0.75rem;
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      line-height: 1.4;
+    }
+
+    .success-note {
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(16, 185, 129, 0.05));
+      color: #166534;
+      border: 1px solid rgba(34, 197, 94, 0.2);
+      animation: joyPulse 3s ease-in-out infinite;
+    }
+
+    .rejection-note {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(79, 70, 229, 0.05));
+      color: #4338ca;
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      animation: comfortGlow 4s ease-in-out infinite;
+    }
+
+    .action-btn.success-action {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: white;
+      font-weight: 600;
+      animation: successButtonGlow 2s ease-in-out infinite;
+    }
+
+    .action-btn.rejection-action {
+      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      color: white;
+      font-weight: 600;
+      animation: encouragementPulse 3s ease-in-out infinite;
+    }
+
+    /* Animations Émotionnelles */
+    @keyframes successPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.02); box-shadow: 0 8px 25px rgba(34, 197, 94, 0.3); }
+    }
+
+    @keyframes gentleGlow {
+      0%, 100% { box-shadow: 0 4px 15px rgba(239, 68, 68, 0.1); }
+      50% { box-shadow: 0 8px 25px rgba(239, 68, 68, 0.2); }
+    }
+
+    @keyframes celebrationShine {
+      0%, 100% { transform: scale(1); filter: brightness(1); }
+      50% { transform: scale(1.01); filter: brightness(1.1); }
+    }
+
+    @keyframes successBounce {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+
+    @keyframes empathyGlow {
+      0%, 100% { filter: brightness(1); }
+      50% { filter: brightness(1.15); }
+    }
+
+    @keyframes confetti {
+      0% { transform: scale(0) rotate(0deg); opacity: 1; }
+      50% { transform: scale(1.5) rotate(180deg); opacity: 0.8; }
+      100% { transform: scale(0) rotate(360deg); opacity: 0; }
+    }
+
+    @keyframes joyPulse {
+      0%, 100% { background-color: rgba(34, 197, 94, 0.1); }
+      50% { background-color: rgba(34, 197, 94, 0.15); }
+    }
+
+    @keyframes comfortGlow {
+      0%, 100% { background-color: rgba(99, 102, 241, 0.1); }
+      50% { background-color: rgba(99, 102, 241, 0.15); }
+    }
+
+    @keyframes successButtonGlow {
+      0%, 100% { box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3); }
+      50% { box-shadow: 0 8px 25px rgba(34, 197, 94, 0.5); }
+    }
+
+    @keyframes encouragementPulse {
+      0%, 100% { box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3); }
+      50% { box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5); }
+    }
+
+    /* Dark Mode pour les émotions */
+    :host-context(.dark-mode) .success-note {
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(16, 185, 129, 0.1));
+      color: #4ade80;
+    }
+
+    :host-context(.dark-mode) .rejection-note {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(79, 70, 229, 0.1));
+      color: #818cf8;
+    }
+
     /* Responsive */
     @media (max-width: 480px) {
       .notifications-panel {
@@ -325,6 +512,11 @@ import { Subscription } from 'rxjs';
         width: 35px;
         height: 35px;
         font-size: 1rem;
+      }
+
+      .emotional-note {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8rem;
       }
     }
   `]
@@ -390,9 +582,54 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     const hours = Math.floor(timeDiff / (1000 * 60 * 60));
     const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
 
-    if (minutes < 1) return 'Just now';
-    if (minutes < 60) return `${minutes}m ago`;
-    if (hours < 24) return `${hours}h ago`;
-    return `${days}d ago`;
+    if (minutes < 1) return 'À l\'instant';
+    if (minutes < 60) return `Il y a ${minutes}min`;
+    if (hours < 24) return `Il y a ${hours}h`;
+    return `Il y a ${days}j`;
+  }
+
+  // 🎉 MÉTHODES ÉMOTIONNELLES PROFESSIONNELLES 🎉
+  isSuccessNotification(notification: Notification): boolean {
+    return notification.message?.toLowerCase().includes('accepté') || 
+           notification.message?.toLowerCase().includes('approuvé') ||
+           notification.message?.toLowerCase().includes('validé') ||
+           notification.title?.toLowerCase().includes('accepté') ||
+           notification.title?.toLowerCase().includes('approuvé') ||
+           notification.type === 'success';
+  }
+
+  isRejectionNotification(notification: Notification): boolean {
+    return notification.message?.toLowerCase().includes('rejeté') || 
+           notification.message?.toLowerCase().includes('refusé') ||
+           notification.message?.toLowerCase().includes('décliné') ||
+           notification.title?.toLowerCase().includes('rejeté') ||
+           notification.title?.toLowerCase().includes('refusé') ||
+           (notification.type === 'error' && !this.isSuccessNotification(notification));
+  }
+
+  isCelebrationNotification(notification: Notification): boolean {
+    return notification.message?.toLowerCase().includes('création') || 
+           notification.message?.toLowerCase().includes('nouvelle équipe') ||
+           this.isSuccessNotification(notification);
+  }
+
+  getEmotionalTitle(notification: Notification): string {
+    if (this.isSuccessNotification(notification)) {
+      return `🎉 ${notification.title} - Félicitations !`;
+    }
+    if (this.isRejectionNotification(notification)) {
+      return `💙 ${notification.title} - Ne perdez pas espoir`;
+    }
+    return `✨ ${notification.title}`;
+  }
+
+  getEmotionalMessage(notification: Notification): string {
+    if (this.isSuccessNotification(notification)) {
+      return `${notification.message} 🚀 Votre demande a été acceptée avec succès !`;
+    }
+    if (this.isRejectionNotification(notification)) {
+      return `${notification.message} 💪 Ajustez votre demande et réessayez, vous pouvez y arriver !`;
+    }
+    return notification.message;
   }
 }
