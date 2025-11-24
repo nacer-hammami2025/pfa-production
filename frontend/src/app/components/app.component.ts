@@ -150,11 +150,34 @@ export class AppComponent implements OnInit, OnDestroy {
     this.showSettingsMenu = false;
   }
 
+  private menuCloseTimeout: any;
+
   closeAllDropdowns() {
     this.showToolsMenu = false;
     this.showAnalyticsMenu = false;
     this.showSettingsMenu = false;
     this.showAdminMenu = false;
+  }
+
+  scheduleMenuClose() {
+    this.menuCloseTimeout = setTimeout(() => {
+      this.closeAllDropdowns();
+    }, 300); // 300ms délai avant fermeture
+  }
+
+  cancelMenuClose() {
+    if (this.menuCloseTimeout) {
+      clearTimeout(this.menuCloseTimeout);
+      this.menuCloseTimeout = null;
+    }
+  }
+
+  onMenuMouseLeave() {
+    this.scheduleMenuClose();
+  }
+
+  onMenuMouseEnter() {
+    this.cancelMenuClose();
   }
 
   toggleTheme() {

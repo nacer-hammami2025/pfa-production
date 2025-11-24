@@ -50,7 +50,7 @@
               <i class='arrow miraculous-arrow'>▼</i>
               <div class='tools-glow-effect'></div>
             </a>
-            <ul class='dropdown-menu' *ngIf='showToolsMenu'>
+            <ul class='dropdown-menu' *ngIf='showToolsMenu' (mouseenter)='onMenuMouseEnter()' (mouseleave)='onMenuMouseLeave()'>
               <li><a routerLink='/voice-commands' routerLinkActive='active'><i>🎤</i> Commandes Vocales</a></li>
               <li><a routerLink='/pomodoro' routerLinkActive='active'><i>⏱️</i> Pomodoro</a></li>
               <li><a routerLink='/scheduling' routerLinkActive='active'><i>📅</i> Planning Intelligent</a></li>
@@ -66,7 +66,7 @@
               <div class='analytics-data-flow'></div>
               <div class='pulse-effect'></div>
             </a>
-            <ul class='dropdown-menu' *ngIf='showAnalyticsMenu'>
+            <ul class='dropdown-menu' *ngIf='showAnalyticsMenu' (mouseenter)='onMenuMouseEnter()' (mouseleave)='onMenuMouseLeave()'>
               <li><a routerLink='/analytics' routerLinkActive='active'><i>📈</i> Tableau de Bord</a></li>
               <li><a routerLink='/analytics-dashboard' routerLinkActive='active'><i>📊</i> Analytics Avancés</a></li>
               <li><a routerLink='/gamification' routerLinkActive='active'><i>🏆</i> Gamification</a></li>
@@ -104,7 +104,7 @@
               <span>Administration</span>
               <i class='arrow'>▼</i>
             </a>
-            <ul class='dropdown-menu' *ngIf='showAdminMenu'>
+            <ul class='dropdown-menu' *ngIf='showAdminMenu' (mouseenter)='onMenuMouseEnter()' (mouseleave)='onMenuMouseLeave()'>
               <li><a routerLink='/admin' routerLinkActive='active'><i>📊</i> Dashboard</a></li>
               <li><a routerLink='/admin/users' routerLinkActive='active'><i>👤</i> Utilisateurs</a></li>
               <li><a routerLink='/admin/teams' routerLinkActive='active'><i>👥</i> Équipes</a></li>
@@ -154,7 +154,7 @@
           </button>
           
           <!-- Dropdown Menu PREMIUM -->
-          <div class='dropdown-menu profile-menu' *ngIf='showSettingsMenu'>
+          <div class='dropdown-menu profile-menu' *ngIf='showSettingsMenu' (mouseenter)='onMenuMouseEnter()' (mouseleave)='onMenuMouseLeave()'>
             <div class='menu-header-premium'>
               <div class='profile-cover'></div>
               <div class='profile-info-premium'>
