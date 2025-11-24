@@ -4,8 +4,8 @@
   "description": "Backend API for PFA project (Node + Express + MongoDB)",
   "main": "src/index.js",
   "scripts": {
-    "start": "cd backend && node src/index.js",
-    "dev": "cd backend && nodemon src/index.js",
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
     "test": "echo \"No tests yet\" && exit 0"
   },
   "author": "",

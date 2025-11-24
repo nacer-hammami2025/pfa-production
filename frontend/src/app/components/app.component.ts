@@ -104,8 +104,17 @@ export class AppComponent implements OnInit, OnDestroy {
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
     const target = event.target as HTMLElement;
-    if (!target.closest('.nav-dropdown')) {
-      this.closeAllDropdowns();
+    console.log('🎯 Document click detected, target:', target.className);
+    // Empêcher la fermeture si le clic est dans un menu ou sur un bouton de menu
+    if (!target.closest('.nav-dropdown') && 
+        !target.closest('.dropdown-menu') && 
+        !target.closest('.profile-menu') &&
+        !target.closest('.profile-btn') &&
+        !target.closest('.nav-link')) {
+      console.log('🎯 Click outside menu - scheduling close');
+      this.scheduleMenuClose();
+    } else {
+      console.log('🎯 Click inside menu - keeping open');
     }
   }
 
@@ -135,11 +144,13 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   toggleSettingsMenu(event?: Event) {
+    console.log('🎯 toggleSettingsMenu called', this.showSettingsMenu);
     if (event) event.stopPropagation();
     this.showSettingsMenu = !this.showSettingsMenu;
     this.showToolsMenu = false;
     this.showAnalyticsMenu = false;
     this.showAdminMenu = false;
+    console.log('🎯 showSettingsMenu is now:', this.showSettingsMenu);
   }
 
   toggleAdminMenu(event?: Event) {
@@ -160,12 +171,15 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   scheduleMenuClose() {
+    console.log('⏰ Scheduling menu close in 500ms');
     this.menuCloseTimeout = setTimeout(() => {
+      console.log('⏰ Menu close timeout triggered - closing all menus');
       this.closeAllDropdowns();
-    }, 300); // 300ms délai avant fermeture
+    }, 500); // Augmenté à 500ms pour plus de confort
   }
 
   cancelMenuClose() {
+    console.log('⏰ Canceling menu close timeout');
     if (this.menuCloseTimeout) {
       clearTimeout(this.menuCloseTimeout);
       this.menuCloseTimeout = null;
@@ -173,10 +187,12 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   onMenuMouseLeave() {
+    console.log('🖱️ Mouse LEAVE menu - scheduling close in 300ms');
     this.scheduleMenuClose();
   }
 
   onMenuMouseEnter() {
+    console.log('🖱️ Mouse ENTER menu - canceling close');
     this.cancelMenuClose();
   }
 

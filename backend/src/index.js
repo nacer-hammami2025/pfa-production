@@ -10,7 +10,7 @@ process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
 
-require('dotenv').config({ path: '../.env' });
+require('dotenv').config({ path: './.env' });
 const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/db');
@@ -19,10 +19,9 @@ const { metricsMiddleware, metricsHandler } = require('./middleware/metrics');
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-// Connect DB
-console.log('[INDEX] About to connect to database...');
-connectDB().catch(err => console.error('DB connection failed:', err));
-console.log('[INDEX] Database connection initiated');
+// Skip DB connection for testing
+console.log('[INDEX] Skipping database connection for testing...');
+console.log('[INDEX] Database connection skipped');
 
 // CORS Configuration
 console.log('[INDEX] Setting up CORS...');

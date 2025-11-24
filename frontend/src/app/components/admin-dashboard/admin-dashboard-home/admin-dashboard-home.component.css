@@ -543,13 +543,15 @@
 }
 
 .panel:hover {
-  transform: translate3d(0, -8px, 0) scale(1.02);
-  box-shadow: 
-    0 20px 60px rgba(102, 126, 234, 0.15),
-    0 15px 40px rgba(118, 75, 162, 0.12),
-    0 8px 24px rgba(240, 147, 251, 0.1),
-    0 4px 12px rgba(0, 0, 0, 0.08);
-  border-color: rgba(102, 126, 234, 0.3);
+  transform: translate3d(0, -12px, 0) scale(1.03) rotateX(2deg);
+  box-shadow:
+    0 25px 80px rgba(102, 126, 234, 0.25),
+    0 20px 60px rgba(118, 75, 162, 0.2),
+    0 12px 36px rgba(240, 147, 251, 0.15),
+    0 6px 18px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border-color: rgba(102, 126, 234, 0.4);
+  filter: brightness(1.05) saturate(1.1);
 }
 
 .panel:hover::before {
@@ -558,6 +560,23 @@
 
 .panel:hover::after {
   opacity: 1;
+  animation: borderGlow 6s ease-in-out infinite, sparklePulse 2s ease-in-out infinite;
+}
+
+.panel:hover::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255, 215, 0, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 70% 70%, rgba(138, 43, 226, 0.2) 0%, transparent 50%),
+    radial-gradient(circle at 50% 20%, rgba(255, 20, 147, 0.25) 0%, transparent 50%);
+  animation: magicalShimmer 3s ease-in-out infinite;
+  z-index: 2;
+  pointer-events: none;
 }
 
 .panel > * {
@@ -565,21 +584,26 @@
   z-index: 1;
 }
 
-@keyframes borderGlow {
-  0%, 100% { 
-    background-position: 0% 50%; 
+@keyframes sparklePulse {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.1); opacity: 1; }
+}
+
+@keyframes magicalShimmer {
+  0%, 100% {
+    transform: rotate(0deg) scale(1);
     opacity: 0.3;
   }
-  25% { 
-    background-position: 100% 50%; 
+  25% {
+    transform: rotate(90deg) scale(1.05);
     opacity: 0.6;
   }
-  50% { 
-    background-position: 200% 50%; 
+  50% {
+    transform: rotate(180deg) scale(1.1);
     opacity: 0.4;
   }
-  75% { 
-    background-position: 300% 50%; 
+  75% {
+    transform: rotate(270deg) scale(1.05);
     opacity: 0.5;
   }
 }
