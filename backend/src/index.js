@@ -19,9 +19,13 @@ const { metricsMiddleware, metricsHandler } = require('./middleware/metrics');
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-// Skip DB connection for testing
-console.log('[INDEX] Skipping database connection for testing...');
-console.log('[INDEX] Database connection skipped');
+// Connect DB (with error handling for testing)
+console.log('[INDEX] About to connect to database...');
+connectDB().catch(err => {
+  console.error('DB connection failed:', err.message);
+  console.log('[INDEX] Continuing without database for testing purposes...');
+});
+console.log('[INDEX] Database connection initiated');
 
 // CORS Configuration
 console.log('[INDEX] Setting up CORS...');
