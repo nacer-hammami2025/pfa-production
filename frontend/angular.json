@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/angular-cli",
   "version": 1,
   "projects": {
-    "pfa-frontend": {
+    "production": {
       "projectType": "application",
       "root": "src",
       "sourceRoot": "src",
@@ -10,7 +10,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/pfa-frontend",
+            "outputPath": "dist/production",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -71,13 +71,13 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "pfa-frontend:build",
+            "browserTarget": "production:build",
             "port": 4200,
             "host": "localhost"
           },
           "configurations": {
             "production": {
-              "browserTarget": "pfa-frontend:build:production"
+              "browserTarget": "production:build:production"
             }
           }
         },
@@ -94,7 +94,7 @@
       }
     }
   },
-  "defaultProject": "pfa-frontend",
+  "defaultProject": "production",
   "cli": {
     "analytics": false,
     "schematicCollections": [

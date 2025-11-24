@@ -197,7 +197,7 @@ app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 // Serve Angular frontend (Production mode)
 if (process.env.NODE_ENV === 'production') {
   // Serve static files from Angular build
-  app.use(express.static(path.join(__dirname, '../../frontend/dist/pfa-frontend')));
+  app.use(express.static(path.join(__dirname, '../../frontend/dist/production')));
   
   // Handle Angular routing (SPA)
   app.get('*', (req, res) => {
@@ -205,7 +205,7 @@ if (process.env.NODE_ENV === 'production') {
     if (req.path.startsWith('/api/')) {
       return res.status(404).json({ error: 'API endpoint not found' });
     }
-    res.sendFile(path.join(__dirname, '../../frontend/dist/pfa-frontend/index.html'));
+    res.sendFile(path.join(__dirname, '../../frontend/dist/production/index.html'));
   });
 } else {
   // Development routes

@@ -3,7 +3,7 @@ services:
     name: pfa-frontend
     env: static
     buildCommand: cd frontend && npm install && npm run build
-    staticPublishPath: frontend/dist/pfa-frontend
+    staticPublishPath: frontend/dist/production
     routes:
       - type: rewrite
         source: /*
