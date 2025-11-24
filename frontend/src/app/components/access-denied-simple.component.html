@@ -1,0 +1,115 @@
+<div class="access-denied-container">
+  <div class="content-wrapper">
+    <!-- Header simple -->
+    <div class="header-section">
+      <div class="icon-container">
+        <div class="error-icon">🛡️</div>
+      </div>
+      <h1 class="title">Accès Restreint</h1>
+      <p class="subtitle">
+        🔒 Cette zone est protégée par notre système de sécurité
+      </p>
+    </div>
+
+    <!-- Info card simple -->
+    <div class="info-card">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="icon">👤</span>
+          <span>Informations de votre compte</span>
+        </div>
+      </div>
+      <div class="card-content">
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-label">
+              <span class="icon">📧</span>
+              <span>Votre identité</span>
+            </div>
+            <div class="info-value">
+              <span class="role-badge user-badge">{{ userEmail }}</span>
+              <span class="role-badge role-type">{{ getRoleDisplayName(userRole) }}</span>
+            </div>
+          </div>
+          
+          <div class="info-item">
+            <div class="info-label">
+              <span class="icon">⚙️</span>
+              <span>Accès demandé</span>
+            </div>
+            <div class="info-value">
+              <span class="role-badge admin-badge">{{ getAttemptedRoleDisplay() }}</span>
+              <span class="status-badge denied">{{ getPermissionStatus() }}</span>
+            </div>
+          </div>
+          
+          <div class="info-item">
+            <div class="info-label">
+              <span class="icon">❌</span>
+              <span>Raison du refus</span>
+            </div>
+            <div class="info-value">
+              <span class="reason-text">{{ getRejectionReason() }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recommendation card -->
+    <div class="recommendation-card">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="icon">💡</span>
+          <span>{{ getRecommendationTitle() }}</span>
+        </div>
+      </div>
+      <div class="card-content">
+        <div class="intro-section">
+          <span class="icon">💡</span>
+          <span>{{ getRecommendation() }}</span>
+        </div>
+        
+        <div class="action-list">
+          <div class="action-item">
+            <span class="icon">✅</span>
+            <span>Contacter votre responsable système</span>
+          </div>
+          <div class="action-item">
+            <span class="icon">📞</span>
+            <span>Appeler le support technique</span>
+          </div>
+          <div class="action-item">
+            <span class="icon">📋</span>
+            <span>Consulter la documentation d'aide</span>
+          </div>
+        </div>
+
+        <div class="action-buttons">
+          <button class="btn btn-primary" (click)="navigateToUserDashboard()">
+            <span class="icon">🏠</span>
+            Retour au Dashboard
+          </button>
+          
+          <button class="btn btn-secondary" (click)="contactSupport()">
+            <span class="icon">🎧</span>
+            Contacter le Support
+          </button>
+          
+          <button class="btn btn-outline" (click)="logout()">
+            <span class="icon">🚪</span>
+            Se Déconnecter
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer-section">
+      <div class="security-info">
+        <span class="icon">✅</span>
+        <span>Votre session est sécurisée par TaskFlow Pro</span>
+      </div>
+    </div>
+  </div>
+</div>

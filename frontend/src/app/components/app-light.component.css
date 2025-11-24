@@ -1,0 +1,184 @@
+/* ============================================
+   TASKFLOW PRO - VERSION ULTRA-OPTIMISÉE POUR PERFORMANCE
+   ============================================ */
+
+/* Variables CSS minimalistes */
+:host {
+  --primary: #667eea;
+  --bg-main: #f7fafc;
+  --bg-card: #ffffff;
+  --bg-hover: #f1f5f9;
+  --text-primary: #1a202c;
+  --text-secondary: #718096;
+  --border-color: #e2e8f0;
+  --border-radius: 12px;
+  --admin-color: #f56565;
+  --header-height: 70px;
+}
+
+/* Reset minimal */
+* { box-sizing: border-box; }
+body { font-family: system-ui, sans-serif; background: var(--bg-main); margin: 0; }
+
+/* Header simplifié */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  height: var(--header-height);
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+}
+
+/* Logo */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.logo .icon { font-size: 24px; }
+
+/* Navigation */
+.main-nav { display: flex; align-items: center; gap: 8px; }
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  border-radius: var(--border-radius);
+  font-weight: 500;
+  font-size: 15px;
+}
+
+.nav-item:hover, .nav-item.active {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.nav-item.admin-item {
+  background: rgba(245, 101, 101, 0.1);
+  color: var(--admin-color);
+}
+
+/* Actions */
+.header-actions { display: flex; align-items: center; gap: 12px; }
+
+.action-btn {
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  background: var(--bg-card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.action-btn:hover {
+  background: var(--bg-hover);
+}
+
+/* Dropdown */
+.dropdown { position: relative; }
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 8px 0;
+  min-width: 200px;
+  z-index: 1001;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+
+.dropdown-item:hover { background: var(--bg-hover); }
+
+/* Contenu principal */
+.main-content {
+  min-height: calc(100vh - var(--header-height));
+  padding: 24px;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .main-nav { display: none; }
+  .header { padding: 0 16px; }
+  .main-content { padding: 16px; }
+}
+
+.mobile-menu-btn {
+  display: none;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  background: none;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+@media (max-width: 768px) {
+  .mobile-menu-btn { display: flex; align-items: center; justify-content: center; }
+}
+
+/* États */
+.loading { opacity: 0.6; pointer-events: none; }
+.hidden { display: none; }
+
+/* DÉSACTIVATION DES ANIMATIONS POUR PERFORMANCE MAXIMALE */
+*, *::before, *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+/* Menu mobile */
+.mobile-nav {
+  position: fixed;
+  top: var(--header-height);
+  left: 0;
+  right: 0;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-color);
+  max-height: 0;
+  overflow: hidden;
+  z-index: 999;
+}
+
+.mobile-nav.open {
+  max-height: calc(100vh - var(--header-height));
+  padding: 16px;
+}
+
+.mobile-nav .nav-item {
+  display: block;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* Suppression complète du fichier d'animations fantastiques */
+/* Plus d'import pour éviter les 400+ lignes d'animations inutiles */

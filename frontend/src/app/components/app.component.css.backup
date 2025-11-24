@@ -1,0 +1,162 @@
+/* ============================================
+   TASKFLOW PRO - VERSION ULTRA-OPTIMISÉE
+   ============================================ */
+
+/* VARIABLES CSS ESSENTIELLES SEULEMENT */
+:host {
+  --primary: #667eea;
+  --primary-dark: #5568d3;
+  --secondary: #764ba2;
+  --bg-main: #f7fafc;
+  --bg-card: #ffffff;
+  --bg-hover: #f1f5f9;
+  --text-primary: #1a202c;
+  --text-secondary: #718096;
+  --border-color: #e2e8f0;
+  --border-radius: 12px;
+  --shadow-sm: 0 2px 4px rgba(0,0,0,0.04);
+  --admin-color: #f56565;
+  --header-height: 70px;
+}
+
+/* RESET ET BASE */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg-main); }
+
+/* HEADER SIMPLIFIÉ */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  height: var(--header-height);
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  box-shadow: var(--shadow-sm);
+}
+
+/* LOGO */
+.logo { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 20px; color: var(--text-primary); }
+.logo .icon { font-size: 24px; }
+
+/* NAVIGATION PRINCIPALE */
+.main-nav { display: flex; align-items: center; gap: 8px; }
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  border-radius: var(--border-radius);
+  font-weight: 500;
+  font-size: 15px;
+  transition: all 0.2s ease;
+}
+
+.nav-item:hover, .nav-item.active {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.nav-item.admin-item {
+  background: rgba(245, 101, 101, 0.1);
+  color: var(--admin-color);
+}
+
+/* ACTIONS UTILISATEUR */
+.header-actions { display: flex; align-items: center; gap: 12px; }
+
+.action-btn {
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  background: var(--bg-card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.action-btn:hover {
+  background: var(--bg-hover);
+  border-color: var(--primary);
+}
+
+/* DROPDOWN SIMPLE */
+.dropdown { position: relative; }
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  padding: 8px 0;
+  min-width: 200px;
+  z-index: 1001;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: background 0.15s ease;
+}
+
+.dropdown-item:hover { background: var(--bg-hover); }
+
+/* CONTENU PRINCIPAL */
+.main-content {
+  min-height: calc(100vh - var(--header-height));
+  padding: 24px;
+}
+
+/* MOBILE SIMPLE */
+@media (max-width: 768px) {
+  .main-nav { display: none; }
+  .header { padding: 0 16px; }
+  .main-content { padding: 16px; }
+  .mobile-menu-btn { display: flex; }
+}
+
+.mobile-menu-btn {
+  display: none;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  background: none;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+/* ÉTATS SIMPLES */
+.loading { opacity: 0.6; pointer-events: none; }
+.hidden { display: none; }
+
+/* PAS D'ANIMATIONS SAUF TRANSITIONS ESSENTIELLES */
+*, *::before, *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+/* Version avec transitions pour les utilisateurs qui les veulent */
+@media (prefers-reduced-motion: no-preference) {
+  .nav-item, .action-btn, .dropdown-item {
+    transition: all 0.15s ease;
+  }
+}

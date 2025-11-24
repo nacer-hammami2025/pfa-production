@@ -1,0 +1,61 @@
+<div class="access-denied-container">
+  <div class="content-wrapper">
+    <!-- Header simple -->
+    <div class="header-section">
+      <div class="error-icon">🛡️</div>
+      <h1 class="title">Accès Restreint</h1>
+      <p class="subtitle">Cette zone est protégée par notre système de sécurité</p>
+    </div>
+
+    <!-- Info card simple -->
+    <div class="info-card">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="icon">👤</span>
+          <span>Informations de votre compte</span>
+        </div>
+      </div>
+      <div class="card-content">
+        <div class="info-grid">
+          <div class="info-item">
+            <span>📧 Email: </span>
+            <span class="role-badge">{{userEmail}}</span>
+          </div>
+          <div class="info-item">
+            <span>👤 Rôle: </span>
+            <span class="role-badge">{{userRole}}</span>
+          </div>
+          <div class="info-item">
+            <span>❌ Accès requis: </span>
+            <span class="role-badge admin-badge">Administrateur</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recommendation card -->
+    <div class="recommendation-card">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="icon">💡</span>
+          <span>Que faire ?</span>
+        </div>
+      </div>
+      <div class="card-content">
+        <p>Pour obtenir un accès administrateur, contactez votre responsable système.</p>
+        
+        <div class="action-buttons">
+          <button class="btn btn-primary" (click)="goToDashboard()">
+            <span class="icon">🏠</span>
+            Retour au Dashboard
+          </button>
+          
+          <button class="btn btn-secondary" (click)="contactAdmin()">
+            <span class="icon">📧</span>
+            Contacter Admin
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -75,7 +75,11 @@ export class AppComponent implements OnInit, OnDestroy {
         });
         // Load persistent notifications (team requests, etc.)
         console.log('🔔 Chargement des notifications persistantes...');
-        this.persistentNotificationService.displayPersistentNotifications();
+        try {
+          this.persistentNotificationService.displayPersistentNotifications();
+        } catch (error) {
+          console.error('❌ Erreur lors du chargement des notifications persistantes:', error);
+        }
       }
     });
 

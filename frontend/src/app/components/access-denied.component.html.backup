@@ -1,0 +1,151 @@
+<div class="access-denied-container">
+  <!-- Étoiles animées en arrière-plan -->
+  <div class="stars"></div>
+  <div class="stars2"></div>
+  <div class="stars3"></div>
+  
+  <!-- Vagues animées en bas -->
+  <div class="wave wave1"></div>
+  <div class="wave wave2"></div>
+  <div class="wave wave3"></div>
+  
+  <div class="content-wrapper">
+    <!-- Icône et titre principal avec animation spectaculaire -->
+    <div class="header-section">
+      <div class="icon-container">
+        <div class="icon-glow"></div>
+        <mat-icon class="error-icon">shield</mat-icon>
+      </div>
+      <h1 class="title">
+        <span class="title-word">Accès</span>
+        <span class="title-word">Restreint</span>
+      </h1>
+      <p class="subtitle">
+        <mat-icon class="subtitle-icon">lock</mat-icon>
+        Cette zone est protégée par notre système de sécurité avancé
+      </p>
+    </div>
+
+    <!-- Carte d'information ultra moderne -->
+    <mat-card class="info-card">
+      <div class="card-shine"></div>
+      <mat-card-header>
+        <mat-card-title class="card-title">
+          <div class="icon-badge">
+            <mat-icon>person</mat-icon>
+          </div>
+          <span>Informations de votre compte</span>
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-label">
+              <mat-icon>email</mat-icon>
+              <span>Votre identité</span>
+            </div>
+            <div class="info-value">
+              <span class="role-badge user-badge">{{ userEmail }}</span>
+              <span class="role-badge role-type">{{ getRoleDisplayName(userRole) }}</span>
+            </div>
+          </div>
+          
+          <div class="info-item">
+            <div class="info-label">
+              <mat-icon>admin_panel_settings</mat-icon>
+              <span>Accès demandé</span>
+            </div>
+            <div class="info-value">
+              <span class="role-badge attempted-badge">{{ getRoleDisplayName(attemptedRole) }}</span>
+            </div>
+          </div>
+          
+          <div class="info-item full-width">
+            <div class="info-label">
+              <mat-icon>error_outline</mat-icon>
+              <span>Raison du blocage</span>
+            </div>
+            <div class="reason-box">
+              {{ getReasonMessage() }}
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Carte de recommandations interactive -->
+    <mat-card class="recommendation-card">
+      <div class="card-shine"></div>
+      <mat-card-header>
+        <mat-card-title class="card-title">
+          <div class="icon-badge success">
+            <mat-icon>psychology</mat-icon>
+          </div>
+          <span>Solutions suggérées</span>
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="recommendation-intro">
+          <mat-icon class="intro-icon">tips_and_updates</mat-icon>
+          <p>{{ getRecommendation() }}</p>
+        </div>
+        <div class="recommendation-grid">
+          <div class="recommendation-item">
+            <div class="recommendation-number">1</div>
+            <mat-icon>verified_user</mat-icon>
+            <span>Vérifiez votre compte actuel</span>
+          </div>
+          <div class="recommendation-item">
+            <div class="recommendation-number">2</div>
+            <mat-icon>support_agent</mat-icon>
+            <span>Contactez votre administrateur</span>
+          </div>
+          <div class="recommendation-item">
+            <div class="recommendation-number">3</div>
+            <mat-icon>description</mat-icon>
+            <span>Consultez la documentation</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Boutons d'action modernes avec effets -->
+    <div class="action-buttons">
+      <button mat-raised-button (click)="navigateToUserDashboard()" class="primary-button">
+        <span class="button-bg"></span>
+        <span class="button-content">
+          <mat-icon>home</mat-icon>
+          <span class="button-text">Retour à l'accueil</span>
+        </span>
+      </button>
+      
+      <button mat-raised-button (click)="contactSupport()" class="secondary-button">
+        <span class="button-bg"></span>
+        <span class="button-content">
+          <mat-icon>headset_mic</mat-icon>
+          <span class="button-text">Support 24/7</span>
+        </span>
+      </button>
+      
+      <button mat-raised-button (click)="logout()" class="tertiary-button">
+        <span class="button-bg"></span>
+        <span class="button-content">
+          <mat-icon>power_settings_new</mat-icon>
+          <span class="button-text">Déconnexion</span>
+        </span>
+      </button>
+    </div>
+
+    <!-- Badge de sécurité moderne -->
+    <div class="security-badge">
+      <div class="badge-glow"></div>
+      <div class="badge-content">
+        <mat-icon class="shield-icon">verified_user</mat-icon>
+        <div class="badge-text">
+          <div class="badge-title">Sécurité Renforcée</div>
+          <div class="badge-subtitle">Votre organisation est protégée par nos systèmes de sécurité avancés</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
