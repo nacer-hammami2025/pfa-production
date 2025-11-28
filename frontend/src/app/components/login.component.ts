@@ -1,4 +1,5 @@
 ﻿import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 
@@ -8,8 +9,7 @@ import { AuthService } from '../services/auth.service';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  email = '';
-  password = '';
+  loginForm: FormGroup;
   userType = 'user'; // 'user' or 'admin'
   showPassword = false;
   isLoading = false;
@@ -19,12 +19,20 @@ export class LoginComponent implements OnInit {
   showMfaStep = false;
   mfaToken = '';
   tempUser: any = null;
+  currentEmail = ''; // Pour stocker l'email pendant le processus MFA
 
   constructor(
+    private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
     private route: ActivatedRoute
-  ) {}
+  ) {
+    this.loginForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required]],
+      rememberMe: [false]
+    });
+  }
 
   async ngOnInit(): Promise<void> {
     // Vérifier si l'utilisateur est déjà connecté
@@ -54,23 +62,26 @@ export class LoginComponent implements OnInit {
     this.userType = type;
   }
 
-  async submit(): Promise<void> {
-    if (!this.email || !this.password) {
-      this.errorMessage = 'Veuillez remplir tous les champs';
+  async login(): Promise<void> {
+    if (this.loginForm.invalid) {
+      this.errorMessage = 'Veuillez remplir tous les champs correctement';
       return;
     }
 
     this.isLoading = true;
     this.errorMessage = '';
 
+    const { email, password } = this.loginForm.value;
+
     try {
       // Passer le rôle demandé au backend
-      const result = await this.authService.login(this.email, this.password, this.userType);
+      const result = await this.authService.login(email, password, this.userType);
       
       if (result.mfaRequired && result.user) {
         // MFA requis
         this.showMfaStep = true;
         this.tempUser = result.user;
+        this.currentEmail = email; // Stocker l'email pour MFA
         this.isLoading = false;
         return;
       }
@@ -98,7 +109,7 @@ export class LoginComponent implements OnInit {
     this.errorMessage = '';
 
     try {
-      const success = await this.authService.verifyMfaLogin(this.email, this.mfaToken);
+      const success = await this.authService.verifyMfaLogin(this.currentEmail, this.mfaToken);
       if (success) {
         this.isLoading = false;
         this.redirectAfterLogin();
@@ -176,5 +187,17 @@ export class LoginComponent implements OnInit {
     this.mfaToken = '';
     this.tempUser = null;
     this.errorMessage = '';
+  }
+
+  loginWithGoogle(): void {
+    console.log('Connexion avec Google');
+    // TODO: Implémenter l'OAuth Google
+    this.errorMessage = 'Connexion Google sera disponible prochainement';
+  }
+
+  loginWithMicrosoft(): void {
+    console.log('Connexion avec Microsoft');
+    // TODO: Implémenter l'OAuth Microsoft
+    this.errorMessage = 'Connexion Microsoft sera disponible prochainement';
   }
 }
