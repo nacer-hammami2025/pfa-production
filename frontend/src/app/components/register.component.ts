@@ -5,375 +5,228 @@ import { AuthService } from '../services/auth.service';
 @Component({
   selector: 'app-register',
   template: `
-    <div class="auth-container">
-      <div class="auth-card">
-        <div class="auth-header">
-          <div class="logo">
-            <div class="logo-icon">📋</div>
-          </div>
-          <h1>Join Us Today</h1>
-          <p class="auth-subtitle">Create your account to get started</p>
+    <div class="register-wrapper">
+      <!-- Extraordinary Animated Background -->
+      <div class="extraordinary-background">
+        <!-- Nebula Layers -->
+        <div class="nebula-layer nebula-1"></div>
+        <div class="nebula-layer nebula-2"></div>
+        <div class="nebula-layer nebula-3"></div>
+        
+        <!-- Magical Orbs -->
+        <div class="magical-orb orb-1"></div>
+        <div class="magical-orb orb-2"></div>
+        <div class="magical-orb orb-3"></div>
+        <div class="magical-orb orb-4"></div>
+        <div class="magical-orb orb-5"></div>
+        
+        <!-- Stardust -->
+        <div class="stardust">
+          <div class="star" *ngFor="let i of [].constructor(25); index as idx"></div>
         </div>
-
-        <form (ngSubmit)="submit()" #f="ngForm" class="auth-form">
-          <div class="form-group">
-            <label for="name" class="form-label">Full Name</label>
-            <div class="input-wrapper">
-              <i class="input-icon">👤</i>
-              <input
-                id="name"
-                type="text"
-                [(ngModel)]="name"
-                name="name"
-                required
-                minlength="2"
-                #nameInput="ngModel"
-                class="form-input"
-                placeholder="Enter your full name"
-                [class.error]="nameInput.invalid && (nameInput.dirty || nameInput.touched)"
-              />
-            </div>
-            <div *ngIf="nameInput.invalid && (nameInput.dirty || nameInput.touched)" class="error-message">
-              Name must be at least 2 characters
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="email" class="form-label">Email Address</label>
-            <div class="input-wrapper">
-              <i class="input-icon">✉️</i>
-              <input
-                id="email"
-                type="email"
-                [(ngModel)]="email"
-                name="email"
-                required
-                pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$"
-                #emailInput="ngModel"
-                class="form-input"
-                placeholder="Enter your email"
-                [class.error]="emailInput.invalid && (emailInput.dirty || emailInput.touched)"
-              />
-            </div>
-            <div *ngIf="emailInput.invalid && (emailInput.dirty || emailInput.touched)" class="error-message">
-              Please enter a valid email address
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="password" class="form-label">Password</label>
-            <div class="input-wrapper">
-              <i class="input-icon">🔒</i>
-              <input
-                id="password"
-                type="password"
-                [(ngModel)]="password"
-                name="password"
-                required
-                minlength="6"
-                #passwordInput="ngModel"
-                class="form-input"
-                placeholder="Create a password"
-                [class.error]="passwordInput.invalid && (passwordInput.dirty || passwordInput.touched)"
-              />
-            </div>
-            <div *ngIf="passwordInput.invalid && (passwordInput.dirty || passwordInput.touched)" class="error-message">
-              Password must be at least 6 characters
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            [disabled]="f.invalid || isLoading"
-            class="auth-btn primary">
-            <span *ngIf="!isLoading">Create Account</span>
-            <span *ngIf="isLoading" class="loading-spinner">
-              <i class="spinner-icon">⏳</i>
-              Creating account...
-            </span>
-          </button>
-
-          <div *ngIf="error" class="alert alert-error">
-            <i class="alert-icon">⚠️</i>
-            {{ error }}
-          </div>
-        </form>
-
-        <div class="auth-footer">
-          <p>Already have an account?
-            <a routerLink="/login" class="auth-link">Sign in here</a>
-          </p>
+        
+        <!-- Aurora Waves -->
+        <div class="aurora">
+          <div class="aurora-wave aurora-1"></div>
+          <div class="aurora-wave aurora-2"></div>
+          <div class="aurora-wave aurora-3"></div>
+          <div class="aurora-wave aurora-4"></div>
+        </div>
+        
+        <!-- Constellation -->
+        <div class="constellation">
+          <div class="constellation-node node-1"></div>
+          <div class="constellation-node node-2"></div>
+          <div class="constellation-node node-3"></div>
+          <div class="constellation-node node-4"></div>
+          <div class="constellation-node node-5"></div>
+          <div class="constellation-line line-1"></div>
+          <div class="constellation-line line-2"></div>
+          <div class="constellation-line line-3"></div>
+          <div class="constellation-line line-4"></div>
         </div>
       </div>
 
-      <div class="auth-bg">
-        <div class="bg-pattern"></div>
-        <div class="bg-content">
-          <h2>Start Managing Tasks</h2>
-          <p>Join thousands of users who organize their work efficiently with our platform.</p>
+      <div class="register-container">
+        <!-- Extraordinary Brand Section -->
+        <div class="extraordinary-brand">
+          <!-- Magical Logo -->
+          <div class="magical-logo">
+            <div class="logo-aura"></div>
+            <div class="logo-core">
+              <div class="core-ring ring-1"></div>
+              <div class="core-ring ring-2"></div>
+              <div class="core-ring ring-3"></div>
+              <div class="logo-symbol">🚀</div>
+            </div>
+            <div class="logo-particles">
+              <div class="logo-particle" *ngFor="let i of [].constructor(8)"></div>
+            </div>
+          </div>
+
+          <!-- Miracle Title -->
+          <div class="miracle-title">
+            <div class="title-glow"></div>
+            <span class="title-word word-1">Rejoignez</span>
+            <span class="title-word word-2">L'Aventure</span>
+            <span class="title-word word-3">Magique</span>
+          </div>
+
+          <!-- Cosmic Subtitle -->
+          <div class="cosmic-subtitle">
+            <span class="subtitle-icon">✨</span>
+            <span class="subtitle-text">Créez votre compte pour débuter cette expérience extraordinaire</span>
+            <span class="subtitle-sparkles">⭐</span>
+          </div>
+
+          <!-- Legendary Features -->
+          <div class="legendary-features">
+            <div class="legend-feature">
+              <div class="feature-trail"></div>
+              <div class="feature-orb">🎯</div>
+              <div class="feature-content">
+                <div class="feature-title">Gestion Révolutionnaire</div>
+                <div class="feature-desc">Organisez vos projets avec une efficacité légendaire</div>
+              </div>
+            </div>
+            <div class="legend-feature">
+              <div class="feature-trail"></div>
+              <div class="feature-orb">⚡</div>
+              <div class="feature-content">
+                <div class="feature-title">Performance Extraordinaire</div>
+                <div class="feature-desc">Vitesse d'exécution au-delà de l'imaginable</div>
+              </div>
+            </div>
+            <div class="legend-feature">
+              <div class="feature-trail"></div>
+              <div class="feature-orb">🎨</div>
+              <div class="feature-content">
+                <div class="feature-title">Interface Miraculeuse</div>
+                <div class="feature-desc">Design qui transcende les attentes</div>
+              </div>
+            </div>
+            <div class="legend-feature">
+              <div class="feature-trail"></div>
+              <div class="feature-orb">🔮</div>
+              <div class="feature-content">
+                <div class="feature-title">Expérience Magique</div>
+                <div class="feature-desc">Chaque interaction devient un enchantement</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Brand Stats -->
+          <div class="brand-stats">
+            <div class="stat-item">
+              <span class="stat-number">10K+</span>
+              <span class="stat-label">Utilisateurs Magiques</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number">99.9%</span>
+              <span class="stat-label">Satisfaction</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number">24/7</span>
+              <span class="stat-label">Support Divin</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Register Form Section -->
+        <div class="register-form-section">
+          <div class="form-container">
+            <div class="form-header">
+              <h2 class="form-title">Création de Compte</h2>
+              <p class="form-subtitle">Rejoignez notre communauté extraordinaire</p>
+            </div>
+
+            <form (ngSubmit)="submit()" #f="ngForm" class="register-form">
+              <div class="form-group">
+                <label for="name" class="form-label">✨ Nom Complet</label>
+                <input
+                  id="name"
+                  type="text"
+                  [(ngModel)]="name"
+                  name="name"
+                  required
+                  minlength="2"
+                  #nameInput="ngModel"
+                  class="form-input"
+                  placeholder="Votre nom magique"
+                  [class.error]="nameInput.invalid && (nameInput.dirty || nameInput.touched)"
+                />
+                <div *ngIf="nameInput.invalid && (nameInput.dirty || nameInput.touched)" class="error-message">
+                  Le nom doit contenir au moins 2 caractères
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="email" class="form-label">⚡ Adresse Email</label>
+                <input
+                  id="email"
+                  type="email"
+                  [(ngModel)]="email"
+                  name="email"
+                  required
+                  pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$"
+                  #emailInput="ngModel"
+                  class="form-input"
+                  placeholder="votre.email@exemple.com"
+                  [class.error]="emailInput.invalid && (emailInput.dirty || emailInput.touched)"
+                />
+                <div *ngIf="emailInput.invalid && (emailInput.dirty || emailInput.touched)" class="error-message">
+                  Veuillez entrer une adresse email valide
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="password" class="form-label">🔮 Mot de Passe</label>
+                <input
+                  id="password"
+                  type="password"
+                  [(ngModel)]="password"
+                  name="password"
+                  required
+                  minlength="6"
+                  #passwordInput="ngModel"
+                  class="form-input"
+                  placeholder="Créez un mot de passe sécurisé"
+                  [class.error]="passwordInput.invalid && (passwordInput.dirty || passwordInput.touched)"
+                />
+                <div *ngIf="passwordInput.invalid && (passwordInput.dirty || passwordInput.touched)" class="error-message">
+                  Le mot de passe doit contenir au moins 6 caractères
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                [disabled]="f.invalid || isLoading"
+                class="form-button">
+                <span *ngIf="!isLoading">🚀 Créer Mon Compte Magique</span>
+                <span *ngIf="isLoading" class="loading-spinner">
+                  <span class="spinner-icon">⏳</span>
+                  Création en cours...
+                </span>
+              </button>
+
+              <div *ngIf="error" class="error-alert">
+                <span class="alert-icon">⚠️</span>
+                {{ error }}
+              </div>
+            </form>
+
+            <div class="form-footer">
+              <p class="footer-text">
+                Vous avez déjà un compte ?
+                <a routerLink="/login" class="footer-link">Connectez-vous ici</a>
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   `,
-  styles: [`
-    .auth-container {
-      min-height: 100vh;
-      display: flex;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    }
-
-    .auth-card {
-      flex: 1;
-      max-width: 450px;
-      background: white;
-      border-radius: 20px;
-      margin: 2rem;
-      padding: 3rem 2.5rem;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-
-    .auth-header {
-      text-align: center;
-      margin-bottom: 2.5rem;
-    }
-
-    .logo {
-      margin-bottom: 1.5rem;
-    }
-
-    .logo-icon {
-      font-size: 3rem;
-      background: linear-gradient(45deg, #667eea, #764ba2);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .auth-header h1 {
-      margin: 0 0 0.5rem 0;
-      color: #2c3e50;
-      font-size: 2rem;
-      font-weight: 700;
-    }
-
-    .auth-subtitle {
-      color: #6c757d;
-      margin: 0;
-      font-size: 1rem;
-    }
-
-    .auth-form {
-      margin-bottom: 2rem;
-    }
-
-    .form-group {
-      margin-bottom: 1.5rem;
-    }
-
-    .form-label {
-      display: block;
-      margin-bottom: 0.5rem;
-      color: #2c3e50;
-      font-weight: 600;
-      font-size: 0.9rem;
-    }
-
-    .input-wrapper {
-      position: relative;
-    }
-
-    .input-icon {
-      position: absolute;
-      left: 1rem;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 1rem;
-      color: #adb5bd;
-    }
-
-    .form-input {
-      width: 100%;
-      padding: 1rem 1rem 1rem 3rem;
-      border: 2px solid #e9ecef;
-      border-radius: 12px;
-      font-size: 1rem;
-      transition: all 0.3s ease;
-      background: #f8f9fa;
-    }
-
-    .form-input:focus {
-      outline: none;
-      border-color: #667eea;
-      background: white;
-      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-    }
-
-    .form-input.error {
-      border-color: #e74c3c;
-    }
-
-    .error-message {
-      color: #e74c3c;
-      font-size: 0.85rem;
-      margin-top: 0.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .auth-btn {
-      width: 100%;
-      padding: 1rem;
-      border: none;
-      border-radius: 12px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-    }
-
-    .auth-btn.primary {
-      background: linear-gradient(45deg, #667eea, #764ba2);
-      color: white;
-    }
-
-    .auth-btn.primary:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
-    }
-
-    .auth-btn:disabled {
-      opacity: 0.7;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    .loading-spinner {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .spinner-icon {
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    .alert {
-      padding: 1rem;
-      border-radius: 8px;
-      margin-top: 1rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .alert-error {
-      background: #fee;
-      border: 1px solid #fcc;
-      color: #c0392b;
-    }
-
-    .alert-icon {
-      font-size: 1.2rem;
-    }
-
-    .auth-footer {
-      text-align: center;
-      padding-top: 1.5rem;
-      border-top: 1px solid #e9ecef;
-    }
-
-    .auth-footer p {
-      margin: 0;
-      color: #6c757d;
-    }
-
-    .auth-link {
-      color: #667eea;
-      text-decoration: none;
-      font-weight: 600;
-      transition: color 0.3s ease;
-    }
-
-    .auth-link:hover {
-      color: #764ba2;
-      text-decoration: underline;
-    }
-
-    .auth-bg {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .bg-pattern {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="80" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="40" cy="60" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="60" cy="30" r="1.5" fill="rgba(255,255,255,0.1)"/></svg>');
-      opacity: 0.3;
-    }
-
-    .bg-content {
-      position: relative;
-      z-index: 1;
-      color: white;
-      text-align: center;
-      max-width: 400px;
-    }
-
-    .bg-content h2 {
-      font-size: 2.5rem;
-      font-weight: 700;
-      margin: 0 0 1rem 0;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-    }
-
-    .bg-content p {
-      font-size: 1.2rem;
-      opacity: 0.9;
-      margin: 0;
-      line-height: 1.6;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-      .auth-container {
-        flex-direction: column;
-      }
-
-      .auth-card {
-        margin: 1rem;
-        padding: 2rem 1.5rem;
-      }
-
-      .auth-bg {
-        display: none;
-      }
-
-      .bg-content h2 {
-        font-size: 2rem;
-      }
-    }
-  `]
+  styleUrls: ['./register.component.css']
 })
 export class RegisterComponent {
   name = '';
