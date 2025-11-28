@@ -5,16 +5,18 @@ import { AdminGuard } from './guards/admin.guard';
 import { AccessDeniedComponent } from './components/access-denied.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { SettingsComponent } from './components/settings/settings.component';
+import { LoginComponent } from './components/login.component';
+import { RegisterComponent } from './components/register.component';
 
 const routes: Routes = [
   {
     path: 'login',
-    loadChildren: () => import('./components/login.module').then(m => m.LoginModule),
+    component: LoginComponent,
     data: { preload: true }
   },
   {
     path: 'register',
-    loadChildren: () => import('./components/register.module').then(m => m.RegisterModule)
+    component: RegisterComponent
   },
   {
     path: 'forgot-password',
