@@ -176,6 +176,24 @@
           </div>
         </form>
 
+        <!-- OAuth Section -->
+        <div class="oauth-section" *ngIf="!showMfaStep">
+          <div class="separator">
+            <span>or sign in with</span>
+          </div>
+          
+          <div class="oauth-buttons">
+            <button type="button" class="oauth-button google" (click)="loginWithGoogle()">
+              <i class="fab fa-google"></i>
+              Google
+            </button>
+            <button type="button" class="oauth-button microsoft" (click)="loginWithMicrosoft()">
+              <i class="fab fa-microsoft"></i>
+              Microsoft
+            </button>
+          </div>
+        </div>
+
         <div class="login-footer" *ngIf="!showMfaStep">
           <a routerLink="/forgot-password" class="link">Forgot password?</a>
           <p>Don't have an account? <a routerLink="/register" class="link">Sign up</a></p>

@@ -34,7 +34,11 @@ const UserSchema = new mongoose.Schema({
   },
   lastLogin: { type: Date, default: Date.now },
   createdAt: { type: Date, default: Date.now },
-  role: { type: String, enum: ['user', 'admin'], default: 'user' }
+  role: { type: String, enum: ['user', 'admin'], default: 'user' },
+  // OAuth fields
+  googleId: { type: String, default: '' },
+  microsoftId: { type: String, default: '' },
+  emailVerified: { type: Boolean, default: false }
 });
 
 module.exports = mongoose.model('User', UserSchema);

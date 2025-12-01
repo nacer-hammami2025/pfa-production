@@ -1,6 +1,9 @@
 export const environment = {
   production: false,
   apiUrl: '/api',
+  // OAuth Configuration pour l'authentification
+  googleClientId: '310821257679-u275u71vsiuv2qv67sqq2s3q2pdlteun.apps.googleusercontent.com',
+  microsoftClientId: 'your_microsoft_client_id_here',
   integrations: {
     google: {
       clientId: '310821257679-u275u71vsiuv2qv67sqq2s3q2pdlteun.apps.googleusercontent.com',

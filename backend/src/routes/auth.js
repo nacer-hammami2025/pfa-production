@@ -431,4 +431,234 @@ router.post('/verify-mfa-login', async (req, res) => {
   }
 });
 
+// OAuth Routes
+
+// Google OAuth configuration
+const { OAuth2Client } = require('google-auth-library');
+const axios = require('axios');
+
+// Google OAuth Client
+const googleClient = new OAuth2Client(
+  process.env.GOOGLE_CLIENT_ID,
+  process.env.GOOGLE_CLIENT_SECRET
+);
+
+// POST /api/auth/google
+router.post('/google', async (req, res) => {
+  const { token, action = 'login' } = req.body;
+  
+  if (!token) {
+    return res.status(400).json({ errors: [{ msg: 'Google token is required' }] });
+  }
+
+  try {
+    console.log('[GOOGLE_OAUTH] Processing Google OAuth request, action:', action);
+    
+    // Verify Google token
+    const ticket = await googleClient.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID
+    });
+    
+    const payload = ticket.getPayload();
+    const { sub: googleId, email, name, picture } = payload;
+
+    if (!email) {
+      return res.status(400).json({ errors: [{ msg: 'Email not found in Google profile' }] });
+    }
+
+    // Check if user exists
+    let user = await User.findOne({ 
+      $or: [
+        { email },
+        { googleId }
+      ]
+    });
+
+    if (action === 'register') {
+      if (user) {
+        return res.status(400).json({ 
+          errors: [{ msg: 'Un compte existe déjà avec cette adresse email' }] 
+        });
+      }
+
+      // Create new user for registration
+      user = new User({
+        name,
+        email,
+        googleId,
+        avatar: picture,
+        role: 'user',
+        password: 'oauth_google', // Placeholder password for OAuth users
+        emailVerified: true // Google emails are already verified
+      });
+
+      // Hash placeholder password
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(user.password, salt);
+      
+      await user.save();
+      console.log('[GOOGLE_OAUTH] ✅ User registered via Google:', email);
+    } else {
+      // Login action
+      if (!user) {
+        return res.status(400).json({ 
+          errors: [{ msg: 'Aucun compte trouvé. Veuillez vous inscrire d\'abord.' }] 
+        });
+      }
+
+      // Update Google ID if not set
+      if (!user.googleId) {
+        user.googleId = googleId;
+        await user.save();
+      }
+      
+      console.log('[GOOGLE_OAUTH] ✅ User logged in via Google:', email);
+    }
+
+    // Generate JWT token
+    const jwtPayload = { 
+      user: { 
+        id: user.id, 
+        name: user.name, 
+        email: user.email, 
+        role: user.role 
+      } 
+    };
+    
+    const jwtToken = jwt.sign(jwtPayload, process.env.JWT_SECRET, { expiresIn: '7d' });
+
+    res.json({
+      token: jwtToken,
+      user: { 
+        id: user.id, 
+        name: user.name, 
+        email: user.email, 
+        role: user.role,
+        avatar: user.avatar 
+      }
+    });
+  } catch (err) {
+    console.error('[GOOGLE_OAUTH] Error:', err);
+    if (err.message.includes('Invalid token')) {
+      return res.status(400).json({ errors: [{ msg: 'Token Google invalide' }] });
+    }
+    res.status(500).json({ errors: [{ msg: 'Erreur serveur lors de l\'authentification Google' }] });
+  }
+});
+
+// POST /api/auth/microsoft
+router.post('/microsoft', async (req, res) => {
+  const { code, action = 'login' } = req.body;
+  
+  if (!code) {
+    return res.status(400).json({ errors: [{ msg: 'Microsoft authorization code is required' }] });
+  }
+
+  try {
+    console.log('[MICROSOFT_OAUTH] Processing Microsoft OAuth request, action:', action);
+    
+    // Exchange authorization code for access token
+    const tokenResponse = await axios.post('https://login.microsoftonline.com/common/oauth2/v2.0/token', {
+      client_id: process.env.MICROSOFT_CLIENT_ID,
+      client_secret: process.env.MICROSOFT_CLIENT_SECRET,
+      code,
+      grant_type: 'authorization_code',
+      redirect_uri: `${process.env.CLIENT_URL}/oauth/callback`
+    }, {
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+    });
+
+    const { access_token } = tokenResponse.data;
+
+    // Get user info from Microsoft Graph API
+    const userResponse = await axios.get('https://graph.microsoft.com/v1.0/me', {
+      headers: { Authorization: `Bearer ${access_token}` }
+    });
+
+    const { id: microsoftId, displayName: name, mail: email, userPrincipalName } = userResponse.data;
+    const userEmail = email || userPrincipalName;
+
+    if (!userEmail) {
+      return res.status(400).json({ errors: [{ msg: 'Email not found in Microsoft profile' }] });
+    }
+
+    // Check if user exists
+    let user = await User.findOne({ 
+      $or: [
+        { email: userEmail },
+        { microsoftId }
+      ]
+    });
+
+    if (action === 'register') {
+      if (user) {
+        return res.status(400).json({ 
+          errors: [{ msg: 'Un compte existe déjà avec cette adresse email' }] 
+        });
+      }
+
+      // Create new user for registration
+      user = new User({
+        name,
+        email: userEmail,
+        microsoftId,
+        role: 'user',
+        password: 'oauth_microsoft', // Placeholder password for OAuth users
+        emailVerified: true // Microsoft emails are already verified
+      });
+
+      // Hash placeholder password
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(user.password, salt);
+      
+      await user.save();
+      console.log('[MICROSOFT_OAUTH] ✅ User registered via Microsoft:', userEmail);
+    } else {
+      // Login action
+      if (!user) {
+        return res.status(400).json({ 
+          errors: [{ msg: 'Aucun compte trouvé. Veuillez vous inscrire d\'abord.' }] 
+        });
+      }
+
+      // Update Microsoft ID if not set
+      if (!user.microsoftId) {
+        user.microsoftId = microsoftId;
+        await user.save();
+      }
+      
+      console.log('[MICROSOFT_OAUTH] ✅ User logged in via Microsoft:', userEmail);
+    }
+
+    // Generate JWT token
+    const jwtPayload = { 
+      user: { 
+        id: user.id, 
+        name: user.name, 
+        email: user.email, 
+        role: user.role 
+      } 
+    };
+    
+    const jwtToken = jwt.sign(jwtPayload, process.env.JWT_SECRET, { expiresIn: '7d' });
+
+    res.json({
+      token: jwtToken,
+      user: { 
+        id: user.id, 
+        name: user.name, 
+        email: user.email, 
+        role: user.role 
+      }
+    });
+  } catch (err) {
+    console.error('[MICROSOFT_OAUTH] Error:', err);
+    if (err.response) {
+      console.error('[MICROSOFT_OAUTH] Response error:', err.response.data);
+    }
+    res.status(500).json({ errors: [{ msg: 'Erreur serveur lors de l\'authentification Microsoft' }] });
+  }
+});
+
 module.exports = router;

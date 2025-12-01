@@ -2,6 +2,7 @@
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+import { OAuthService } from '../services/oauth.service';
 
 @Component({
   selector: 'app-login',
@@ -24,6 +25,7 @@ export class LoginComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
+    private oAuthService: OAuthService,
     private router: Router,
     private route: ActivatedRoute
   ) {
@@ -189,15 +191,25 @@ export class LoginComponent implements OnInit {
     this.errorMessage = '';
   }
 
-  loginWithGoogle(): void {
-    console.log('Connexion avec Google');
-    // TODO: Implémenter l'OAuth Google
-    this.errorMessage = 'Connexion Google sera disponible prochainement';
+  async loginWithGoogle(): Promise<void> {
+    try {
+      this.isLoading = true;
+      this.errorMessage = '';
+      await this.oAuthService.loginWithGoogle();
+    } catch (error: any) {
+      this.errorMessage = error.message || 'Google connection failed. Please try again.';
+      this.isLoading = false;
+    }
   }
 
-  loginWithMicrosoft(): void {
-    console.log('Connexion avec Microsoft');
-    // TODO: Implémenter l'OAuth Microsoft
-    this.errorMessage = 'Connexion Microsoft sera disponible prochainement';
+  async loginWithMicrosoft(): Promise<void> {
+    try {
+      this.isLoading = true;
+      this.errorMessage = '';
+      await this.oAuthService.loginWithMicrosoft();
+    } catch (error: any) {
+      this.errorMessage = error.message || 'Microsoft connection failed. Please try again.';
+      this.isLoading = false;
+    }
   }
 }

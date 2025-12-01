@@ -15,6 +15,7 @@ import { SettingsComponent } from './components/settings/settings.component';
 import { AccessDeniedComponent } from './components/access-denied.component';
 import { RegisterComponent } from './components/register.component';
 import { LoginComponent } from './components/login.component';
+import { OAuthCallbackComponent } from './components/oauth-callback.component';
 import { AdminOnlyDirective } from './directives/admin-only.directive';
 
 import { AuthGuard } from './guards/auth.guard';
@@ -48,6 +49,7 @@ export function appInitializer(authService: AuthService, persistentNotificationS
     AccessDeniedComponent,
     RegisterComponent,
     LoginComponent,
+    OAuthCallbackComponent,
     AdminOnlyDirective
   ],
   imports: [

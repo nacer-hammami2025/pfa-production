@@ -7,6 +7,7 @@ import { ProfileComponent } from './components/profile/profile.component';
 import { SettingsComponent } from './components/settings/settings.component';
 import { LoginComponent } from './components/login.component';
 import { RegisterComponent } from './components/register.component';
+import { OAuthCallbackComponent } from './components/oauth-callback.component';
 
 const routes: Routes = [
   {
@@ -17,6 +18,10 @@ const routes: Routes = [
   {
     path: 'register',
     component: RegisterComponent
+  },
+  {
+    path: 'auth/microsoft/callback',
+    component: OAuthCallbackComponent
   },
   {
     path: 'forgot-password',

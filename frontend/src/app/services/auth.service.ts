@@ -200,6 +200,10 @@ export class AuthService {
     return this.currentUserSubject.value;
   }
 
+  setCurrentUser(user: any): void {
+    this.currentUserSubject.next(user);
+  }
+
   async forgotPassword(email: string): Promise<string> {
     try {
       const res = await this.http.post<{ message: string; resetToken?: string }>(

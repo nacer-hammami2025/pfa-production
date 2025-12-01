@@ -4,6 +4,10 @@ export const environment = {
   apiUrl: 'https://nacer-dev.me/api',
   wsUrl: 'wss://nacer-dev.me',
   
+  // OAuth Configuration pour l'authentification
+  googleClientId: '310821257679-u275u71vsiuv2qv67sqq2s3q2pdlteun.apps.googleusercontent.com',
+  microsoftClientId: 'your_microsoft_client_id_here',
+  
   // Feature Flags
   features: {
     analytics: true,

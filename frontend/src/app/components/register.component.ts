@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+import { OAuthService } from '../services/oauth.service';
 
 @Component({
   selector: 'app-register',
@@ -18,6 +19,7 @@ export class RegisterComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
+    private oAuthService: OAuthService,
     private router: Router
   ) {
     this.registerForm = this.fb.group({
@@ -71,13 +73,25 @@ export class RegisterComponent implements OnInit {
     }
   }
 
-  registerWithGoogle() {
-    // Implémentation OAuth Google
-    console.log('Inscription avec Google');
+  async registerWithGoogle(): Promise<void> {
+    try {
+      this.isLoading = true;
+      this.errorMessage = '';
+      await this.oAuthService.registerWithGoogle();
+    } catch (error: any) {
+      this.errorMessage = error.message || 'Google registration failed. Please try again.';
+      this.isLoading = false;
+    }
   }
 
-  registerWithMicrosoft() {
-    // Implémentation OAuth Microsoft
-    console.log('Inscription avec Microsoft');
+  async registerWithMicrosoft(): Promise<void> {
+    try {
+      this.isLoading = true;
+      this.errorMessage = '';
+      await this.oAuthService.registerWithMicrosoft();
+    } catch (error: any) {
+      this.errorMessage = error.message || 'Microsoft registration failed. Please try again.';
+      this.isLoading = false;
+    }
   }
 }

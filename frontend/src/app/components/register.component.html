@@ -187,6 +187,24 @@
             <p>Already have an account? <a routerLink="/login" class="link">Sign In</a></p>
           </div>
         </form>
+
+        <!-- OAuth Section -->
+        <div class="oauth-section">
+          <div class="separator">
+            <span>or sign up with</span>
+          </div>
+          
+          <div class="oauth-buttons">
+            <button type="button" class="oauth-button google" (click)="registerWithGoogle()">
+              <i class="fab fa-google"></i>
+              Google
+            </button>
+            <button type="button" class="oauth-button microsoft" (click)="registerWithMicrosoft()">
+              <i class="fab fa-microsoft"></i>
+              Microsoft
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
