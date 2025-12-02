@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { RouterModule, Routes, PreloadAllModules } from '@angular/router';
 import { AuthGuard } from './guards/auth.guard';
 import { AdminGuard } from './guards/admin.guard';
 import { AccessDeniedComponent } from './components/access-denied.component';
@@ -123,7 +123,12 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes, {
+    enableTracing: false,
+    preloadingStrategy: PreloadAllModules,
+    onSameUrlNavigation: 'ignore',
+    scrollPositionRestoration: 'top'
+  })],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
