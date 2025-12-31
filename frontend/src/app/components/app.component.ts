@@ -171,11 +171,11 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   scheduleMenuClose() {
-    console.log('⏰ Scheduling menu close in 2000ms');
+    console.log('⏰ Scheduling menu close in 4000ms');
     this.menuCloseTimeout = setTimeout(() => {
       console.log('⏰ Menu close timeout triggered - closing all menus');
       this.closeAllDropdowns();
-    }, 2000); // Délai augmenté à 2000ms (2 secondes) pour un excellent confort utilisateur
+    }, 4000); // Délai augmenté à 4000ms (4 secondes) pour un confort maximal
   }
 
   cancelMenuClose() {
@@ -198,6 +198,15 @@ export class AppComponent implements OnInit, OnDestroy {
 
   toggleTheme() {
     this.isDarkMode = !this.isDarkMode;
+    // Sauvegarder dans localStorage
+    localStorage.setItem('darkMode', this.isDarkMode.toString());
+    // Appliquer le thème
+    if (this.isDarkMode) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
+    console.log('✨ Theme toggled:', this.isDarkMode ? 'Dark' : 'Light');
   }
 
   scrollToTop() {
