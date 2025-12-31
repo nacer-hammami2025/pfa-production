@@ -429,3 +429,45 @@ body {
     display: none !important;
   }
 }
+
+/* ============================================
+   SUPPRESSION GLOBALE DES FORMES DISGRACIEUSES
+   ============================================ */
+   
+/* SUPPRIMER TOUTES les formes dynamiques qui tournent */
+*::before,
+*::after {
+  animation-name: none !important;
+}
+
+/* Formes spécifiques à cacher */
+.floating-shape,
+.dynamic-background,
+.background-decoration,
+.decorative-element,
+[class*="floating"],
+[class*="decoration"] {
+  display: none !important;
+}
+
+/* Dashboard container - arrière-plan propre sans formes */
+.dashboard-container::before,
+.dashboard-container::after,
+.admin-sidebar::before,
+.admin-sidebar::after,
+.dropdown-menu::before,
+.dropdown-menu::after,
+.profile-menu::before,
+.profile-menu::after {
+  display: none !important;
+  content: none !important;
+  animation: none !important;
+}
+
+/* Forcer les menus à rester simples et propres */
+.dropdown-menu,
+.profile-menu,
+.admin-sidebar {
+  background: var(--bg-card, #ffffff) !important;
+  overflow: hidden !important;
+}
