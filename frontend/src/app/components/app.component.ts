@@ -171,11 +171,11 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   scheduleMenuClose() {
-    console.log('⏰ Scheduling menu close in 1500ms');
+    console.log('⏰ Scheduling menu close in 2000ms');
     this.menuCloseTimeout = setTimeout(() => {
       console.log('⏰ Menu close timeout triggered - closing all menus');
       this.closeAllDropdowns();
-    }, 1500); // Délai augmenté à 1500ms pour un meilleur confort utilisateur
+    }, 2000); // Délai augmenté à 2000ms (2 secondes) pour un excellent confort utilisateur
   }
 
   cancelMenuClose() {

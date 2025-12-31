@@ -21,6 +21,17 @@
   height: 100vh;
   z-index: 1000;
   overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Suppression de toutes formes et animations disgracieuses */
+.admin-sidebar::before,
+.admin-sidebar::after,
+.sidebar-menu::before,
+.sidebar-menu::after,
+.menu-item::before,
+.menu-item::after {
+  display: none !important;
 }
 
 .sidebar-header {
