@@ -1,7 +1,7 @@
 {
   "dashboard": {
     "id": null,
-    "uid": "pfa-production-complete",
+    "uid": "pfa-backend-complete",
     "title": "🚀 PFA TaskFlow Pro - Dashboard Production Complet",
     "description": "Monitoring complet de l'application PFA TaskFlow Pro en production",
     "tags": ["pfa", "production", "taskflow", "monitoring"],
@@ -23,7 +23,7 @@
         "type": "stat",
         "targets": [
           {
-            "expr": "up{job=\"pfa-production\"}",
+            "expr": "up{job=\"pfa-backend\"}",
             "legendFormat": "PFA Backend",
             "refId": "A"
           }
@@ -59,7 +59,7 @@
         "type": "stat",
         "targets": [
           {
-            "expr": "process_resident_memory_bytes{job=\"pfa-production\"} / 1024 / 1024",
+            "expr": "process_resident_memory_bytes{job=\"pfa-backend\"} / 1024 / 1024",
             "legendFormat": "Memory (MB)",
             "refId": "A"
           }
@@ -91,7 +91,7 @@
         "type": "stat",
         "targets": [
           {
-            "expr": "rate(process_cpu_user_seconds_total{job=\"pfa-production\"}[1m]) * 100",
+            "expr": "rate(process_cpu_user_seconds_total{job=\"pfa-backend\"}[1m]) * 100",
             "legendFormat": "CPU %",
             "refId": "A"
           }
@@ -122,7 +122,7 @@
         "type": "stat",
         "targets": [
           {
-            "expr": "mongodb_connections_current{job=\"pfa-production\"}",
+            "expr": "mongodb_connections_current{job=\"pfa-backend\"}",
             "legendFormat": "Connexions",
             "refId": "A"
           }
@@ -159,7 +159,7 @@
         "type": "timeseries",
         "targets": [
           {
-            "expr": "rate(http_requests_total{job=\"pfa-production\"}[1m]) * 60",
+            "expr": "rate(http_requests_total{job=\"pfa-backend\"}[1m]) * 60",
             "legendFormat": "{{method}} {{route}}",
             "refId": "A"
           }
@@ -202,7 +202,7 @@
         "type": "timeseries",
         "targets": [
           {
-            "expr": "http_request_duration_ms{job=\"pfa-production\"}",
+            "expr": "http_request_duration_ms{job=\"pfa-backend\"}",
             "legendFormat": "{{method}} {{route}} - {{percentile}}",
             "refId": "A"
           }
@@ -234,7 +234,7 @@
         "type": "piechart",
         "targets": [
           {
-            "expr": "pfa_tasks_total{job=\"pfa-production\"}",
+            "expr": "pfa_tasks_total{job=\"pfa-backend\"}",
             "legendFormat": "{{status}}",
             "refId": "A"
           }
@@ -267,7 +267,7 @@
         "type": "stat",
         "targets": [
           {
-            "expr": "pfa_projects_total{job=\"pfa-production\"}",
+            "expr": "pfa_projects_total{job=\"pfa-backend\"}",
             "legendFormat": "Total Projets",
             "refId": "A"
           }
@@ -291,7 +291,7 @@
         "type": "timeseries",
         "targets": [
           {
-            "expr": "pfa_user_activity_total{job=\"pfa-production\"}",
+            "expr": "pfa_user_activity_total{job=\"pfa-backend\"}",
             "legendFormat": "{{action}} - {{user_role}}",
             "refId": "A"
           }
@@ -315,7 +315,7 @@
         "type": "stat",
         "targets": [
           {
-            "expr": "pfa_teams_total{job=\"pfa-production\"}",
+            "expr": "pfa_teams_total{job=\"pfa-backend\"}",
             "legendFormat": "Équipes",
             "refId": "A"
           }
@@ -341,17 +341,17 @@
         "type": "table",
         "targets": [
           {
-            "expr": "label_replace(up{job=\"pfa-production\"}, \"metric\", \"Service Status\", \"\", \"\")",
+            "expr": "label_replace(up{job=\"pfa-backend\"}, \"metric\", \"Service Status\", \"\", \"\")",
             "format": "table",
             "refId": "A"
           },
           {
-            "expr": "label_replace(process_resident_memory_bytes{job=\"pfa-production\"} / 1024 / 1024, \"metric\", \"Memory (MB)\", \"\", \"\")",
+            "expr": "label_replace(process_resident_memory_bytes{job=\"pfa-backend\"} / 1024 / 1024, \"metric\", \"Memory (MB)\", \"\", \"\")",
             "format": "table",
             "refId": "B"
           },
           {
-            "expr": "label_replace(rate(process_cpu_user_seconds_total{job=\"pfa-production\"}[1m]) * 100, \"metric\", \"CPU %\", \"\", \"\")",
+            "expr": "label_replace(rate(process_cpu_user_seconds_total{job=\"pfa-backend\"}[1m]) * 100, \"metric\", \"CPU %\", \"\", \"\")",
             "format": "table",
             "refId": "C"
           }
@@ -388,8 +388,8 @@
     "canEdit": true,
     "canAdmin": true,
     "canStar": true,
-    "slug": "pfa-production-complete",
-    "url": "/d/pfa-production-complete/pfa-taskflow-pro-dashboard-production-complet",
+    "slug": "pfa-backend-complete",
+    "url": "/d/pfa-backend-complete/pfa-taskflow-pro-dashboard-production-complet",
     "expires": "0001-01-01T00:00:00Z",
     "created": "2025-11-18T00:00:00Z",
     "updated": "2025-11-18T00:00:00Z",

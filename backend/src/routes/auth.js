@@ -6,6 +6,7 @@ const { check, validationResult } = require('express-validator');
 const User = require('../models/User');
 const speakeasy = require('speakeasy');
 const qrcode = require('qrcode');
+const { trackUserActivity } = require('../middleware/metrics');
 
 // Store reset tokens temporarily (in production, use Redis or database)
 const resetTokens = new Map();
@@ -157,6 +158,7 @@ router.post(
             throw err;
           }
           console.log('[REGISTER] ✅ Token generated successfully');
+          trackUserActivity('register');
           res.json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
         }
       );
@@ -239,6 +241,7 @@ router.post(
             return res.status(500).json({ message: 'Token generation error' });
           }
           console.log('[LOGIN] ✅ Login successful for:', email);
+          trackUserActivity('login');
           res.json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
         }
       );

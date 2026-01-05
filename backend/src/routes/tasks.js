@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
 const Task = require('../models/Task');
+const { trackUserActivity, trackResponseTime } = require('../middleware/metrics');
 
 // GET /api/tasks - list user's tasks with optional filtering
 router.get('/', auth, async (req, res) => {
@@ -120,6 +121,7 @@ router.get('/project/:projectId', auth, async (req, res) => {
 
 // POST /api/tasks - create
 router.post('/', auth, async (req, res) => {
+  const start = Date.now();
   try {
     console.log('📝 Backend: Requête POST /api/tasks reçue');
     console.log('👤 User ID:', req.user.id);
@@ -152,6 +154,8 @@ router.post('/', auth, async (req, res) => {
     }
 
     console.log('✅ Tâche sauvegardée avec succès:', task._id);
+    trackUserActivity('task_create');
+    trackResponseTime('task_create', (Date.now() - start) / 1000);
     res.json(task);
   } catch (err) {
     console.error('❌ Erreur lors de la création de tâche:', err.message);
@@ -161,6 +165,7 @@ router.post('/', auth, async (req, res) => {
 
 // PUT /api/tasks/:id - update
 router.put('/:id', auth, async (req, res) => {
+  const start = Date.now();
   try {
     const task = await Task.findById(req.params.id);
     if (!task) return res.status(404).json({ msg: 'Task not found' });
@@ -177,6 +182,8 @@ router.put('/:id', auth, async (req, res) => {
     if (tags !== undefined) task.tags = tags;
 
     await task.save();
+    trackUserActivity('task_update');
+    trackResponseTime('task_update', (Date.now() - start) / 1000);
     res.json(task);
   } catch (err) {
     console.error(err.message);

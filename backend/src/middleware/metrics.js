@@ -34,12 +34,29 @@ const activeUsers = new promClient.Gauge({
 const tasksTotal = new promClient.Gauge({
   name: 'pfa_tasks_total',
   help: 'Total number of tasks in the system',
-  labelNames: ['status'] // completed, pending, in_progress
+  labelNames: ['status']
 });
 
 const projectsTotal = new promClient.Gauge({
   name: 'pfa_projects_total',
   help: 'Total number of projects in the system'
+});
+
+const teamsTotal = new promClient.Gauge({
+  name: 'pfa_teams_total',
+  help: 'Total number of teams in the system'
+});
+
+const notificationsTotal = new promClient.Counter({
+  name: 'pfa_notifications_total',
+  help: 'Total number of notifications sent',
+  labelNames: ['type']
+});
+
+const userActivityTotal = new promClient.Counter({
+  name: 'pfa_user_activity_total',
+  help: 'Total user activity events',
+  labelNames: ['action']
 });
 
 const mongoConnections = new promClient.Gauge({
@@ -50,7 +67,8 @@ const mongoConnections = new promClient.Gauge({
 const responseTime = new promClient.Histogram({
   name: 'pfa_response_time_seconds',
   help: 'Response time for PFA operations',
-  labelNames: ['operation']
+  labelNames: ['operation'],
+  buckets: [0.01, 0.05, 0.1, 0.5, 1, 2, 5]
 });
 
 // Register the custom metrics
@@ -59,6 +77,9 @@ register.registerMetric(httpRequestsTotal);
 register.registerMetric(activeUsers);
 register.registerMetric(tasksTotal);
 register.registerMetric(projectsTotal);
+register.registerMetric(teamsTotal);
+register.registerMetric(notificationsTotal);
+register.registerMetric(userActivityTotal);
 register.registerMetric(mongoConnections);
 register.registerMetric(responseTime);
 
@@ -87,30 +108,65 @@ const updateBusinessMetrics = async () => {
   try {
     const mongoose = require('mongoose');
     
-    // Update task metrics
-    const Task = require('../models/Task');
-    if (mongoose.connection.readyState === 1) {
+    if (mongoose.connection.readyState !== 1) {
+      console.log('[METRICS] Database not connected, skipping business metrics update');
+      return;
+    }
+    
+    // Update task metrics by status
+    try {
+      const Task = require('../models/Task');
+      const todoTasks = await Task.countDocuments({ status: 'TODO' });
+      const inProgressTasks = await Task.countDocuments({ status: 'IN_PROGRESS' });
+      const doneTasks = await Task.countDocuments({ status: 'DONE' });
       const completedTasks = await Task.countDocuments({ completed: true });
       const pendingTasks = await Task.countDocuments({ completed: false });
       
+      tasksTotal.labels('TODO').set(todoTasks);
+      tasksTotal.labels('IN_PROGRESS').set(inProgressTasks);
+      tasksTotal.labels('DONE').set(doneTasks);
       tasksTotal.labels('completed').set(completedTasks);
       tasksTotal.labels('pending').set(pendingTasks);
+    } catch (err) {
+      // Task model might not be loaded yet
     }
     
     // Update project metrics
-    const Project = require('../models/Project');
-    if (mongoose.connection.readyState === 1) {
+    try {
+      const Project = require('../models/Project');
       const totalProjects = await Project.countDocuments();
       projectsTotal.set(totalProjects);
+    } catch (err) {
+      // Project model might not be loaded yet
+    }
+    
+    // Update team metrics
+    try {
+      const Team = require('../models/Team');
+      const totalTeams = await Team.countDocuments();
+      const activeTeams = await Team.countDocuments({ isActive: true });
+      teamsTotal.set(totalTeams);
+    } catch (err) {
+      // Team model might not be loaded yet
+    }
+    
+    // Update active users count
+    try {
+      const User = require('../models/User');
+      const totalUsers = await User.countDocuments();
+      const activeUsersCount = await User.countDocuments({ 
+        lastActive: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) } 
+      });
+      activeUsers.set(activeUsersCount);
+    } catch (err) {
+      // User model might not be loaded yet
     }
     
     // MongoDB connection metrics
-    if (mongoose.connection.readyState === 1) {
-      mongoConnections.set(mongoose.connection.readyState);
-    }
+    mongoConnections.set(mongoose.connection.readyState);
     
   } catch (error) {
-    console.error('Error updating business metrics:', error);
+    console.error('[METRICS] Error updating business metrics:', error.message);
   }
 };
 
@@ -131,16 +187,36 @@ const metricsHandler = async (req, res) => {
   }
 };
 
+// Helper functions to track specific metrics
+const trackNotification = (type = 'general') => {
+  notificationsTotal.labels(type).inc();
+};
+
+const trackUserActivity = (action = 'unknown') => {
+  userActivityTotal.labels(action).inc();
+};
+
+const trackResponseTime = (operation, duration) => {
+  responseTime.labels(operation).observe(duration);
+};
+
 module.exports = {
   register,
   metricsMiddleware,
   metricsHandler,
+  updateBusinessMetrics,
+  trackNotification,
+  trackUserActivity,
+  trackResponseTime,
   metrics: {
     httpRequestDuration,
     httpRequestsTotal,
     activeUsers,
     tasksTotal,
     projectsTotal,
+    teamsTotal,
+    notificationsTotal,
+    userActivityTotal,
     mongoConnections,
     responseTime
   }

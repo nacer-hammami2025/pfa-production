@@ -78,7 +78,7 @@
       "pluginVersion": "8.0.0",
       "targets": [
         {
-          "expr": "up{job=\"pfa-production\"}",
+          "expr": "up{job=\"pfa-backend\"}",
           "interval": "",
           "legendFormat": "Service Status",
           "refId": "A"
@@ -119,7 +119,7 @@
       },
       "targets": [
         {
-          "expr": "process_resident_memory_bytes{job=\"pfa-production\"}",
+          "expr": "process_resident_memory_bytes{job=\"pfa-backend\"}",
           "interval": "",
           "legendFormat": "Memory Usage",
           "refId": "A"
@@ -176,7 +176,7 @@
       },
       "targets": [
         {
-          "expr": "mongodb_connections_current{job=\"pfa-production\"}",
+          "expr": "mongodb_connections_current{job=\"pfa-backend\"}",
           "interval": "",
           "legendFormat": "MongoDB Connections",
           "refId": "A"
@@ -233,7 +233,7 @@
       },
       "targets": [
         {
-          "expr": "rate(process_cpu_user_seconds_total{job=\"pfa-production\"}[1m]) * 100",
+          "expr": "rate(process_cpu_user_seconds_total{job=\"pfa-backend\"}[1m]) * 100",
           "interval": "",
           "legendFormat": "CPU Usage %",
           "refId": "A"
@@ -270,7 +270,7 @@
       },
       "targets": [
         {
-          "expr": "rate(http_requests_total{job=\"pfa-production\"}[1m]) * 60",
+          "expr": "rate(http_requests_total{job=\"pfa-backend\"}[1m]) * 60",
           "interval": "",
           "legendFormat": "{{method}} {{route}}",
           "refId": "A"
@@ -307,7 +307,7 @@
       },
       "targets": [
         {
-          "expr": "http_request_duration_ms{job=\"pfa-production\"}",
+          "expr": "http_request_duration_ms{job=\"pfa-backend\"}",
           "interval": "",
           "legendFormat": "{{method}} {{route}}",
           "refId": "A"
@@ -345,7 +345,7 @@
       },
       "targets": [
         {
-          "expr": "pfa_tasks_total{job=\"pfa-production\"}",
+          "expr": "pfa_tasks_total{job=\"pfa-backend\"}",
           "interval": "",
           "legendFormat": "{{status}}",
           "refId": "A"
@@ -386,7 +386,7 @@
       },
       "targets": [
         {
-          "expr": "pfa_projects_total{job=\"pfa-production\"}",
+          "expr": "pfa_projects_total{job=\"pfa-backend\"}",
           "interval": "",
           "legendFormat": "Total Projects",
           "refId": "A"
@@ -423,7 +423,7 @@
       },
       "targets": [
         {
-          "expr": "pfa_user_activity_total{job=\"pfa-production\"}",
+          "expr": "pfa_user_activity_total{job=\"pfa-backend\"}",
           "interval": "",
           "legendFormat": "{{action}} - {{user_role}}",
           "refId": "A"
@@ -464,7 +464,7 @@
       },
       "targets": [
         {
-          "expr": "pfa_teams_total{job=\"pfa-production\"}",
+          "expr": "pfa_teams_total{job=\"pfa-backend\"}",
           "interval": "",
           "legendFormat": "Active Teams",
           "refId": "A"
@@ -501,7 +501,7 @@
       },
       "targets": [
         {
-          "expr": "pfa_notifications_total{job=\"pfa-production\"}",
+          "expr": "pfa_notifications_total{job=\"pfa-backend\"}",
           "interval": "",
           "legendFormat": "{{type}}",
           "refId": "A"

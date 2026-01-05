@@ -4,6 +4,7 @@ const { check, validationResult } = require('express-validator');
 const Notification = require('../models/Notification');
 const User = require('../models/User');
 const auth = require('../middleware/auth');
+const { trackNotification, trackUserActivity } = require('../middleware/metrics');
 
 // Middleware d'authentification requis pour toutes les routes
 router.use(auth);
@@ -171,6 +172,9 @@ router.post('/test', async (req, res) => {
       data: { priority: 'low' },
       channels: ['in_app']
     });
+
+    trackNotification('system_update');
+    trackUserActivity('notification_send');
 
     res.json({
       message: 'Test notification created',

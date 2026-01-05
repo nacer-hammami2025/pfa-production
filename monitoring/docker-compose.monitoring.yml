@@ -44,55 +44,55 @@ services:
     networks:
       - monitoring
 
-  # Node Exporter for system metrics
-  node-exporter:
-    image: prom/node-exporter:latest
-    container_name: pfa-node-exporter
-    ports:
-      - "9100:9100"
-    volumes:
-      - /proc:/host/proc:ro
-      - /sys:/host/sys:ro
-      - /:/rootfs:ro
-    command:
-      - '--path.procfs=/host/proc'
-      - '--path.rootfs=/rootfs'
-      - '--path.sysfs=/host/sys'
-      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
-    restart: unless-stopped
-    networks:
-      - monitoring
+  # Node Exporter for system metrics (Linux only)
+  # node-exporter:
+  #   image: prom/node-exporter:latest
+  #   container_name: pfa-node-exporter
+  #   ports:
+  #     - "9100:9100"
+  #   volumes:
+  #     - /proc:/host/proc:ro
+  #     - /sys:/host/sys:ro
+  #     - /:/rootfs:ro
+  #   command:
+  #     - '--path.procfs=/host/proc'
+  #     - '--path.rootfs=/rootfs'
+  #     - '--path.sysfs=/host/sys'
+  #     - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+  #   restart: unless-stopped
+  #   networks:
+  #     - monitoring
 
-  # MongoDB Exporter
-  mongodb-exporter:
-    image: percona/mongodb_exporter:latest
-    container_name: pfa-mongodb-exporter
-    ports:
-      - "9216:9216"
-    environment:
-      - MONGODB_URI=${MONGODB_URI}
-    restart: unless-stopped
-    networks:
-      - monitoring
+  # MongoDB Exporter (optionnel - décommenter si nécessaire)
+  # mongodb-exporter:
+  #   image: bitnami/mongodb-exporter:latest
+  #   container_name: pfa-mongodb-exporter
+  #   ports:
+  #     - "9216:9216"
+  #   environment:
+  #     - MONGODB_URI=${MONGODB_URI:-mongodb://localhost:27017}
+  #   restart: unless-stopped
+  #   networks:
+  #     - monitoring
 
-  # cAdvisor for container metrics
-  cadvisor:
-    image: gcr.io/cadvisor/cadvisor:latest
-    container_name: pfa-cadvisor
-    ports:
-      - "8080:8080"
-    volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:ro
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-      - /dev/disk/:/dev/disk:ro
-    privileged: true
-    devices:
-      - /dev/kmsg
-    restart: unless-stopped
-    networks:
-      - monitoring
+  # cAdvisor for container metrics (Linux only)
+  # cadvisor:
+  #   image: gcr.io/cadvisor/cadvisor:latest
+  #   container_name: pfa-cadvisor
+  #   ports:
+  #     - "8080:8080"
+  #   volumes:
+  #     - /:/rootfs:ro
+  #     - /var/run:/var/run:ro
+  #     - /sys:/sys:ro
+  #     - /var/lib/docker/:/var/lib/docker:ro
+  #     - /dev/disk/:/dev/disk:ro
+  #   privileged: true
+  #   devices:
+  #     - /dev/kmsg
+  #   restart: unless-stopped
+  #   networks:
+  #     - monitoring
 
   # Alertmanager for alerts
   alertmanager:
@@ -111,31 +111,31 @@ services:
     networks:
       - monitoring
 
-  # Nginx Exporter (si vous utilisez nginx)
-  nginx-exporter:
-    image: nginx/nginx-prometheus-exporter:latest
-    container_name: pfa-nginx-exporter
-    ports:
-      - "9113:9113"
-    command:
-      - '-nginx.scrape-uri=http://nginx:80/nginx_status'
-    restart: unless-stopped
-    networks:
-      - monitoring
-    depends_on:
-      - nginx
+  # Nginx Exporter (optionnel - décommenter si nginx est utilisé)
+  # nginx-exporter:
+  #   image: nginx/nginx-prometheus-exporter:latest
+  #   container_name: pfa-nginx-exporter
+  #   ports:
+  #     - "9113:9113"
+  #   command:
+  #     - '-nginx.scrape-uri=http://nginx:80/nginx_status'
+  #   restart: unless-stopped
+  #   networks:
+  #     - monitoring
+  #   depends_on:
+  #     - nginx
 
-  # Nginx with status module
-  nginx:
-    image: nginx:alpine
-    container_name: pfa-nginx
-    ports:
-      - "8081:80"
-    volumes:
-      - ./nginx/nginx-status.conf:/etc/nginx/conf.d/default.conf
-    restart: unless-stopped
-    networks:
-      - monitoring
+  # # Nginx with status module
+  # nginx:
+  #   image: nginx:alpine
+  #   container_name: pfa-nginx
+  #   ports:
+  #     - "8081:80"
+  #   volumes:
+  #     - ./nginx/nginx-status.conf:/etc/nginx/conf.d/default.conf
+  #   restart: unless-stopped
+  #   networks:
+  #     - monitoring
 
 networks:
   monitoring:

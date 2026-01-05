@@ -16,33 +16,33 @@ alerting:
 
 # Scrape configurations
 scrape_configs:
-  # PFA Backend Application
+  # PFA Backend Application (running on host)
   - job_name: 'pfa-backend'
     static_configs:
-      - targets: ['backend:5001']
+      - targets: ['host.docker.internal:5001']
     metrics_path: '/api/metrics'
     scrape_interval: 15s
     scrape_timeout: 10s
 
-  # Node.js Process Metrics
-  - job_name: 'node-exporter'
-    static_configs:
-      - targets: ['node-exporter:9100']
+  # # Node.js Process Metrics (disabled - Linux only)
+  # - job_name: 'node-exporter'
+  #   static_configs:
+  #     - targets: ['node-exporter:9100']
 
-  # MongoDB Metrics
-  - job_name: 'mongodb-exporter'
-    static_configs:
-      - targets: ['mongodb-exporter:9216']
+  # # MongoDB Metrics (disabled - not configured yet)
+  # - job_name: 'mongodb-exporter'
+  #   static_configs:
+  #     - targets: ['mongodb-exporter:9216']
 
-  # Nginx Metrics
-  - job_name: 'nginx-exporter'
-    static_configs:
-      - targets: ['nginx-exporter:9113']
+  # # Nginx Metrics (disabled - not configured yet)
+  # - job_name: 'nginx-exporter'
+  #   static_configs:
+  #     - targets: ['nginx-exporter:9113']
 
-  # Docker Container Metrics
-  - job_name: 'cadvisor'
-    static_configs:
-      - targets: ['cadvisor:8080']
+  # # Docker Container Metrics (disabled - Linux only)
+  # - job_name: 'cadvisor'
+  #   static_configs:
+  #     - targets: ['cadvisor:8080']
 
   # Prometheus Self-monitoring
   - job_name: 'prometheus'
