@@ -10,11 +10,11 @@
   animation: fadeIn 0.5s ease-out;
 }
 
-/* Menu latéral admin */
+/* Menu latéral admin - AMÉLIORATION VISIBILITÉ */
 .admin-sidebar {
   width: 280px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(180deg, #1e3a8a 0%, #3b82f6 50%, #6366f1 100%);
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
   position: fixed;
   left: 0;
   top: 0;
@@ -22,6 +22,7 @@
   z-index: 1000;
   overflow-y: auto;
   overflow-x: hidden;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* Suppression de toutes formes et animations disgracieuses */
@@ -36,17 +37,21 @@
 
 .sidebar-header {
   padding: 2rem 1.5rem 1.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
 }
 
 .sidebar-header h3 {
-  color: white;
-  font-size: 1.4rem;
-  font-weight: 600;
+  color: #ffffff;
+  font-size: 1.6rem;
+  font-weight: 700;
   margin: 0;
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
+  letter-spacing: 0.5px;
 }
 
 .sidebar-menu {
@@ -64,22 +69,27 @@
   align-items: center;
   gap: 1rem;
   padding: 1rem 1.5rem;
-  color: rgba(255, 255, 255, 0.9);
+  color: #ffffff;
   text-decoration: none;
   transition: all 0.3s ease;
-  font-weight: 500;
+  font-weight: 600;
+  font-size: 15px;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .menu-link:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
   transform: translateX(5px);
+  box-shadow: inset 4px 0 0 #ffffff;
 }
 
 .menu-item.active .menu-link {
-  background: rgba(255, 255, 255, 0.15);
-  color: white;
-  border-right: 4px solid #ffd700;
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  border-right: 4px solid #fbbf24;
+  font-weight: 700;
+  box-shadow: inset 0 0 15px rgba(251, 191, 36, 0.3);
 }
 
 .menu-link i {
@@ -114,15 +124,20 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid #dee2e6;
+  padding: 1.5rem 2rem;
+  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(30, 64, 175, 0.2);
+  margin-bottom: 1rem;
 }
 
 .header h1 {
   font-size: 2.2rem;
   font-weight: 700;
-  color: #343a40;
+  color: #ffffff;
   margin: 0;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+  letter-spacing: 0.5px;
 }
 
 .header .actions button {
