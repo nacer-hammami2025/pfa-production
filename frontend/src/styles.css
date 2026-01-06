@@ -2,6 +2,42 @@
    FANTASTIC DESIGN SYSTEM - PFA 2025
    =========================================== */
 
+/* ============================================
+   SUPPRESSION RADICALE DES EFFETS ADMIN
+   ============================================ */
+   
+/* Force la suppression de TOUT élément ::before et ::after dans l'admin */
+.admin-sidebar *,
+.admin-sidebar *::before,
+.admin-sidebar *::after,
+.sidebar-menu *,
+.sidebar-menu *::before,
+.sidebar-menu *::after,
+.menu-item *,
+.menu-item *::before,
+.menu-item *::after,
+.admin-dashboard *::before,
+.admin-dashboard *::after {
+  animation: none !important;
+  transform: none !important;
+  transition: background 0.2s ease, color 0.2s ease !important;
+}
+
+/* Suppression absolue des pseudo-éléments disgracieux */
+.admin-sidebar::before,
+.admin-sidebar::after,
+.sidebar-menu::before,
+.sidebar-menu::after,
+.menu-item::before,
+.menu-item::after {
+  content: none !important;
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
 /* Import Google Fonts for premium typography */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
