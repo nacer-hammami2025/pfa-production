@@ -3,13 +3,257 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #0f2027 0%, #203a43 25%, #2c5364 50%, #667eea 75%, #764ba2 100%);
+  background: linear-gradient(135deg, #0a0f1a 0%, #1a1f3a 25%, #0d1b2a 50%, #1b263b 75%, #0a0f1a 100%);
   font-family: var(--font-sans);
   padding: var(--space-4);
   position: relative;
   overflow: hidden;
 }
 
+/* ============================================
+   ✨ TASKFLOW PRO - ARRIÈRE-PLAN FANTASTIQUE ✨
+   ============================================ */
+
+.taskflow-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+/* Grille de productivité animée */
+.productivity-grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    linear-gradient(rgba(99, 102, 241, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(99, 102, 241, 0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  animation: gridPulse 4s ease-in-out infinite;
+}
+
+@keyframes gridPulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
+}
+
+/* Flux de tâches - lignes animées */
+.task-flow-lines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.flow-line {
+  position: absolute;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #6366f1, #8b5cf6, #a855f7, transparent);
+  border-radius: 2px;
+  opacity: 0.4;
+}
+
+.line-1 {
+  top: 15%;
+  left: -20%;
+  width: 50%;
+  animation: flowLine 8s linear infinite;
+}
+
+.line-2 {
+  top: 35%;
+  right: -20%;
+  width: 40%;
+  animation: flowLineReverse 10s linear infinite;
+  animation-delay: -2s;
+}
+
+.line-3 {
+  top: 55%;
+  left: -15%;
+  width: 60%;
+  animation: flowLine 12s linear infinite;
+  animation-delay: -4s;
+}
+
+.line-4 {
+  top: 75%;
+  right: -25%;
+  width: 45%;
+  animation: flowLineReverse 9s linear infinite;
+  animation-delay: -1s;
+}
+
+.line-5 {
+  top: 90%;
+  left: -10%;
+  width: 35%;
+  animation: flowLine 7s linear infinite;
+  animation-delay: -3s;
+}
+
+@keyframes flowLine {
+  0% { transform: translateX(-100%); opacity: 0; }
+  10% { opacity: 0.6; }
+  90% { opacity: 0.6; }
+  100% { transform: translateX(300%); opacity: 0; }
+}
+
+@keyframes flowLineReverse {
+  0% { transform: translateX(100%); opacity: 0; }
+  10% { opacity: 0.5; }
+  90% { opacity: 0.5; }
+  100% { transform: translateX(-300%); opacity: 0; }
+}
+
+/* Particules de productivité flottantes */
+.productivity-particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.particle {
+  position: absolute;
+  font-size: 20px;
+  opacity: 0.15;
+  animation: floatParticle 15s ease-in-out infinite;
+  filter: drop-shadow(0 0 10px currentColor);
+}
+
+.p1 { top: 10%; left: 5%; animation-delay: 0s; color: #10b981; }
+.p2 { top: 20%; left: 85%; animation-delay: -2s; color: #f59e0b; }
+.p3 { top: 40%; left: 10%; animation-delay: -4s; color: #6366f1; }
+.p4 { top: 60%; left: 90%; animation-delay: -6s; color: #ef4444; }
+.p5 { top: 80%; left: 15%; animation-delay: -8s; color: #10b981; }
+.p6 { top: 25%; left: 75%; animation-delay: -1s; color: #3b82f6; }
+.p7 { top: 70%; left: 80%; animation-delay: -3s; color: #fbbf24; }
+.p8 { top: 50%; left: 3%; animation-delay: -5s; color: #10b981; }
+.p9 { top: 85%; left: 70%; animation-delay: -7s; color: #8b5cf6; }
+.p10 { top: 5%; left: 50%; animation-delay: -9s; color: #10b981; }
+
+@keyframes floatParticle {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg) scale(1);
+    opacity: 0.1;
+  }
+  25% {
+    transform: translateY(-30px) rotate(10deg) scale(1.1);
+    opacity: 0.25;
+  }
+  50% {
+    transform: translateY(-15px) rotate(-5deg) scale(1);
+    opacity: 0.15;
+  }
+  75% {
+    transform: translateY(-40px) rotate(5deg) scale(1.15);
+    opacity: 0.2;
+  }
+}
+
+/* Cercles de connexion */
+.connection-circles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.conn-circle {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  animation: circleExpand 6s ease-out infinite;
+}
+
+.c1 {
+  top: 20%;
+  left: 20%;
+  width: 300px;
+  height: 300px;
+  animation-delay: 0s;
+}
+
+.c2 {
+  top: 50%;
+  right: 15%;
+  width: 400px;
+  height: 400px;
+  animation-delay: -2s;
+}
+
+.c3 {
+  bottom: 10%;
+  left: 40%;
+  width: 250px;
+  height: 250px;
+  animation-delay: -4s;
+}
+
+@keyframes circleExpand {
+  0% {
+    transform: scale(0.5);
+    opacity: 0.5;
+    border-color: rgba(139, 92, 246, 0.4);
+  }
+  50% {
+    opacity: 0.3;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+    border-color: rgba(99, 102, 241, 0.1);
+  }
+}
+
+/* Vagues de flux en bas */
+.flow-waves {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 200px;
+  overflow: hidden;
+}
+
+.wave-svg {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 200%;
+  height: 100%;
+}
+
+.wave-path {
+  fill: rgba(99, 102, 241, 0.05);
+}
+
+.wave-1 {
+  animation: waveMove 20s linear infinite;
+}
+
+.wave-2 {
+  fill: rgba(139, 92, 246, 0.03);
+  animation: waveMove 15s linear infinite reverse;
+}
+
+@keyframes waveMove {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* Gradient overlay dynamique */
 .login-wrapper::before {
   content: '';
   position: absolute;
@@ -18,20 +262,22 @@
   right: 0;
   bottom: 0;
   background:
-    radial-gradient(circle at 20% 80%, rgba(102, 126, 234, 0.3) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(118, 75, 162, 0.3) 0%, transparent 50%),
-    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
+    radial-gradient(ellipse at 20% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(139, 92, 246, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(168, 85, 247, 0.08) 0%, transparent 60%);
   pointer-events: none;
-  animation: pulse 8s ease-in-out infinite;
+  animation: gradientShift 10s ease-in-out infinite alternate;
   z-index: 1;
 }
 
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
+@keyframes gradientShift {
+  0% {
+    opacity: 0.8;
+    transform: scale(1);
   }
-  50% {
-    opacity: 0.5;
+  100% {
+    opacity: 1;
+    transform: scale(1.05);
   }
 }
 
@@ -63,7 +309,7 @@
 
 .login-left {
   flex: 1;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  background: linear-gradient(160deg, #1e3a8a 0%, #3730a3 30%, #6366f1 60%, #8b5cf6 85%, #a855f7 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -72,7 +318,28 @@
   overflow: hidden;
 }
 
+/* Effet de flux dans le panneau gauche */
 .login-left::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: 
+    conic-gradient(from 0deg at 50% 50%, 
+      transparent 0deg, 
+      rgba(255, 255, 255, 0.03) 60deg, 
+      transparent 120deg,
+      rgba(255, 255, 255, 0.05) 180deg,
+      transparent 240deg,
+      rgba(255, 255, 255, 0.02) 300deg,
+      transparent 360deg);
+  animation: rotateGlow 30s linear infinite;
+  pointer-events: none;
+}
+
+.login-left::after {
   content: '';
   position: absolute;
   top: 0;
@@ -80,9 +347,15 @@
   right: 0;
   bottom: 0;
   background:
-    radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.2) 0%, transparent 50%),
-    radial-gradient(circle at 70% 80%, rgba(255, 255, 255, 0.15) 0%, transparent 50%);
+    radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.15) 0%, transparent 40%),
+    radial-gradient(circle at 70% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.1) 0%, transparent 50%);
   pointer-events: none;
+}
+
+@keyframes rotateGlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .brand-content {
