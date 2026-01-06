@@ -104,18 +104,21 @@ export class AppComponent implements OnInit, OnDestroy {
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
     const target = event.target as HTMLElement;
-    console.log('🎯 Document click detected, target:', target.className);
-    // Empêcher la fermeture si le clic est dans un menu ou sur un bouton de menu
-    if (!target.closest('.nav-dropdown') && 
-        !target.closest('.dropdown-menu') && 
-        !target.closest('.profile-menu') &&
-        !target.closest('.profile-btn') &&
-        !target.closest('.nav-link')) {
-      console.log('🎯 Click outside menu - scheduling close');
-      this.scheduleMenuClose();
-    } else {
-      console.log('🎯 Click inside menu - keeping open');
+    // NE FERMER QUE si clic VRAIMENT en dehors de tout menu
+    const isInsideMenu = target.closest('.nav-dropdown') || 
+        target.closest('.dropdown-menu') || 
+        target.closest('.profile-menu') ||
+        target.closest('.profile-btn') ||
+        target.closest('.nav-link') ||
+        target.closest('.dropdown-toggle') ||
+        target.closest('.user-profile') ||
+        target.closest('.nav-item');
+    
+    if (!isInsideMenu) {
+      // Clic vraiment en dehors - fermer immédiatement
+      this.closeAllDropdowns();
     }
+    // Sinon, ne rien faire - le menu reste ouvert
   }
 
   toggleMenu() {

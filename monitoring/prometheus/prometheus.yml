@@ -16,13 +16,22 @@ alerting:
 
 # Scrape configurations
 scrape_configs:
-  # PFA Backend Application (running on host)
+  # PFA Backend Application (running on host - LOCAL)
   - job_name: 'pfa-backend'
     static_configs:
       - targets: ['host.docker.internal:5001']
     metrics_path: '/api/metrics'
     scrape_interval: 15s
     scrape_timeout: 10s
+
+  # PFA Backend Application (PRODUCTION on Render)
+  - job_name: 'pfa-production'
+    static_configs:
+      - targets: ['pfa-production.onrender.com']
+    metrics_path: '/api/metrics'
+    scrape_interval: 30s
+    scrape_timeout: 20s
+    scheme: https
 
   # # Node.js Process Metrics (disabled - Linux only)
   # - job_name: 'node-exporter'

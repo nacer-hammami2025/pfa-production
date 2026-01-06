@@ -1,45 +1,83 @@
 ﻿<div class="login-wrapper">
-  <!-- ✨ ARRIÈRE-PLAN DYNAMIQUE FANTASTIQUE TASKFLOW ✨ -->
-  <div class="taskflow-background">
-    <!-- Grille de productivité animée -->
-    <div class="productivity-grid"></div>
+  <!-- ✨ ARRIÈRE-PLAN INNOVANT TASKFLOW - RÉSEAU DE PRODUCTIVITÉ ✨ -->
+  <div class="taskflow-universe">
+    <!-- Canvas SVG animé - Réseau de connexions -->
+    <svg class="network-svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <!-- Gradient principal -->
+        <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#6366f1;stop-opacity:0.8"/>
+          <stop offset="50%" style="stop-color:#8b5cf6;stop-opacity:0.6"/>
+          <stop offset="100%" style="stop-color:#a855f7;stop-opacity:0.4"/>
+        </linearGradient>
+        <!-- Glow effect -->
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+          <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <!-- Pulse animation -->
+        <radialGradient id="nodeGrad">
+          <stop offset="0%" style="stop-color:#10b981;stop-opacity:1"/>
+          <stop offset="100%" style="stop-color:#10b981;stop-opacity:0"/>
+        </radialGradient>
+      </defs>
+      
+      <!-- Lignes de connexion animées -->
+      <g class="network-lines" filter="url(#glow)">
+        <path class="net-line l1" d="M0,200 Q400,100 800,300 T1600,200" stroke="url(#lineGrad)" fill="none" stroke-width="2"/>
+        <path class="net-line l2" d="M0,400 Q300,500 700,350 T1400,500 T1920,400" stroke="url(#lineGrad)" fill="none" stroke-width="1.5"/>
+        <path class="net-line l3" d="M0,600 Q500,450 900,600 T1700,550" stroke="url(#lineGrad)" fill="none" stroke-width="2"/>
+        <path class="net-line l4" d="M0,800 Q400,700 800,850 T1600,750 T1920,800" stroke="url(#lineGrad)" fill="none" stroke-width="1.5"/>
+        <path class="net-line l5" d="M200,0 Q300,300 200,600 T300,1080" stroke="url(#lineGrad)" fill="none" stroke-width="1"/>
+        <path class="net-line l6" d="M600,0 Q700,400 600,700 T700,1080" stroke="url(#lineGrad)" fill="none" stroke-width="1"/>
+        <path class="net-line l7" d="M1200,0 Q1100,350 1200,650 T1100,1080" stroke="url(#lineGrad)" fill="none" stroke-width="1"/>
+        <path class="net-line l8" d="M1600,0 Q1500,300 1600,600 T1500,1080" stroke="url(#lineGrad)" fill="none" stroke-width="1"/>
+      </g>
+      
+      <!-- Noeuds du réseau (représentant les tâches) -->
+      <g class="network-nodes">
+        <circle class="node n1" cx="200" cy="200" r="8" fill="#10b981"/>
+        <circle class="node n2" cx="500" cy="350" r="6" fill="#6366f1"/>
+        <circle class="node n3" cx="800" cy="250" r="10" fill="#f59e0b"/>
+        <circle class="node n4" cx="1100" cy="400" r="7" fill="#ef4444"/>
+        <circle class="node n5" cx="1400" cy="300" r="9" fill="#8b5cf6"/>
+        <circle class="node n6" cx="1700" cy="450" r="6" fill="#10b981"/>
+        <circle class="node n7" cx="300" cy="550" r="8" fill="#3b82f6"/>
+        <circle class="node n8" cx="600" cy="700" r="7" fill="#ec4899"/>
+        <circle class="node n9" cx="900" cy="600" r="10" fill="#14b8a6"/>
+        <circle class="node n10" cx="1200" cy="750" r="6" fill="#f59e0b"/>
+        <circle class="node n11" cx="1500" cy="650" r="8" fill="#6366f1"/>
+        <circle class="node n12" cx="1800" cy="800" r="7" fill="#10b981"/>
+      </g>
+      
+      <!-- Particules de données en mouvement -->
+      <g class="data-particles">
+        <circle class="data-dot d1" r="3" fill="#10b981">
+          <animateMotion dur="8s" repeatCount="indefinite" path="M0,200 Q400,100 800,300 T1600,200"/>
+        </circle>
+        <circle class="data-dot d2" r="3" fill="#6366f1">
+          <animateMotion dur="10s" repeatCount="indefinite" path="M0,400 Q300,500 700,350 T1400,500 T1920,400"/>
+        </circle>
+        <circle class="data-dot d3" r="3" fill="#f59e0b">
+          <animateMotion dur="12s" repeatCount="indefinite" path="M0,600 Q500,450 900,600 T1700,550"/>
+        </circle>
+        <circle class="data-dot d4" r="3" fill="#8b5cf6">
+          <animateMotion dur="9s" repeatCount="indefinite" path="M0,800 Q400,700 800,850 T1600,750 T1920,800"/>
+        </circle>
+      </g>
+    </svg>
     
-    <!-- Flux de tâches animés -->
-    <div class="task-flow-lines">
-      <div class="flow-line line-1"></div>
-      <div class="flow-line line-2"></div>
-      <div class="flow-line line-3"></div>
-      <div class="flow-line line-4"></div>
-      <div class="flow-line line-5"></div>
-    </div>
+    <!-- Overlay gradient -->
+    <div class="universe-overlay"></div>
     
-    <!-- Particules de productivité -->
-    <div class="productivity-particles">
-      <div class="particle p1">✓</div>
-      <div class="particle p2">⚡</div>
-      <div class="particle p3">📋</div>
-      <div class="particle p4">🎯</div>
-      <div class="particle p5">✓</div>
-      <div class="particle p6">📊</div>
-      <div class="particle p7">⭐</div>
-      <div class="particle p8">✓</div>
-      <div class="particle p9">🚀</div>
-      <div class="particle p10">✓</div>
-    </div>
-    
-    <!-- Cercles de connexion -->
-    <div class="connection-circles">
-      <div class="conn-circle c1"></div>
-      <div class="conn-circle c2"></div>
-      <div class="conn-circle c3"></div>
-    </div>
-    
-    <!-- Vagues de flux -->
-    <div class="flow-waves">
-      <svg class="wave-svg" viewBox="0 0 1440 320" preserveAspectRatio="none">
-        <path class="wave-path wave-1" d="M0,160L48,176C96,192,192,224,288,213.3C384,203,480,149,576,138.7C672,128,768,160,864,186.7C960,213,1056,235,1152,224C1248,213,1344,171,1392,149.3L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
-        <path class="wave-path wave-2" d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,218.7C672,235,768,245,864,234.7C960,224,1056,192,1152,181.3C1248,171,1344,181,1392,186.7L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
-      </svg>
+    <!-- Étoiles/Points de productivité -->
+    <div class="productivity-stars">
+      <span class="star s1">✓</span>
+      <span class="star s2">⚡</span>
+      <span class="star s3">📊</span>
+      <span class="star s4">🎯</span>
+      <span class="star s5">✓</span>
+      <span class="star s6">🚀</span>
     </div>
   </div>
 
