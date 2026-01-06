@@ -171,11 +171,16 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   scheduleMenuClose() {
-    console.log('⏰ Scheduling menu close in 4000ms');
+    // NE PLUS fermer automatiquement - l'utilisateur ferme manuellement ou en cliquant ailleurs
+    // Délai très long (30 secondes) pour éviter toute fermeture intempestive
+    console.log('⏰ Menu will stay open - no auto-close');
+    if (this.menuCloseTimeout) {
+      clearTimeout(this.menuCloseTimeout);
+    }
     this.menuCloseTimeout = setTimeout(() => {
-      console.log('⏰ Menu close timeout triggered - closing all menus');
+      console.log('⏰ Menu close timeout triggered after 30s');
       this.closeAllDropdowns();
-    }, 4000); // Délai augmenté à 4000ms (4 secondes) pour un confort maximal
+    }, 30000); // 30 secondes - presque jamais de fermeture auto
   }
 
   cancelMenuClose() {
@@ -187,8 +192,10 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   onMenuMouseLeave() {
-    console.log('🖱️ Mouse LEAVE menu - scheduling close in 300ms');
-    this.scheduleMenuClose();
+    // NE PAS fermer le menu quand la souris quitte - trop frustrant
+    // L'utilisateur peut cliquer ailleurs pour fermer
+    console.log('🖱️ Mouse LEAVE menu - menu stays OPEN (user clicks elsewhere to close)');
+    // Pas d'appel à scheduleMenuClose() - le menu reste ouvert
   }
 
   onMenuMouseEnter() {

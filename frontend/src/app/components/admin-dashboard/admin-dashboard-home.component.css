@@ -25,14 +25,27 @@
   border-right: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Suppression de toutes formes et animations disgracieuses */
+/* SUPPRESSION TOTALE de tous effets dynamiques disgracieux */
 .admin-sidebar::before,
 .admin-sidebar::after,
 .sidebar-menu::before,
 .sidebar-menu::after,
 .menu-item::before,
-.menu-item::after {
+.menu-item::after,
+.admin-sidebar *::before,
+.admin-sidebar *::after {
   display: none !important;
+  content: none !important;
+  animation: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+/* Désactiver TOUTE animation dans le sidebar */
+.admin-sidebar,
+.admin-sidebar * {
+  animation: none !important;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease !important;
 }
 
 .sidebar-header {

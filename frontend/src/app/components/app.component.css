@@ -254,16 +254,17 @@
   position: absolute;
   top: calc(100% + 8px);
   left: 0;
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow-lg);
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  border: 2px solid rgba(99, 102, 241, 0.3);
+  border-radius: 16px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 30px rgba(99, 102, 241, 0.15);
   list-style: none;
-  padding: 8px;
+  padding: 12px;
   margin: 0;
-  min-width: 220px;
-  z-index: 1001;
-  animation: dropdownFadeIn 0.2s ease;
+  min-width: 260px;
+  z-index: 10001;
+  animation: dropdownFadeIn 0.25s ease;
+  backdrop-filter: blur(20px);
 }
 
 @keyframes dropdownFadeIn {
@@ -284,19 +285,23 @@
 .dropdown-menu a {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px 14px;
-  color: var(--text-secondary);
+  gap: 14px;
+  padding: 14px 18px;
+  color: #e2e8f0;
   text-decoration: none;
-  font-size: 14px;
-  border-radius: 8px;
-  transition: var(--transition);
+  font-size: 15px;
+  font-weight: 500;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
 }
 
 .dropdown-menu a:hover {
-  background: var(--bg-hover);
-  color: var(--primary);
-  transform: translateX(4px);
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%);
+  color: #ffffff;
+  transform: translateX(6px);
+  border-color: rgba(99, 102, 241, 0.4);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
 }
 
 .dropdown-menu a.active {
@@ -306,8 +311,17 @@
 }
 
 .dropdown-menu i {
-  font-size: 18px;
+  font-size: 20px;
   font-style: normal;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.dropdown-menu li {
+  margin-bottom: 4px;
+}
+
+.dropdown-menu li:last-child {
+  margin-bottom: 0;
 }
 
 /* ============================================
@@ -524,10 +538,10 @@
   top: calc(100% + 12px);
   right: 0;
   width: 340px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  border: 2px solid rgba(99, 102, 241, 0.3);
   border-radius: 20px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15), 0 0 1px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4), 0 0 40px rgba(99, 102, 241, 0.15);
   opacity: 0;
   transform: translateY(-10px) scale(0.95);
   animation: dropdownEnter 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
@@ -612,14 +626,14 @@
 .name-premium {
   font-size: 18px;
   font-weight: 700;
-  color: var(--text-primary);
+  color: #ffffff;
   margin: 0 0 4px 0;
   letter-spacing: -0.02em;
 }
 
 .email-premium {
   font-size: 13px;
-  color: var(--text-secondary);
+  color: #94a3b8;
   margin: 0 0 8px 0;
 }
 
@@ -628,18 +642,20 @@
   align-items: center;
   gap: 6px;
   padding: 6px 12px;
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
-  color: var(--primary);
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2));
+  color: #a5b4fc;
   border-radius: 8px;
   font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  border: 1px solid rgba(99, 102, 241, 0.3);
 }
 
 .role-badge-premium.admin {
-  background: linear-gradient(135deg, rgba(245, 101, 101, 0.15), rgba(229, 62, 62, 0.15));
-  color: var(--admin-color);
+  background: linear-gradient(135deg, rgba(251, 146, 60, 0.2), rgba(239, 68, 68, 0.2));
+  color: #fbbf24;
+  border-color: rgba(251, 146, 60, 0.4);
 }
 
 .role-badge-premium i {
@@ -661,7 +677,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: var(--text-muted);
+  color: #64748b;
   margin: 0 0 8px 12px;
 }
 
@@ -736,13 +752,13 @@
 .item-title {
   font-size: 14px;
   font-weight: 600;
-  color: var(--text-primary);
+  color: #e2e8f0;
   line-height: 1.2;
 }
 
 .item-desc {
   font-size: 12px;
-  color: var(--text-secondary);
+  color: #94a3b8;
   line-height: 1.2;
 }
 
