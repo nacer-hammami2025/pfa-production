@@ -1,0 +1,52 @@
+services:
+  # Backend API Service
+  - type: web
+    name: pfa-backend
+    env: node
+    region: frankfurt
+    plan: free
+    branch: main
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: FRONTEND_URL
+        value: https://nacer-dev.me
+    autoDeploy: true
+    
+  # Frontend Angular Service
+  - type: web
+    name: pfa-frontend
+    env: static
+    region: frankfurt
+    plan: free
+    branch: main
+    buildCommand: cd frontend && npm install && npm run build -- --configuration=production
+    staticPublishPath: ./frontend/dist/taskflow/browser
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: public, max-age=0, must-revalidate
+      - path: /assets/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: NODE_ENV
+        value: production
+    autoDeploy: true
+
+# Auto-deploy configuration
+# Cette configuration active le déploiement automatique à chaque push sur main
+# Render détectera automatiquement ce fichier et configurera les services
