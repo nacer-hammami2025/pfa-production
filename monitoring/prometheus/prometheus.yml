@@ -1,11 +1,16 @@
 # Prometheus Configuration for PFA Application
+# Enterprise-grade monitoring configuration
 global:
   scrape_interval: 15s
   evaluation_interval: 15s
+  external_labels:
+    environment: production
+    service: pfa-platform
 
-# Rule files
+# Rule files - Alert rules for SLO monitoring
 rule_files:
   - "rules/*.yml"
+  - "alert-rules.yml"
 
 # Alertmanager configuration
 alerting:

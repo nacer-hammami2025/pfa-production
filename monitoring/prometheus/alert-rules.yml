@@ -1,0 +1,311 @@
+# PFA Production Alert Rules
+# Enterprise-grade alerting configuration for production monitoring
+
+groups:
+  - name: pfa-availability
+    interval: 30s
+    rules:
+      # ============================================
+      # 🔴 CRITICAL - SERVICE AVAILABILITY
+      # ============================================
+      
+      - alert: PFAServiceDown
+        expr: up{job="pfa-production"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: pfa-api
+          team: platform
+        annotations:
+          summary: "🔴 CRITICAL: PFA Production API is DOWN"
+          description: "The production API at pfa-production.onrender.com has been unreachable for more than 1 minute."
+          runbook_url: "https://github.com/your-org/pfa/wiki/runbooks/service-down"
+          dashboard_url: "http://localhost:3001/d/pfa-executive/executive-summary"
+
+      - alert: PFAServiceFlapping
+        expr: changes(up{job="pfa-production"}[15m]) > 3
+        for: 5m
+        labels:
+          severity: warning
+          service: pfa-api
+          team: platform
+        annotations:
+          summary: "🟠 WARNING: PFA API is flapping (unstable)"
+          description: "Service has restarted {{ $value }} times in the last 15 minutes."
+
+  - name: pfa-error-rate
+    interval: 30s
+    rules:
+      # ============================================
+      # 🔴 CRITICAL - ERROR RATES
+      # ============================================
+      
+      - alert: PFACriticalErrorRate
+        expr: |
+          (
+            sum(rate(http_requests_total{job="pfa-production", status=~"5.."}[5m])) 
+            / 
+            sum(rate(http_requests_total{job="pfa-production"}[5m]))
+          ) * 100 > 5
+        for: 2m
+        labels:
+          severity: critical
+          service: pfa-api
+          team: platform
+        annotations:
+          summary: "🔴 CRITICAL: Error rate exceeds 5%"
+          description: "Current 5xx error rate: {{ $value | printf \"%.2f\" }}%. This is a critical SLO breach."
+          impact: "Users are experiencing significant failures"
+          action: "Check application logs and recent deployments"
+
+      - alert: PFAHighErrorRate
+        expr: |
+          (
+            sum(rate(http_requests_total{job="pfa-production", status=~"5.."}[5m])) 
+            / 
+            sum(rate(http_requests_total{job="pfa-production"}[5m]))
+          ) * 100 > 1
+        for: 5m
+        labels:
+          severity: warning
+          service: pfa-api
+          team: platform
+        annotations:
+          summary: "🟠 WARNING: Error rate exceeds 1%"
+          description: "Current 5xx error rate: {{ $value | printf \"%.2f\" }}%. Approaching SLO violation."
+          action: "Investigate error patterns in application logs"
+
+      - alert: PFAHighClientErrors
+        expr: |
+          (
+            sum(rate(http_requests_total{job="pfa-production", status=~"4.."}[5m])) 
+            / 
+            sum(rate(http_requests_total{job="pfa-production"}[5m]))
+          ) * 100 > 20
+        for: 10m
+        labels:
+          severity: warning
+          service: pfa-api
+          team: platform
+        annotations:
+          summary: "🟠 WARNING: High client error rate (4xx)"
+          description: "Client error rate: {{ $value | printf \"%.1f\" }}%. May indicate API misuse or bot activity."
+
+  - name: pfa-latency
+    interval: 30s
+    rules:
+      # ============================================
+      # 🟠 WARNING - LATENCY SLO
+      # ============================================
+      
+      - alert: PFAHighLatency
+        expr: |
+          avg(
+            rate(http_request_duration_seconds_sum{job="pfa-production"}[5m]) 
+            / 
+            rate(http_request_duration_seconds_count{job="pfa-production"}[5m])
+          ) * 1000 > 200
+        for: 5m
+        labels:
+          severity: warning
+          service: pfa-api
+          team: platform
+        annotations:
+          summary: "🟠 WARNING: Response time exceeds SLO (200ms)"
+          description: "Average response time: {{ $value | printf \"%.0f\" }}ms. SLO target is 200ms."
+          action: "Check for slow database queries or external service issues"
+
+      - alert: PFACriticalLatency
+        expr: |
+          avg(
+            rate(http_request_duration_seconds_sum{job="pfa-production"}[5m]) 
+            / 
+            rate(http_request_duration_seconds_count{job="pfa-production"}[5m])
+          ) * 1000 > 500
+        for: 3m
+        labels:
+          severity: critical
+          service: pfa-api
+          team: platform
+        annotations:
+          summary: "🔴 CRITICAL: Response time exceeds 500ms"
+          description: "Average response time: {{ $value | printf \"%.0f\" }}ms. Severe performance degradation."
+          impact: "Users experiencing significant delays"
+
+      - alert: PFALatencyP95High
+        expr: |
+          histogram_quantile(0.95, 
+            sum(rate(http_request_duration_seconds_bucket{job="pfa-production"}[5m])) by (le)
+          ) * 1000 > 500
+        for: 5m
+        labels:
+          severity: warning
+          service: pfa-api
+          team: platform
+        annotations:
+          summary: "🟠 WARNING: P95 latency exceeds 500ms"
+          description: "95th percentile latency: {{ $value | printf \"%.0f\" }}ms. Long-tail latency issue."
+
+  - name: pfa-resources
+    interval: 30s
+    rules:
+      # ============================================
+      # 🔴 CRITICAL - RESOURCE EXHAUSTION
+      # ============================================
+      
+      - alert: PFACriticalMemoryUsage
+        expr: |
+          (
+            nodejs_heap_size_used_bytes{job="pfa-production"} 
+            / 
+            nodejs_heap_size_total_bytes{job="pfa-production"}
+          ) * 100 > 90
+        for: 5m
+        labels:
+          severity: critical
+          service: pfa-api
+          team: platform
+        annotations:
+          summary: "🔴 CRITICAL: Memory usage exceeds 90%"
+          description: "Heap usage: {{ $value | printf \"%.1f\" }}%. Imminent OOM risk."
+          action: "Consider service restart or scaling"
+          impact: "Potential service crash due to memory exhaustion"
+
+      - alert: PFAHighMemoryUsage
+        expr: |
+          (
+            nodejs_heap_size_used_bytes{job="pfa-production"} 
+            / 
+            nodejs_heap_size_total_bytes{job="pfa-production"}
+          ) * 100 > 75
+        for: 15m
+        labels:
+          severity: warning
+          service: pfa-api
+          team: platform
+        annotations:
+          summary: "🟠 WARNING: Memory usage exceeds 75%"
+          description: "Heap usage: {{ $value | printf \"%.1f\" }}%. Monitor for potential memory leak."
+          action: "Analyze memory allocation patterns"
+
+      - alert: PFAMemoryGrowth
+        expr: |
+          (
+            nodejs_heap_size_used_bytes{job="pfa-production"} 
+            - 
+            nodejs_heap_size_used_bytes{job="pfa-production"} offset 1h
+          ) / 1024 / 1024 > 50
+        for: 30m
+        labels:
+          severity: warning
+          service: pfa-api
+          team: platform
+        annotations:
+          summary: "🟠 WARNING: Memory growing steadily"
+          description: "Memory has grown by {{ $value | printf \"%.1f\" }}MB in the last hour. Possible memory leak."
+
+  - name: pfa-slo
+    interval: 1m
+    rules:
+      # ============================================
+      # 📊 SLO TRACKING (Error Budget)
+      # ============================================
+      
+      - alert: PFAErrorBudgetLow
+        expr: |
+          100 - (
+            (
+              sum(rate(http_requests_total{job="pfa-production", status=~"5.."}[24h])) 
+              / 
+              (sum(rate(http_requests_total{job="pfa-production"}[24h])) * 0.001)
+            ) * 100
+          ) < 50
+        for: 10m
+        labels:
+          severity: warning
+          service: pfa-api
+          team: platform
+        annotations:
+          summary: "🟠 WARNING: Error budget below 50%"
+          description: "Only {{ $value | printf \"%.1f\" }}% of monthly error budget remaining."
+          action: "Freeze non-critical deployments, focus on reliability"
+
+      - alert: PFAErrorBudgetCritical
+        expr: |
+          100 - (
+            (
+              sum(rate(http_requests_total{job="pfa-production", status=~"5.."}[24h])) 
+              / 
+              (sum(rate(http_requests_total{job="pfa-production"}[24h])) * 0.001)
+            ) * 100
+          ) < 20
+        for: 5m
+        labels:
+          severity: critical
+          service: pfa-api
+          team: platform
+        annotations:
+          summary: "🔴 CRITICAL: Error budget nearly exhausted"
+          description: "Only {{ $value | printf \"%.1f\" }}% of error budget remaining. SLO at risk."
+          action: "Incident response required. Freeze all deployments."
+
+  - name: pfa-database
+    interval: 30s
+    rules:
+      # ============================================
+      # 🗄️ DATABASE ALERTS
+      # ============================================
+      
+      - alert: PFAMongoDBConnectionHigh
+        expr: mongodb_connections_current{job="pfa-production"} > 80
+        for: 5m
+        labels:
+          severity: warning
+          service: mongodb
+          team: platform
+        annotations:
+          summary: "🟠 WARNING: High MongoDB connection count"
+          description: "Current connections: {{ $value }}. May indicate connection leak."
+
+      - alert: PFAMongoDBConnectionPoolExhausted
+        expr: |
+          mongodb_connections_current{job="pfa-production"} 
+          / 
+          mongodb_connections_available{job="pfa-production"} * 100 > 80
+        for: 5m
+        labels:
+          severity: critical
+          service: mongodb
+          team: platform
+        annotations:
+          summary: "🔴 CRITICAL: MongoDB connection pool near exhaustion"
+          description: "Connection pool usage: {{ $value | printf \"%.1f\" }}%."
+
+  - name: pfa-info
+    interval: 1m
+    rules:
+      # ============================================
+      # ℹ️ INFORMATIONAL ALERTS
+      # ============================================
+      
+      - alert: PFAServiceRestarted
+        expr: changes(process_start_time_seconds{job="pfa-production"}[10m]) > 0
+        for: 0m
+        labels:
+          severity: info
+          service: pfa-api
+          team: platform
+        annotations:
+          summary: "ℹ️ INFO: PFA service was restarted"
+          description: "Service has restarted. Verify if this was a planned deployment."
+
+      - alert: PFALowTraffic
+        expr: sum(rate(http_requests_total{job="pfa-production"}[15m])) < 0.001
+        for: 30m
+        labels:
+          severity: info
+          service: pfa-api
+          team: platform
+        annotations:
+          summary: "ℹ️ INFO: Very low traffic detected"
+          description: "Request rate is unusually low. Verify service accessibility."

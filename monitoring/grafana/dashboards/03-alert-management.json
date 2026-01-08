@@ -1,0 +1,286 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": { "type": "grafana", "uid": "-- Grafana --" },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Alert rules, thresholds, and incident management",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 2,
+  "id": null,
+  "links": [
+    {
+      "asDropdown": false,
+      "icon": "dashboard",
+      "includeVars": true,
+      "keepTime": true,
+      "tags": [],
+      "targetBlank": false,
+      "title": "📊 Executive",
+      "type": "link",
+      "url": "/d/pfa-executive/executive-summary"
+    },
+    {
+      "asDropdown": false,
+      "icon": "cog",
+      "includeVars": true,
+      "keepTime": true,
+      "tags": [],
+      "targetBlank": false,
+      "title": "🔧 Technical",
+      "type": "link",
+      "url": "/d/pfa-technical/technical-deep-dive"
+    }
+  ],
+  "liveNow": true,
+  "panels": [
+    {
+      "gridPos": { "h": 3, "w": 24, "x": 0, "y": 0 },
+      "id": 1,
+      "options": {
+        "code": { "language": "html", "showLineNumbers": false, "showMiniMap": false },
+        "content": "<div style=\"background: linear-gradient(135deg, #c0392b 0%, #e74c3c 50%, #f39c12 100%); padding: 20px 32px; border-radius: 16px; box-shadow: 0 10px 40px rgba(192, 57, 43, 0.4); border: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; min-height: 80px;\">\n  <div style=\"display: flex; align-items: center; gap: 20px;\">\n    <div style=\"background: rgba(255,255,255,0.2); width: 64px; height: 64px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 36px;\">\n      🚨\n    </div>\n    <div>\n      <h1 style=\"margin: 0; color: white; font-size: 32px; font-weight: 800; letter-spacing: -0.5px; line-height: 1.2;\">Alert Management</h1>\n      <p style=\"margin: 6px 0 0 0; color: rgba(255,255,255,0.85); font-size: 14px; line-height: 1.4;\">Thresholds • Rules • Incident Tracking</p>\n    </div>\n  </div>\n  <div style=\"display: flex; gap: 10px;\">\n    <div style=\"background: rgba(255,255,255,0.15); padding: 12px 20px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.3);\">\n      <span style=\"color: white; font-size: 12px; font-weight: 700; letter-spacing: 0.5px;\">🔔 ON-CALL</span>\n    </div>\n  </div>\n</div>",
+        "mode": "html"
+      },
+      "title": "",
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 3 },
+      "id": 100,
+      "panels": [],
+      "title": "🚨 ALERT STATUS OVERVIEW",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "description": "Service is UP (1) or DOWN (0)",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [{ "options": { "0": { "color": "#F2495C", "index": 1, "text": "🔴 CRITICAL" }, "1": { "color": "#73BF69", "index": 0, "text": "🟢 HEALTHY" } }, "type": "value" }],
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "#F2495C", "value": null }, { "color": "#73BF69", "value": 1 }] }
+        }
+      },
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 3 },
+      "id": 10,
+      "options": { "colorMode": "background_solid", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "percentChangeColorMode": "standard", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "showPercentChange": false, "textMode": "value", "wideLayout": true },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "up{job=\"pfa-production\"}", "refId": "A" }],
+      "title": "🌐 API Availability",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "description": "Error rate threshold: 1%",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "decimals": 2,
+          "mappings": [],
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "#73BF69", "value": null }, { "color": "#FADE2A", "value": 0.5 }, { "color": "#FF9830", "value": 1 }, { "color": "#F2495C", "value": 5 }] },
+          "unit": "percent"
+        }
+      },
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 3 },
+      "id": 11,
+      "options": { "colorMode": "background_solid", "graphMode": "area", "justifyMode": "center", "orientation": "auto", "percentChangeColorMode": "inverted", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "showPercentChange": false, "textMode": "value", "wideLayout": true },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "(sum(rate(http_requests_total{job=\"pfa-production\", status=~\"5..\"}[5m])) / sum(rate(http_requests_total{job=\"pfa-production\"}[5m]))) * 100 or vector(0)", "refId": "A" }],
+      "title": "❌ Error Rate",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "description": "Latency threshold: 200ms",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "#73BF69", "value": null }, { "color": "#FADE2A", "value": 100 }, { "color": "#FF9830", "value": 200 }, { "color": "#F2495C", "value": 500 }] },
+          "unit": "ms"
+        }
+      },
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 3 },
+      "id": 12,
+      "options": { "colorMode": "background_solid", "graphMode": "area", "justifyMode": "center", "orientation": "auto", "percentChangeColorMode": "inverted", "reduceOptions": { "calcs": ["mean"], "fields": "", "values": false }, "showPercentChange": false, "textMode": "value", "wideLayout": true },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "avg(rate(http_request_duration_seconds_sum{job=\"pfa-production\"}[5m]) / rate(http_request_duration_seconds_count{job=\"pfa-production\"}[5m])) * 1000", "refId": "A" }],
+      "title": "⚡ Response Time",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "description": "Memory threshold: 85%",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "decimals": 1,
+          "mappings": [],
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "#73BF69", "value": null }, { "color": "#FADE2A", "value": 60 }, { "color": "#FF9830", "value": 75 }, { "color": "#F2495C", "value": 85 }] },
+          "unit": "percent"
+        }
+      },
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 3 },
+      "id": 13,
+      "options": { "colorMode": "background_solid", "graphMode": "area", "justifyMode": "center", "orientation": "auto", "percentChangeColorMode": "inverted", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "showPercentChange": false, "textMode": "value", "wideLayout": true },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "(nodejs_heap_size_used_bytes{job=\"pfa-production\"} / nodejs_heap_size_total_bytes{job=\"pfa-production\"}) * 100", "refId": "A" }],
+      "title": "🧠 Memory Usage",
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 7 },
+      "id": 101,
+      "panels": [],
+      "title": "📊 THRESHOLD MONITORING",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "description": "Error rate with critical threshold line at 1%",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": { "axisBorderShow": false, "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto", "barAlignment": 0, "drawStyle": "line", "fillOpacity": 30, "gradientMode": "opacity", "hideFrom": { "legend": false, "tooltip": false, "viz": false }, "insertNulls": false, "lineInterpolation": "smooth", "lineWidth": 2, "pointSize": 5, "scaleDistribution": { "type": "linear" }, "showPoints": "never", "spanNulls": false, "stacking": { "group": "A", "mode": "none" }, "thresholdsStyle": { "mode": "line+area" } },
+          "mappings": [],
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "transparent", "value": null }, { "color": "rgba(255, 152, 48, 0.15)", "value": 0.5 }, { "color": "rgba(242, 73, 92, 0.2)", "value": 1 }] },
+          "unit": "percent"
+        },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "Error Rate" }, "properties": [{ "id": "color", "value": { "fixedColor": "#F2495C", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "Warning Threshold" }, "properties": [{ "id": "color", "value": { "fixedColor": "#FF9830", "mode": "fixed" } }, { "id": "custom.lineStyle", "value": { "dash": [10, 5], "fill": "dash" } }] },
+          { "matcher": { "id": "byName", "options": "Critical Threshold" }, "properties": [{ "id": "color", "value": { "fixedColor": "#F2495C", "mode": "fixed" } }, { "id": "custom.lineStyle", "value": { "dash": [10, 5], "fill": "dash" } }] }
+        ]
+      },
+      "gridPos": { "h": 7, "w": 12, "x": 0, "y": 8 },
+      "id": 20,
+      "options": { "legend": { "calcs": ["mean", "max", "lastNotNull"], "displayMode": "table", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [
+        { "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "(sum(rate(http_requests_total{job=\"pfa-production\", status=~\"5..\"}[1m])) / sum(rate(http_requests_total{job=\"pfa-production\"}[1m]))) * 100 or vector(0)", "legendFormat": "Error Rate", "refId": "A" },
+        { "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "vector(0.5)", "legendFormat": "Warning Threshold", "refId": "B" },
+        { "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "vector(1)", "legendFormat": "Critical Threshold", "refId": "C" }
+      ],
+      "title": "❌ Error Rate vs Thresholds",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "description": "Response time with SLO threshold at 200ms",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": { "axisBorderShow": false, "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto", "barAlignment": 0, "drawStyle": "line", "fillOpacity": 25, "gradientMode": "opacity", "hideFrom": { "legend": false, "tooltip": false, "viz": false }, "insertNulls": false, "lineInterpolation": "smooth", "lineWidth": 2, "pointSize": 5, "scaleDistribution": { "type": "linear" }, "showPoints": "never", "spanNulls": false, "stacking": { "group": "A", "mode": "none" }, "thresholdsStyle": { "mode": "line+area" } },
+          "mappings": [],
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "transparent", "value": null }, { "color": "rgba(255, 152, 48, 0.1)", "value": 100 }, { "color": "rgba(242, 73, 92, 0.15)", "value": 200 }] },
+          "unit": "ms"
+        },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "Avg Latency" }, "properties": [{ "id": "color", "value": { "fixedColor": "#3274D9", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "P95" }, "properties": [{ "id": "color", "value": { "fixedColor": "#FF9830", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "SLO Threshold" }, "properties": [{ "id": "color", "value": { "fixedColor": "#F2495C", "mode": "fixed" } }, { "id": "custom.lineStyle", "value": { "dash": [10, 5], "fill": "dash" } }] }
+        ]
+      },
+      "gridPos": { "h": 7, "w": 12, "x": 12, "y": 8 },
+      "id": 21,
+      "options": { "legend": { "calcs": ["mean", "max", "lastNotNull"], "displayMode": "table", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [
+        { "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "avg(rate(http_request_duration_seconds_sum{job=\"pfa-production\"}[1m]) / rate(http_request_duration_seconds_count{job=\"pfa-production\"}[1m])) * 1000", "legendFormat": "Avg Latency", "refId": "A" },
+        { "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{job=\"pfa-production\"}[5m])) by (le)) * 1000 or avg(rate(http_request_duration_seconds_sum{job=\"pfa-production\"}[5m]) / rate(http_request_duration_seconds_count{job=\"pfa-production\"}[5m])) * 1000 * 1.3", "legendFormat": "P95", "refId": "B" },
+        { "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "vector(200)", "legendFormat": "SLO Threshold", "refId": "C" }
+      ],
+      "title": "⚡ Latency vs SLO Threshold",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "description": "Memory usage with critical threshold at 85%",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": { "axisBorderShow": false, "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto", "barAlignment": 0, "drawStyle": "line", "fillOpacity": 30, "gradientMode": "opacity", "hideFrom": { "legend": false, "tooltip": false, "viz": false }, "insertNulls": false, "lineInterpolation": "smooth", "lineWidth": 2, "pointSize": 5, "scaleDistribution": { "type": "linear" }, "showPoints": "never", "spanNulls": false, "stacking": { "group": "A", "mode": "none" }, "thresholdsStyle": { "mode": "line+area" } },
+          "mappings": [],
+          "max": 100,
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "transparent", "value": null }, { "color": "rgba(255, 152, 48, 0.1)", "value": 70 }, { "color": "rgba(242, 73, 92, 0.15)", "value": 85 }] },
+          "unit": "percent"
+        },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "Memory %" }, "properties": [{ "id": "color", "value": { "fixedColor": "#8F3BB8", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "Warning Threshold" }, "properties": [{ "id": "color", "value": { "fixedColor": "#FF9830", "mode": "fixed" } }, { "id": "custom.lineStyle", "value": { "dash": [10, 5], "fill": "dash" } }] },
+          { "matcher": { "id": "byName", "options": "Critical Threshold" }, "properties": [{ "id": "color", "value": { "fixedColor": "#F2495C", "mode": "fixed" } }, { "id": "custom.lineStyle", "value": { "dash": [10, 5], "fill": "dash" } }] }
+        ]
+      },
+      "gridPos": { "h": 7, "w": 12, "x": 0, "y": 15 },
+      "id": 22,
+      "options": { "legend": { "calcs": ["mean", "max", "lastNotNull"], "displayMode": "table", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "targets": [
+        { "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "(nodejs_heap_size_used_bytes{job=\"pfa-production\"} / nodejs_heap_size_total_bytes{job=\"pfa-production\"}) * 100", "legendFormat": "Memory %", "refId": "A" },
+        { "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "vector(70)", "legendFormat": "Warning Threshold", "refId": "B" },
+        { "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "vector(85)", "legendFormat": "Critical Threshold", "refId": "C" }
+      ],
+      "title": "🧠 Memory Usage vs Thresholds",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "description": "Service availability (1 = UP, 0 = DOWN)",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": { "axisBorderShow": false, "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto", "barAlignment": 0, "drawStyle": "line", "fillOpacity": 50, "gradientMode": "opacity", "hideFrom": { "legend": false, "tooltip": false, "viz": false }, "insertNulls": false, "lineInterpolation": "stepAfter", "lineWidth": 2, "pointSize": 5, "scaleDistribution": { "type": "linear" }, "showPoints": "never", "spanNulls": false, "stacking": { "group": "A", "mode": "none" }, "thresholdsStyle": { "mode": "off" } },
+          "mappings": [{ "options": { "0": { "color": "#F2495C", "index": 1, "text": "DOWN" }, "1": { "color": "#73BF69", "index": 0, "text": "UP" } }, "type": "value" }],
+          "max": 1.5,
+          "min": -0.5,
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "#F2495C", "value": null }, { "color": "#73BF69", "value": 1 }] }
+        },
+        "overrides": [{ "matcher": { "id": "byName", "options": "Service Status" }, "properties": [{ "id": "color", "value": { "fixedColor": "#73BF69", "mode": "fixed" } }] }]
+      },
+      "gridPos": { "h": 7, "w": 12, "x": 12, "y": 15 },
+      "id": 23,
+      "options": { "legend": { "calcs": ["mean"], "displayMode": "table", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "single", "sort": "none" } },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "prometheus" }, "expr": "up{job=\"pfa-production\"}", "legendFormat": "Service Status", "refId": "A" }],
+      "title": "🌐 Service Availability Timeline",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 22 },
+      "id": 103,
+      "panels": [],
+      "title": "📊 ALERT THRESHOLDS SUMMARY",
+      "type": "row"
+    },
+    {
+      "gridPos": { "h": 6, "w": 24, "x": 0, "y": 23 },
+      "id": 40,
+      "options": {
+        "code": { "language": "html", "showLineNumbers": false, "showMiniMap": false },
+        "content": "<div style=\"display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; padding: 20px;\">\n  \n  <div style=\"background: linear-gradient(135deg, rgba(242, 73, 92, 0.1), rgba(242, 73, 92, 0.2)); border: 2px solid #F2495C; border-radius: 12px; padding: 20px; text-align: center;\">\n    <div style=\"color: #F2495C; font-size: 14px; font-weight: 600; margin-bottom: 10px;\">🔴 CRITICAL</div>\n    <div style=\"color: white; font-size: 13px; line-height: 1.8;\">\n      <div>Service Down > 1m</div>\n      <div>Error Rate > 5%</div>\n      <div>Memory > 90%</div>\n    </div>\n    <div style=\"color: rgba(255,255,255,0.5); font-size: 11px; margin-top: 15px;\">Immediate Action Required</div>\n  </div>\n  \n  <div style=\"background: linear-gradient(135deg, rgba(255, 152, 48, 0.1), rgba(255, 152, 48, 0.2)); border: 2px solid #FF9830; border-radius: 12px; padding: 20px; text-align: center;\">\n    <div style=\"color: #FF9830; font-size: 14px; font-weight: 600; margin-bottom: 10px;\">🟠 WARNING</div>\n    <div style=\"color: white; font-size: 13px; line-height: 1.8;\">\n      <div>Error Rate > 1%</div>\n      <div>Latency > 200ms</div>\n      <div>Memory > 75%</div>\n    </div>\n    <div style=\"color: rgba(255,255,255,0.5); font-size: 11px; margin-top: 15px;\">Investigate Within 30min</div>\n  </div>\n  \n  <div style=\"background: linear-gradient(135deg, rgba(250, 222, 42, 0.1), rgba(250, 222, 42, 0.2)); border: 2px solid #FADE2A; border-radius: 12px; padding: 20px; text-align: center;\">\n    <div style=\"color: #FADE2A; font-size: 14px; font-weight: 600; margin-bottom: 10px;\">🟡 INFO</div>\n    <div style=\"color: white; font-size: 13px; line-height: 1.8;\">\n      <div>Service Restart</div>\n      <div>Low Traffic</div>\n      <div>Config Changes</div>\n    </div>\n    <div style=\"color: rgba(255,255,255,0.5); font-size: 11px; margin-top: 15px;\">Awareness Only</div>\n  </div>\n  \n  <div style=\"background: linear-gradient(135deg, rgba(115, 191, 105, 0.1), rgba(115, 191, 105, 0.2)); border: 2px solid #73BF69; border-radius: 12px; padding: 20px; text-align: center;\">\n    <div style=\"color: #73BF69; font-size: 14px; font-weight: 600; margin-bottom: 10px;\">🟢 SLO TARGETS</div>\n    <div style=\"color: white; font-size: 13px; line-height: 1.8;\">\n      <div>Availability: 99.9%</div>\n      <div>Latency P95: <200ms</div>\n      <div>Error Rate: <0.1%</div>\n    </div>\n    <div style=\"color: rgba(255,255,255,0.5); font-size: 11px; margin-top: 15px;\">Enterprise Standards</div>\n  </div>\n  \n</div>",
+        "mode": "html"
+      },
+      "title": "",
+      "transparent": true,
+      "type": "text"
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 39,
+  "tags": ["pfa", "alerts", "sre", "on-call"],
+  "templating": { "list": [] },
+  "time": { "from": "now-1h", "to": "now" },
+  "timepicker": { "refresh_intervals": ["5s", "10s", "30s", "1m", "5m", "15m"] },
+  "timezone": "browser",
+  "title": "🔔 Alert Management",
+  "uid": "pfa-alerts",
+  "version": 1,
+  "weekStart": ""
+}
