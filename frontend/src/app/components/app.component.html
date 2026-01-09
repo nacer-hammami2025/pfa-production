@@ -50,11 +50,51 @@
               <i class='arrow miraculous-arrow'>▼</i>
               <div class='tools-glow-effect'></div>
             </a>
-            <ul class='dropdown-menu' *ngIf='showToolsMenu' (mouseenter)='onMenuMouseEnter()' (mouseleave)='onMenuMouseLeave()'>
-              <li><a routerLink='/voice-commands' routerLinkActive='active'><i>🎤</i> Commandes Vocales</a></li>
-              <li><a routerLink='/pomodoro' routerLinkActive='active'><i>⏱️</i> Pomodoro</a></li>
-              <li><a routerLink='/scheduling' routerLinkActive='active'><i>📅</i> Planning Intelligent</a></li>
-              <li><a routerLink='/time-tracking' routerLinkActive='active'><i>⏰</i> Suivi du Temps</a></li>
+            <ul class='dropdown-menu enhanced-menu' *ngIf='showToolsMenu'>
+              <li>
+                <a routerLink='/voice-commands' routerLinkActive='active' title='Contrôlez votre application par la voix'>
+                  <div class='menu-item-wrapper'>
+                    <i class='menu-icon'>🎤</i>
+                    <div class='menu-content'>
+                      <div class='menu-title'>Commandes Vocales</div>
+                      <div class='menu-description'>Contrôlez par la voix</div>
+                    </div>
+                  </div>
+                </a>
+              </li>
+              <li>
+                <a routerLink='/pomodoro' routerLinkActive='active' title='Technique Pomodoro pour la productivité'>
+                  <div class='menu-item-wrapper'>
+                    <i class='menu-icon'>⏱️</i>
+                    <div class='menu-content'>
+                      <div class='menu-title'>Pomodoro</div>
+                      <div class='menu-description'>Gérez vos sessions de travail</div>
+                    </div>
+                  </div>
+                </a>
+              </li>
+              <li>
+                <a routerLink='/scheduling' routerLinkActive='active' title='Planification intelligente de vos tâches'>
+                  <div class='menu-item-wrapper'>
+                    <i class='menu-icon'>📅</i>
+                    <div class='menu-content'>
+                      <div class='menu-title'>Planning Intelligent</div>
+                      <div class='menu-description'>Organisez votre emploi du temps</div>
+                    </div>
+                  </div>
+                </a>
+              </li>
+              <li>
+                <a routerLink='/time-tracking' routerLinkActive='active' title='Suivez le temps passé sur vos tâches'>
+                  <div class='menu-item-wrapper'>
+                    <i class='menu-icon'>⏰</i>
+                    <div class='menu-content'>
+                      <div class='menu-title'>Suivi du Temps</div>
+                      <div class='menu-description'>Chronométrez vos activités</div>
+                    </div>
+                  </div>
+                </a>
+              </li>
             </ul>
           </li>
 
@@ -66,11 +106,51 @@
               <div class='analytics-data-flow'></div>
               <div class='pulse-effect'></div>
             </a>
-            <ul class='dropdown-menu' *ngIf='showAnalyticsMenu' (mouseenter)='onMenuMouseEnter()' (mouseleave)='onMenuMouseLeave()'>
-              <li><a routerLink='/analytics' routerLinkActive='active'><i>📈</i> Tableau de Bord</a></li>
-              <li><a routerLink='/analytics-dashboard' routerLinkActive='active'><i>📊</i> Analytics Avancés</a></li>
-              <li><a routerLink='/gamification' routerLinkActive='active'><i>🏆</i> Gamification</a></li>
-              <li><a routerLink='/ai-suggestions' routerLinkActive='active'><i>🤖</i> Suggestions IA</a></li>
+            <ul class='dropdown-menu enhanced-menu' *ngIf='showAnalyticsMenu'>
+              <li>
+                <a routerLink='/analytics' routerLinkActive='active' title='Visualisez vos statistiques'>
+                  <div class='menu-item-wrapper'>
+                    <i class='menu-icon'>📈</i>
+                    <div class='menu-content'>
+                      <div class='menu-title'>Tableau de Bord</div>
+                      <div class='menu-description'>Vue d'ensemble de vos stats</div>
+                    </div>
+                  </div>
+                </a>
+              </li>
+              <li>
+                <a routerLink='/analytics-dashboard' routerLinkActive='active' title='Analyses détaillées et métriques avancées'>
+                  <div class='menu-item-wrapper'>
+                    <i class='menu-icon'>📊</i>
+                    <div class='menu-content'>
+                      <div class='menu-title'>Analytics Avancés</div>
+                      <div class='menu-description'>Analyses détaillées approfondies</div>
+                    </div>
+                  </div>
+                </a>
+              </li>
+              <li>
+                <a routerLink='/gamification' routerLinkActive='active' title='Suivez vos réalisations et badges'>
+                  <div class='menu-item-wrapper'>
+                    <i class='menu-icon'>🏆</i>
+                    <div class='menu-content'>
+                      <div class='menu-title'>Gamification</div>
+                      <div class='menu-description'>Points, badges et classement</div>
+                    </div>
+                  </div>
+                </a>
+              </li>
+              <li>
+                <a routerLink='/ai-suggestions' routerLinkActive='active' title='Intelligence artificielle pour vos tâches'>
+                  <div class='menu-item-wrapper'>
+                    <i class='menu-icon'>🤖</i>
+                    <div class='menu-content'>
+                      <div class='menu-title'>Suggestions IA</div>
+                      <div class='menu-description'>Recommandations intelligentes</div>
+                    </div>
+                  </div>
+                </a>
+              </li>
             </ul>
           </li>
 
@@ -104,10 +184,40 @@
               <span>Administration</span>
               <i class='arrow'>▼</i>
             </a>
-            <ul class='dropdown-menu' *ngIf='showAdminMenu' (mouseenter)='onMenuMouseEnter()' (mouseleave)='onMenuMouseLeave()'>
-              <li><a routerLink='/admin' routerLinkActive='active'><i>📊</i> Dashboard</a></li>
-              <li><a routerLink='/admin/users' routerLinkActive='active'><i>👤</i> Utilisateurs</a></li>
-              <li><a routerLink='/admin/teams' routerLinkActive='active'><i>👥</i> Équipes</a></li>
+            <ul class='dropdown-menu enhanced-menu admin-menu' *ngIf='showAdminMenu'>
+              <li>
+                <a routerLink='/admin' routerLinkActive='active' title='Tableau de bord administrateur'>
+                  <div class='menu-item-wrapper'>
+                    <i class='menu-icon'>📊</i>
+                    <div class='menu-content'>
+                      <div class='menu-title'>Dashboard Admin</div>
+                      <div class='menu-description'>Gestion et statistiques globales</div>
+                    </div>
+                  </div>
+                </a>
+              </li>
+              <li>
+                <a routerLink='/admin/users' routerLinkActive='active' title='Gérer les utilisateurs de la plateforme'>
+                  <div class='menu-item-wrapper'>
+                    <i class='menu-icon'>👤</i>
+                    <div class='menu-content'>
+                      <div class='menu-title'>Gestion Utilisateurs</div>
+                      <div class='menu-description'>Comptes, rôles et permissions</div>
+                    </div>
+                  </div>
+                </a>
+              </li>
+              <li>
+                <a routerLink='/admin/teams' routerLinkActive='active' title='Gérer les équipes et leurs membres'>
+                  <div class='menu-item-wrapper'>
+                    <i class='menu-icon'>👥</i>
+                    <div class='menu-content'>
+                      <div class='menu-title'>Gestion Équipes</div>
+                      <div class='menu-description'>Équipes, membres et projets</div>
+                    </div>
+                  </div>
+                </a>
+              </li>
             </ul>
           </li>
         </ul>
@@ -154,7 +264,7 @@
           </button>
           
           <!-- Dropdown Menu PREMIUM -->
-          <div class='dropdown-menu profile-menu' *ngIf='showSettingsMenu' (mouseenter)='onMenuMouseEnter()' (mouseleave)='onMenuMouseLeave()'>
+          <div class='dropdown-menu profile-menu' *ngIf='showSettingsMenu'>
             <div class='menu-header-premium'>
               <div class='profile-cover'></div>
               <div class='profile-info-premium'>

@@ -166,8 +166,6 @@ export class AppComponent implements OnInit, OnDestroy {
     this.showSettingsMenu = false;
   }
 
-  private menuCloseTimeout: any;
-
   closeAllDropdowns() {
     this.showToolsMenu = false;
     this.showAnalyticsMenu = false;
@@ -175,38 +173,8 @@ export class AppComponent implements OnInit, OnDestroy {
     this.showAdminMenu = false;
   }
 
-  scheduleMenuClose() {
-    // NE PLUS fermer automatiquement - l'utilisateur ferme manuellement ou en cliquant ailleurs
-    // Délai très long (30 secondes) pour éviter toute fermeture intempestive
-    console.log('⏰ Menu will stay open - no auto-close');
-    if (this.menuCloseTimeout) {
-      clearTimeout(this.menuCloseTimeout);
-    }
-    this.menuCloseTimeout = setTimeout(() => {
-      console.log('⏰ Menu close timeout triggered after 30s');
-      this.closeAllDropdowns();
-    }, 30000); // 30 secondes - presque jamais de fermeture auto
-  }
-
-  cancelMenuClose() {
-    console.log('⏰ Canceling menu close timeout');
-    if (this.menuCloseTimeout) {
-      clearTimeout(this.menuCloseTimeout);
-      this.menuCloseTimeout = null;
-    }
-  }
-
-  onMenuMouseLeave() {
-    // NE PAS fermer le menu quand la souris quitte - trop frustrant
-    // L'utilisateur peut cliquer ailleurs pour fermer
-    console.log('🖱️ Mouse LEAVE menu - menu stays OPEN (user clicks elsewhere to close)');
-    // Pas d'appel à scheduleMenuClose() - le menu reste ouvert
-  }
-
-  onMenuMouseEnter() {
-    console.log('🖱️ Mouse ENTER menu - canceling close');
-    this.cancelMenuClose();
-  }
+  // PLUS DE FERMETURE AUTOMATIQUE - Les menus restent ouverts jusqu'à ce que l'utilisateur clique ailleurs
+  // Cela résout le problème des menus qui disparaissent trop vite
 
   toggleTheme() {
     this.isDarkMode = !this.isDarkMode;
