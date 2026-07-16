@@ -1,0 +1,14 @@
+# Global default reviewers
+* @nacer-hammami2025
+
+# Backend ownership
+/backend/ @nacer-hammami2025
+
+# Frontend ownership
+/frontend/ @nacer-hammami2025
+
+# DevSecOps and deployment ownership
+/.github/ @nacer-hammami2025
+/docker-compose*.yml @nacer-hammami2025
+/render.yaml @nacer-hammami2025
+/nginx.conf @nacer-hammami2025
